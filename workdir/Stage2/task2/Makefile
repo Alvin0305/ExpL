@@ -4,6 +4,8 @@ CC = gcc
 
 TARGET = io/out
 
+C_FILES = node/node.c code_gen/code_gen.c register/register.c
+
 LEX_FILE = lexer.l
 YACC_FILE = parser.y
 
@@ -15,8 +17,8 @@ lex.yy.c: $(LEX_FILE)
 y.tab.c y.tab.h: $(YACC_FILE)
 	$(YACC) -d $(YACC_FILE)
 
-$(TARGET): y.tab.c lex.yy.c
-	$(CC) y.tab.c lex.yy.c -o $(TARGET) -ll
+$(TARGET): y.tab.c lex.yy.c $(C_FILES)
+	$(CC) y.tab.c lex.yy.c $(C_FILES) -o $(TARGET) -ll
 
 run: $(TARGET)
 	./$(TARGET)

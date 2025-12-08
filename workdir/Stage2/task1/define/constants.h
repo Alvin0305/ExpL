@@ -3,6 +3,13 @@
 
 #define NOT_CONSTANT 1000000
 
+#define regIndex int
+
+#define STACK_START 4096
+
+#define SOURCE_FILE "io/input.a"
+#define OUTPUT_FILE "io/result.xsm"
+
 enum type {
     INT,
     STRING,

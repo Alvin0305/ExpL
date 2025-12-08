@@ -22,6 +22,7 @@
 "*" {return MUL;}
 "/" {return DIV;}
 "=" {return ASSIGN;}
+";" {return SEMI;}
 
 "begin" {return KW_BEGIN;}
 "end" {return KW_END;}

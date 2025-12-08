@@ -1,0 +1,7 @@
+begin
+    a = 10;
+    if (a < 10) then
+        b = a;
+    endif
+    b = 21;
+end

@@ -232,7 +232,7 @@ void inorder_helper(struct tnode *root) {
 }
 
 void print_inorder(struct tnode *root) {
-    printf("[PRINTING IN INORDER]");
+    printf("[PRINTING IN INORDER]\n");
     inorder_helper(root);
     printf("\n");
 }

@@ -1,0 +1,20 @@
+begin
+    i = 0;
+    n = 20;
+
+    while (i < n) do
+        i = i + 1;
+
+        if (i == 5) then
+            continue;
+        endif
+        if (i == 10) then
+            continue;
+        endif
+        if (i == 16) then
+            break;
+        endif
+
+        write(i);
+    endwhile
+end

@@ -4,6 +4,8 @@
     #include "node/node.h"
     #include "node/node.c"
 
+    #include "define/constants.h"
+
     int yylex(void);
     void yyerror(char const *msg);
 
@@ -26,7 +28,7 @@
 
 %type <node> expr program statementList statement inputStatement outputStatement assignmentStatement statement ID NUM
 
-%token NUM PLUS MINUS MUL DIV KW_BEGIN KW_END ID READ WRITE ASSIGN
+%token NUM PLUS MINUS MUL DIV KW_BEGIN KW_END ID READ WRITE ASSIGN SEMI
 
 %left PLUS MINUS
 %left MUL DIV
@@ -52,13 +54,13 @@ statement : inputStatement { $$ = $1; }
     | assignmentStatement { $$ = $1; }
     ;
 
-inputStatement : READ '(' ID ')' { $$ = createReadNode($3); }
+inputStatement : READ '(' ID ')' SEMI { $$ = createReadNode($3); }
     ;
 
-outputStatement : WRITE '(' expr ')' { $$ = createWriteNode($3); }
+outputStatement : WRITE '(' expr ')' SEMI { $$ = createWriteNode($3); }
     ;
 
-assignmentStatement : ID ASSIGN expr { $$ = createAssignNode($1, $3); }
+assignmentStatement : ID ASSIGN expr SEMI { $$ = createAssignNode($1, $3); }
     ;
 
 expr : expr PLUS expr { $$ = createArithOpNode(NODE_ADD, $1, $3); }

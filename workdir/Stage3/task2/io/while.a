@@ -1,0 +1,7 @@
+begin
+    i = 0;
+    n = 10;
+    while(i < n) do
+        i = i + 1;
+    endwhile
+end
