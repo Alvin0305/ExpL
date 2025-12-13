@@ -1,0 +1,8 @@
+begin
+    decl
+        int a;
+        str s;
+    enddecl
+    
+    a = "hello";   // invalid
+end

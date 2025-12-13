@@ -1,0 +1,6 @@
+begin
+    decl
+        int a;
+        int a;
+    enddecl
+end

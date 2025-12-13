@@ -1,0 +1,29 @@
+begin
+    decl
+        int a[2][2], b[2][2], c[2][2];
+        int i, j;
+    enddecl
+
+    i = 0;
+    while (i < 2) do
+        j = 0;
+        while (j < 2) do
+            a[i][j] = i + j;
+            b[i][j] = (i + j) * 2;
+            j = j + 1;
+        endwhile
+        i = i + 1;
+    endwhile
+
+    i = 0;
+    while (i < 2) do
+        j = 0;
+        while (j < 2) do
+            c[i][j] = a[i][j] + b[i][j];
+            j = j + 1;
+        endwhile
+        i = i + 1;
+    endwhile
+
+    write(c[1][1]);   // (1+1)+(2*(1+1)) = 6
+end

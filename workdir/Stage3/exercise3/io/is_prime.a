@@ -1,0 +1,21 @@
+begin
+    read(a);
+    i = 2;
+    r = 1;
+
+    while (i < a) do
+        b = a % i;
+        if (b == 0) then
+            r = 0;
+            break;
+        endif
+
+        i = i + 1;
+    endwhile
+
+    if (r == 1) then
+        write(1);
+    else
+        write(0);
+    endif
+end

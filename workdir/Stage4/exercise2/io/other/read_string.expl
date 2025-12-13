@@ -1,0 +1,8 @@
+begin
+    decl
+        str s;
+    enddecl
+    
+    read(s);
+    write(s);
+end

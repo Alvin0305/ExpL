@@ -1,0 +1,13 @@
+begin
+    decl int a,b; enddecl
+
+    a = 5;
+    b = 10;
+    if (a < b) then
+        if (b < 20) then
+            write(1);
+        else
+            write(2);
+        endif
+    endif
+end

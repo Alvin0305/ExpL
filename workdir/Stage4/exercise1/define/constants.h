@@ -4,7 +4,7 @@
 #define NOT_CONSTANT 1000000
 #define NO_RETURN -100
 
-#define SOURCE_FILE "io/is_prime.a"
+#define SOURCE_FILE "io/2d_array/matrix_sum.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -16,6 +16,12 @@
 #define regIndex int
 
 #define TOTAL_REGISTERS 20
+
+enum sizes {
+    INT_SIZE = 4,
+    STRING_SIZE = 6,
+    NONE_SIZE = 0
+};
 
 enum type {
     INT,
@@ -31,6 +37,14 @@ enum nodeTypes {
 
     NODE_VARIABLE,
     NODE_CONSTANT,
+    NODE_STRING_LITERAL,
+
+    NODE_TYPE,
+    NODE_DECL,
+
+    NODE_ARRAY_DECL,
+    NODE_ARRAY_ASSIGN,
+    NODE_ARRAY_ACCESS,
 
     NODE_READ,
     NODE_WRITE,
@@ -62,9 +76,10 @@ enum nodeTypes {
 #define FAILURE -1
 
 // error returns for read and write
-#define NO_ALLOCATION -1
-#define E_INVALID_FILE_DESCRIPTOR -1 
-#define E_READ_ERROR -2
+enum errors {
+    E_VARIABLE_REDECLARATION,
+    E_VARIABLE_USER_BEFORE_DECLARATION
+};
 
 // error returns for labels
 #define E_LABEL_EXISTS -3

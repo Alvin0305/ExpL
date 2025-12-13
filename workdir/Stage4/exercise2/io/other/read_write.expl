@@ -1,0 +1,8 @@
+begin
+    decl
+        int n;
+    enddecl
+
+    read(n);
+    write(n);
+end

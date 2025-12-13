@@ -1,0 +1,8 @@
+begin
+    decl
+        int a[3][3];
+    enddecl
+
+    a[2][2] = 100;
+    write(a[2][2]);
+end

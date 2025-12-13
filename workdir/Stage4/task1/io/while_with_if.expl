@@ -1,0 +1,11 @@
+begin
+    decl int i; enddecl
+
+    i = 0;
+    while (i < 10) do
+        if (i == 5) then
+            write(100);
+        endif
+        i = i + 1;
+    endwhile
+end

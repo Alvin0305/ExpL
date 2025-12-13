@@ -1,0 +1,6 @@
+begin
+    decl
+    enddecl
+    
+    write(5 + 3);
+end
