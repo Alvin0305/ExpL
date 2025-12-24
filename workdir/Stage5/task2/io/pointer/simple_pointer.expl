@@ -1,0 +1,13 @@
+begin
+    decl
+        int x, *y;
+        int *a, b;
+    enddecl
+
+    y = &x;
+    *y = 10;
+
+    write(x);
+    write(*y);
+    write(1);
+end

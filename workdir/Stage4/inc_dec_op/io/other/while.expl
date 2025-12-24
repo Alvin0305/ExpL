@@ -1,0 +1,9 @@
+begin
+    decl int i; enddecl
+
+    i = 0;
+    while (i < 5) do
+        write(i);
+        i = i + 1;
+    endwhile
+end

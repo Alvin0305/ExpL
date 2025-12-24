@@ -1,0 +1,13 @@
+begin
+    decl
+        int i, n;
+    enddecl
+    i = 0;
+    n = 10;
+
+    while (not i > n) do
+        write(i);
+        i++;
+    endwhile
+
+end

@@ -1,0 +1,184 @@
+#include "../define/constants.h"
+#include "../util/util.h"
+#include "../node/node.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+
+extern int lineNumber;
+
+void throwError(int error, void *arg1) {
+    switch (error) {
+        case E_VARIABLE_REDECLARATION:
+            printf("[ERROR]: Variable \"%s\" redeclared\n", (char *) arg1);
+            exit(1);
+        case E_VARIABLE_USED_BEFORE_DECLARATION:
+            printf("[ERROR]: Variable \"%s\" used before declaration [%d]\n", (char *) arg1, lineNumber);
+            exit(1);
+        case E_DEREFERENCING_NON_POINTER_VARIABLE:
+            printf("[ERROR]: Variable \"%s\" is not a pointer but is dereferenced\n", (char *) arg1);
+            exit(1);
+        case E_POINTER_TO_POINTER:
+            printf("[ERROR]: A pointer to another pointer variable \"%s\" is not allowed\n", (char *) arg1);
+            exit(1);
+        case E_STACK_MEMORY_EXHAUSTED:
+            printf("[ERROR]: Stack Memory Exhausted\n");
+            exit(1);
+        case E_INVALID_ARGUMENT:
+            printf("[ERROR]: Invalid %s argument\n", (char *) arg1);
+            exit(1);
+        case E_FUNCTION_REDECLARATION:
+            printf("[ERROR]: Function %s is redeclared\n", (char *) arg1);
+            exit(1);
+        case E_FUNCTION_USED_BEFORE_DECLARATION:
+            printf("[ERROR]: Function %s is used before declaration [%d]\n", (char *) arg1, lineNumber);
+            exit(1);
+        case E_FUNCTION_SIGNATURE_NUM_ARGS_MISMATCH:
+            printf("[ERROR]: Function signature number of args mismatch\n");
+            exit(1);
+        case E_PARAMETER_DUPLICATION:
+            printf("[ERROR]: Duplicate parameters found \"%s\"\n", (char *) arg1);
+            exit(1);
+    }
+}
+
+void throwTypeMismatchError(char *location, int expectedType, int givenType) {
+    printf("[ERROR]: [%d] Expected %s in %s. But got %s\n", lineNumber, dataTypeToString(expectedType), location, dataTypeToString(givenType));
+    exit(1);
+}
+
+void throwFunctionSignatureMismatchError(int error, int expectedType, int givenType, char *expectedName, char *givenName) {
+    switch (error) {
+        case E_FUNCTION_SIGNATURE_TYPE_MISMATCH:
+            printf("[ERROR]: Function Signature Mismatch, expected %s type for \"%s\", got %s\n", dataTypeToString(expectedType), expectedName, dataTypeToString(givenType));
+            exit(1);
+        case E_FUNCTION_SIGNATURE_VARNAME_MISMATCH:
+            printf("[ERROR]: Function Signature Mismatch, expected variable name: \"%s\", got \"%s\"\n", expectedName, givenName);
+            exit(1);
+        case E_FUNCTION_SIGNATURE_RETURN_TYPE_MISMATCH:
+            printf("[ERROR]: Function Signature Mismatch, expected return type: %s, got %s\n", dataTypeToString(expectedType), dataTypeToString(givenType));
+            exit(1);
+        case E_FUNCTION_RETURN_TYPE_MISMATCH:
+            printf("[ERROR]: Function Return type for \"%s\" mismatch, expected return type: %s, got %s\n", givenName, dataTypeToString(expectedType), dataTypeToString(givenType));
+            exit(1);
+        case E_FUNCTION_PASSED_ARG_MISMATCH:
+            printf("[ERROR]: Function Argument \"%s\" type mismatch, expected argument type: %s, got %s\n", expectedName, dataTypeToString(expectedType), dataTypeToString(givenType));
+            exit(1);
+    }
+}
+
+void throwFunctionCallError(int error) {
+    switch (error) {
+        case E_FUNCTION_CALL_TOO_FEW_ARG:
+            printf("[ERROR]: Too few arguments than expected\n");
+            exit(1);
+        case E_FUNCTION_CALL_MORE_ARG:
+            printf("[ERROR]: More arguments than expected\n");
+            exit(1);
+    }
+}
+
+void compilerError(int error, ...) {
+    va_list ap;
+    va_start(ap, error);
+
+    switch (error) {
+        case E_ACCESS_NON_EXISTING_FIELD_OF_TUPLE: {
+            char *tupleName = va_arg(ap, char *);
+            char *fieldName = va_arg(ap, char *);
+
+            printf("[ERROR]: \"%s\" tuple does not have a field \"%s\"\n", tupleName, fieldName);
+            break;
+        }
+
+        case E_VARIABLE_USED_BEFORE_DECLARATION: {
+            char *varName = va_arg(ap, char *);
+
+            fprintf(stderr, "[ERROR]: variable \"%s\" used before declaration [%d]\n", varName, lineNumber);
+            break;
+        }
+
+        case E_AST_STRUCTURE_INCORRECT: {
+            struct tnode *node = va_arg(ap, struct tnode *);
+
+            printf("[ERROR]: AST Structure Wrong at node: ");
+            printNode(node);
+            
+            printf("LEFT: ");
+            if (node->left) {
+                printNode(node->left);
+            } else {
+                printf("NULL\n");
+            }
+
+            printf("RIGHT: ");
+            if (node->right) {
+                printNode(node->right);
+            } else {
+                printf("NULL\n");
+            }
+            
+            break;
+        }
+
+        case E_AST_NODE_TYPE_MISMATCH: {
+            struct tnode *node = va_arg(ap, struct tnode *);
+            int expectedType = va_arg(ap, int);
+            int givenType = va_arg(ap, int);
+
+            printf("[ERROR]: AST type wrong at: ");
+            printNode(node);
+
+            printf("Expected: %s, but got %s\n", dataTypeToString(expectedType), dataTypeToString(givenType));
+            break;
+        }
+
+        case E_AST_NULL_VARNAME: {
+            char *nullVar = va_arg(ap, char *);
+            printf("[ERROR]: %s is null\n", nullVar);
+            break;
+        }
+
+        case E_INVALID_REGISTER: {
+            printf("[ERROR]: Invalid register is getting allocated. Check the code\n");
+            break;
+        }
+
+        case E_FUNCTION_SIGNATURE_MORE_ARG: {
+            char *functionName = va_arg(ap, char *);
+            printf("[ERROR]: Function \"%s\" definition has more arguments than definition\n", functionName);
+            break;
+        }
+
+        case E_FUNCTION_SIGNATURE_TOO_FEW_ARG: {
+            char *functionName = va_arg(ap, char *);
+            printf("[ERROR]: Function \"%s\" definition has less arguments than definition (%d)\n", functionName, lineNumber);
+            break;
+        }
+
+        case E_FUNCTION_CALL_MORE_ARG: {
+            char *functionName = va_arg(ap, char *);
+            printf("[ERROR]: Passed more arguments to function \"%s\" than expected\n", functionName);
+            break;
+        }
+
+        case E_FUNCTION_CALL_TOO_FEW_ARG: {
+            char *functionName = va_arg(ap, char *);
+            printf("[ERROR]: Passed few arguments to function \"%s\" than expected\n", functionName);
+            break;
+        }
+
+        case E_NO_FREE_REGISTERS: {
+            printf("[ERROR]: Registers Exhausted\n");
+            break;
+        }
+
+        default:
+            printf("[ERROR]: Unhandled Error Occured: %d\n", error);
+            break;
+    }
+
+    va_end(ap);
+    exit(1);
+}

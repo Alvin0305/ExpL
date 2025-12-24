@@ -1,0 +1,52 @@
+decl
+    tuple student (str name, int roll_no, str branchname, int year_of_admission) a;
+    tuple faculty (str name, int employee_id, str dept) x, y; 
+
+    tuple student *b;
+
+    int func(int num, tuple student s);
+enddecl
+
+int func(int num, tuple student s) {
+    decl
+    enddecl
+
+    begin
+        write(s.name);
+        write(s.roll_no);
+
+        return 0;
+    end
+}
+
+int main() {
+    decl
+        tuple item (str name, int price) item1;
+        tuple item *item2;
+    enddecl
+
+    begin
+        b = &a;
+        item2 = &item1;
+
+        b->name = "Alvin";
+        a.roll_no = 6;
+        b->branchname = "CSE";
+        b->year_of_admission = 2023;
+
+        func(1, a);
+
+        write(b->name);
+        write(b->roll_no);
+        write(a.branchname);
+        write(a.year_of_admission);
+
+        item2->name = "Banana";
+        item1.price = 10;
+
+        write(item1.name);
+        write(item2->price);
+
+        return 0;
+    end
+}

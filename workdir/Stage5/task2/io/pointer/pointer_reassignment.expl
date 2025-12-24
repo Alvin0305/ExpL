@@ -1,0 +1,15 @@
+begin
+    decl
+        int x, y;
+        int *p;
+    enddecl
+
+    x = 5;
+    y = 15;
+
+    p = &x;
+    write(*p);    // 5
+
+    p = &y;
+    write(*p);    // 15
+end

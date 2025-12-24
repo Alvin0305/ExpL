@@ -1,0 +1,12 @@
+begin
+    decl
+        int x, *p;
+    enddecl
+
+    x = 5;
+    p = &x;
+    *p = 20;
+
+    write(x);     // 20
+    write(*p);    // 20
+end

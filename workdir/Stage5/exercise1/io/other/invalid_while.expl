@@ -1,0 +1,8 @@
+begin
+    decl int i; enddecl
+
+    i = 0;
+    while ("hello") do
+        write(i);
+    endwhile;
+end

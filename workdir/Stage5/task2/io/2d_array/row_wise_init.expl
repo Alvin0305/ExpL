@@ -1,0 +1,20 @@
+begin
+    decl
+        int a[3][3];
+        int i, j, k;
+    enddecl
+
+    i = 0;
+    k = 1;
+    while (i < 3) do
+        j = 0;
+        while (j < 3) do
+            a[i][j] = k;
+            k = k + 1;
+            j = j + 1;
+        endwhile
+        i = i + 1;
+    endwhile
+
+    write(a[2][2]);   // 9
+end

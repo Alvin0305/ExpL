@@ -1,0 +1,27 @@
+begin
+    decl
+        int num;
+    enddecl
+
+    num = 10;
+    
+    num += 3;
+    write(num);
+
+    num -= 3;
+    write(num);
+
+    num *= 3;
+    write(num);
+
+    num /= 3;
+    write(num);
+
+    num %= 3;
+    write(num);
+
+    while (num < 10) do
+        write(num);
+        num += 1;
+    endwhile
+end

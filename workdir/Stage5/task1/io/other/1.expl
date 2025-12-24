@@ -1,0 +1,17 @@
+begin
+    decl
+        int a[3];
+        int x;
+    enddecl
+
+    a[0] = 5;
+    a[1] = 10;
+
+    if(a[1] > a[0]) then
+        x = a[1];
+    else
+        x = a[0];
+    endif
+
+    write(x);
+end

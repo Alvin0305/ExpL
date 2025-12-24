@@ -1,0 +1,10 @@
+begin
+    decl
+        int x, *p, *q;
+    enddecl
+
+    p = &x;
+    x = 10;
+
+    q = &p;       // ❌ should be rejected
+end

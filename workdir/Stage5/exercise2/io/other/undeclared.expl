@@ -1,0 +1,6 @@
+begin
+    decl
+    enddecl
+    
+    a = 5;
+end

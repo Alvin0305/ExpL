@@ -1,8 +1,8 @@
 #ifndef G_SYMBOL_TABLE_H
 #define G_SYMBOL_TABLE_H
 
-#include "../node/node.h"
 #include "../define/constants.h"
+#include "../node/node.h"
 
 typedef struct GSymbol {
     char *name;
@@ -17,14 +17,14 @@ typedef struct GSymbol {
 extern struct GSymbol *g_symbol_table_head;
 extern int stackTop;
 
-struct GSymbol *lookup(char *name);
+struct GSymbol *lookupGST(char *name);
 struct GSymbol *install(char *name, int type, int size);
 
 // printer
 void printGSymbolTable();
 void printDimensions(struct GSymbol *entry);
 
-void populateGSymbolTable(struct tnode *node);
+void populateGST(struct tnode *node);
 
 // helper
 int getSizeOfArrayFromAST(struct tnode *dimensionDeclNode, int *dimensionCount);

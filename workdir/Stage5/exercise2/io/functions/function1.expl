@@ -1,0 +1,47 @@
+decl
+    int num;
+    int sum(int a, int b, int c);
+    int f(int p), fib(int n);
+enddecl
+
+int f(int p) {
+    decl
+    enddecl
+
+    begin
+        write(num);
+        write(p);
+        return p + 1;
+    end
+}
+
+int sum(int a, int b, int c) {
+    decl
+    enddecl
+    
+    begin
+        write(a);
+        write(b);
+        write(c);
+
+        return a + b + c;
+        brkp;
+    end
+}
+
+int main() {
+    decl
+        int result;
+    enddecl
+
+    begin
+        num = 100;
+        brkp;
+        result = sum(1, 2, f(f(2)));
+
+        write(result);
+        write("Hey");
+        result = f(1);
+        write(result);
+    end
+}

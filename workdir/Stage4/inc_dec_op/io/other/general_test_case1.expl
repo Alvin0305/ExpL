@@ -1,0 +1,16 @@
+begin
+    decl int a,b; enddecl
+
+    a = 1;
+    b = 5;
+
+    while (a < b) do
+        a = a + 1;
+
+        if (a == 3) then
+            write(33);
+        endif
+    endwhile
+
+    write(a);
+end

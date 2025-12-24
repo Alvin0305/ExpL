@@ -1,11 +1,11 @@
+#include "node.h"
+#include "../define/constants.h"
+#include "../error_handler/error_handler.h"
+#include "../g_symbol_table/g_symbol_table.h"
+#include "../util/util.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include "node.h"
-#include "../util/util.h"
-#include "../define/constants.h"
-#include "../g_symbol_table/g_symbol_table.h"
-#include "../error_handler/error_handler.h"
 
 extern int lineNumber;
 
@@ -15,7 +15,7 @@ struct tnode *createTreeNode(int val, int nodeType, char *varName, struct tnode 
     } else if (varName) {
         return createNewVariableNode(varName);
     } else {
-        struct tnode *node = (tnode*) malloc(sizeof(tnode));
+        struct tnode *node = (tnode *)malloc(sizeof(tnode));
 
         node->left = left;
         node->right = right;
@@ -28,8 +28,8 @@ struct tnode *createTreeNode(int val, int nodeType, char *varName, struct tnode 
 }
 
 struct tnode *createEmptyNode() {
-    struct tnode *node = (struct tnode*) malloc(sizeof(tnode));
-    
+    struct tnode *node = (struct tnode *)malloc(sizeof(tnode));
+
     node->left = NULL;
     node->right = NULL;
     node->nodeType = NODE_EMPTY;
@@ -39,7 +39,7 @@ struct tnode *createEmptyNode() {
 
 struct tnode *createConstantNode(int val) {
     struct tnode *node = createEmptyNode();
-    
+
     node->nodeType = NODE_CONSTANT;
     node->numVal = val;
     node->varName = NULL;
@@ -55,20 +55,20 @@ struct tnode *createStringLiteralNode(char *stringLiteral) {
     node->right = NULL;
     node->nodeType = NODE_STRING_LITERAL;
     node->varName = NULL;
-    node->strVal = (char *) malloc(strlen(stringLiteral) + 1);
+    node->strVal = (char *)malloc(strlen(stringLiteral) + 1);
     strcpy(node->strVal, stringLiteral);
-    node->type = STRING; 
+    node->type = STRING;
 
     return node;
 }
 
 struct tnode *createNewVariableNode(char *varName) {
     struct tnode *node = createEmptyNode();
-    
+
     node->nodeType = NODE_VARIABLE;
     node->numVal = NOT_CONSTANT;
 
-    node->varName = (char *) malloc(strlen(varName) + 1);
+    node->varName = (char *)malloc(strlen(varName) + 1);
     strcpy(node->varName, varName);
     return node;
 }
@@ -83,7 +83,7 @@ struct tnode *createNewArrayNode(struct tnode *varListNode, struct tnode *idNode
     node->type = NONE;
     node->varName = NULL;
     node->numVal = NOT_CONSTANT;
-    
+
     return connector;
 }
 
@@ -116,12 +116,12 @@ struct tnode *createVariableUsageNode(char *varName) {
 
     node->nodeType = NODE_VARIABLE;
     node->numVal = NOT_CONSTANT;
-    node->varName = (char *) malloc(strlen(varName) + 1);
+    node->varName = (char *)malloc(strlen(varName) + 1);
     strcpy(node->varName, varName);
 
-    GSymbol *entry = lookup(varName);
+    GSymbol *entry = lookupGST(varName);
     if (!entry) {
-        throwError(E_VARIABLE_USER_BEFORE_DECLARATION, varName);
+        throwError(E_VARIABLE_USED_BEFORE_DECLARATION, varName);
     } else {
         node->type = entry->type;
         node->gSymbolTableEntry = entry;
@@ -383,7 +383,7 @@ struct tnode *createDeclarationNode(struct tnode *typeNode, struct tnode *varLis
 
 struct tnode *createNewPointerNode(struct tnode *idNode) {
     struct tnode *node = createEmptyNode();
-    
+
     node->nodeType = NODE_DEREFERENCE;
     node->left = idNode;
     node->right = NULL;
@@ -414,7 +414,7 @@ struct tnode *createDereferenceNode(struct tnode *idNode) {
 struct tnode *createAddressToNode(struct tnode *idNode) {
     struct tnode *node = createEmptyNode();
     struct tnode *newIdNode = createVariableUsageNode(idNode->varName);
-    
+
     node->nodeType = NODE_ADDRESS_TO;
     node->left = newIdNode;
     node->right = NULL;
@@ -424,7 +424,7 @@ struct tnode *createAddressToNode(struct tnode *idNode) {
 
     if (newIdNode->gSymbolTableEntry->isPtr) {
         throwError(E_POINTER_TO_POINTER, newIdNode->varName);
-    } 
+    }
 
     return node;
 }
@@ -448,8 +448,9 @@ struct tnode *createAssignToDereferencedNode(struct tnode *idNode, struct tnode 
 }
 
 void print_helper(struct tnode *root) {
-    if (!root) return;
-    
+    if (!root)
+        return;
+
     printNode(root);
 
     print_helper(root->left);
@@ -463,7 +464,8 @@ void print(struct tnode *root) {
 }
 
 void inorder_helper(struct tnode *root) {
-    if (!root) return;
+    if (!root)
+        return;
 
     inorder_helper(root->left);
     printNode(root);

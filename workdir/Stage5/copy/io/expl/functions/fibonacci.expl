@@ -1,0 +1,64 @@
+decl
+    int fib(int n), sum(int n), summ(int a, int b), func(int num);
+enddecl
+
+int fib(int n) {
+    decl
+    enddecl
+    
+    begin
+        if (n == 1 or n == 2) then
+            return 1;
+        else
+            return fib(n - 1) + fib(n - 2);
+        endif
+    end
+}
+
+int sum(int n) {
+    decl
+    enddecl
+
+    begin
+        if (n == 1) then
+            return 1;
+        else
+            return n + sum(n - 1);
+        endif
+    end
+}
+
+int summ(int a, int b) {
+    decl
+    enddecl
+
+    begin
+        return a + b;
+    end
+}
+
+int func(int num) {
+    decl
+    enddecl
+
+    begin
+        return num + 1;
+    end
+}
+
+int main() {
+    decl
+        int result;
+    enddecl
+
+    begin
+        result = fib(8);
+        write(result);
+        result = sum(10);
+        write(result);
+        result = summ(10, 12);
+        write(result);
+        result = func(10);
+        write(result);
+    end
+}

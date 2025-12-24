@@ -316,7 +316,7 @@ void generateDoWhileCode(struct tnode *node) {
     generateWhileLoopCode(node);
 }
 
-int generateCalculateArrayIndexForAccess(struct tnode *arrayAccessNode) {
+int generateArrayElementAddress(struct tnode *arrayAccessNode) {
     struct tnode *idNode = arrayAccessNode->left;
     struct GSymbol *entry = idNode->gSymbolTableEntry;
     int numDimensions = entry->numDimensions;
@@ -374,7 +374,7 @@ int generateCalculateArrayIndexForAccess(struct tnode *arrayAccessNode) {
 }
 
 int generateArrayAccessCode(struct tnode *arrayAccessNode) {
-    int indexReg = generateCalculateArrayIndexForAccess(arrayAccessNode);
+    int indexReg = generateArrayElementAddress(arrayAccessNode);
     int freeReg = getFreeRegister();
 
     fprintf(target_file, "MOV R%d, [R%d]\n", freeReg, indexReg);
@@ -383,7 +383,7 @@ int generateArrayAccessCode(struct tnode *arrayAccessNode) {
     return freeReg;
 }
 
-void generateAssignFromArrayCode(struct tnode *arrayAssignNode) {
+void generateAssignmentFromArray(struct tnode *arrayAssignNode) {
     struct tnode *left = arrayAssignNode->left;
     int memAddr = generateUserCode(left);
 
@@ -393,8 +393,8 @@ void generateAssignFromArrayCode(struct tnode *arrayAssignNode) {
     releaseRegister(indexReg);
 }
 
-void generateAssignToArrayCode(struct tnode *arrayAssignNode) {
-    int indexReg = generateCalculateArrayIndexForAccess(arrayAssignNode->left);
+void generateAssignmentToArray(struct tnode *arrayAssignNode) {
+    int indexReg = generateArrayElementAddress(arrayAssignNode->left);
     int valueReg = generateUserCode(arrayAssignNode->right);
 
     fprintf(target_file, "MOV [R%d], R%d\n", indexReg, valueReg);
@@ -479,7 +479,7 @@ int generateUserCode(struct tnode *root) {
             return NO_RETURN;
 
         case NODE_READ_TO_ARRAY:
-            int memAddrReg = generateCalculateArrayIndexForAccess(root->left);
+            int memAddrReg = generateArrayElementAddress(root->left);
             generateReadFromConsoleCodeToAddrInReg(memAddrReg);
             return NO_RETURN;
 
@@ -520,7 +520,7 @@ int generateUserCode(struct tnode *root) {
             return generateArrayAccessCode(root);
 
         case NODE_ARRAY_ASSIGN:
-            generateAssignToArrayCode(root);
+            generateAssignmentToArray(root);
             return NO_RETURN;
 
         case NODE_ADD:

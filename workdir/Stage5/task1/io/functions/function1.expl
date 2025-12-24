@@ -1,0 +1,11 @@
+decl
+    int num;
+    int a, b;
+    int num2, func(int a, int b);
+    int fib(int n), sum(int a, int b);
+    str print(), hello(int a, str b, int c);
+enddecl
+
+begin
+    read(a);
+end

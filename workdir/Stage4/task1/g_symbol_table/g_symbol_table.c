@@ -1,16 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "g_symbol_table.h"
 #include "../define/constants.h"
 #include "../error_handler/error_handler.h"
 #include "../util/util.h"
-#include "g_symbol_table.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int stackTop = STACK_START;
 struct GSymbol *g_symbol_table_head;
 int currentDataType = NONE;
 
-struct GSymbol *lookup(char *name) {
+struct GSymbol *lookupGST(char *name) {
     struct GSymbol *head = g_symbol_table_head;
 
     while (head) {
@@ -24,8 +24,8 @@ struct GSymbol *lookup(char *name) {
 }
 
 struct GSymbol *createSymbolTableEntry(char *name, int type, int size) {
-    struct GSymbol *entry = (struct GSymbol *) malloc(sizeof(struct GSymbol));
-    entry->name = (char *) malloc(strlen(name) + 1);
+    struct GSymbol *entry = (struct GSymbol *)malloc(sizeof(struct GSymbol));
+    entry->name = (char *)malloc(strlen(name) + 1);
 
     strcpy(entry->name, name);
     entry->type = type;
@@ -72,23 +72,23 @@ void printGSymbolTable() {
     printf("\n");
 }
 
-void populateGSymbolTable(struct tnode *root) {
+void populateGST(struct tnode *root) {
     switch (root->nodeType) {
-        case NODE_CONNECTOR:
-        case NODE_DECL:
-            populateGSymbolTable(root->left);
-            populateGSymbolTable(root->right);
-            break;
+    case NODE_CONNECTOR:
+    case NODE_DECL:
+        populateGST(root->left);
+        populateGST(root->right);
+        break;
 
-        case NODE_TYPE:
-            currentDataType = root->type;
-            break;
+    case NODE_TYPE:
+        currentDataType = root->type;
+        break;
 
-        case NODE_VARIABLE:
-            struct GSymbol* entry = install(root->varName, currentDataType, getSizeOfDataType(currentDataType));
-            root->gSymbolTableEntry = entry;
-            root->type = root->gSymbolTableEntry->type;
-            printf("adding symbol table entry for %s, type: %s\n", root->varName, dataTypeToString(root->type));
-            break;
+    case NODE_VARIABLE:
+        struct GSymbol *entry = install(root->varName, currentDataType, getSizeOfDataType(currentDataType));
+        root->gSymbolTableEntry = entry;
+        root->type = root->gSymbolTableEntry->type;
+        printf("adding symbol table entry for %s, type: %s\n", root->varName, dataTypeToString(root->type));
+        break;
     }
 }

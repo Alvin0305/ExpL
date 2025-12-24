@@ -1,0 +1,18 @@
+begin
+    decl
+        int a;
+    enddecl
+
+    read(a);
+
+    if (a == 0) then
+        write("a is 0");
+    endif
+
+    if (a == 0 or a == 1) then
+        write("a is 0 or 1");
+    else
+        write("a is not bin");
+    endif
+
+end

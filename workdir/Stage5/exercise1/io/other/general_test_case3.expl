@@ -1,0 +1,16 @@
+begin
+    decl
+        int n, i;
+        str name;
+    enddecl
+
+    i = 0;
+    n = 10;
+
+//    name = "a" % i;
+
+    while (i) do
+        i = i + 1;
+        write(i);
+    endwhile
+end

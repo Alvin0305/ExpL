@@ -17,20 +17,23 @@
 
 #define TOTAL_REGISTERS 20
 
-enum sizes {
+enum sizes
+{
     INT_SIZE = 4,
     STRING_SIZE = 6,
     NONE_SIZE = 0
 };
 
-enum type {
+enum type
+{
     INT,
     STRING,
     BOOL,
     NONE
 };
 
-enum nodeTypes {
+enum nodeTypes
+{
     NODE_EMPTY,
     NODE_ASSIGN,
     NODE_CONNECTOR,
@@ -60,7 +63,7 @@ enum nodeTypes {
     NODE_NE,
     NODE_LE,
     NODE_LT,
-    
+
     NODE_WHILE,
     NODE_BREAK,
     NODE_CONTINUE,
@@ -81,9 +84,10 @@ enum nodeTypes {
 #define FAILURE -1
 
 // errors
-enum errors {
+enum errors
+{
     E_VARIABLE_REDECLARATION,
-    E_VARIABLE_USER_BEFORE_DECLARATION,
+    E_VARIABLE_USED_BEFORE_DECLARATION,
     E_DEREFERENCING_NON_POINTER_VARIABLE,
     E_POINTER_TO_POINTER
 };

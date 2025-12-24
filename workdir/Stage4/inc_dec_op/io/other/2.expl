@@ -1,0 +1,11 @@
+begin
+    decl
+        int arr[5];
+        int r;
+    enddecl
+
+    arr[3] = 7;
+    r = arr[3] * 4 + 2;
+
+    write(r);
+end

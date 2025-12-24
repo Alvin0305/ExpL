@@ -1,0 +1,6 @@
+begin
+    decl
+    enddecl
+    
+    write(10 - (2 + 3) * 4);
+end

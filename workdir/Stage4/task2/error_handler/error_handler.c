@@ -11,7 +11,7 @@ void throwError(int error, void *arg1) {
             printf("[ERROR]: Variable \"%s\" redeclared\n", (char *) arg1);
             exit(1);
 
-        case E_VARIABLE_USER_BEFORE_DECLARATION:
+        case E_VARIABLE_USED_BEFORE_DECLARATION:
             printf("[ERROR]: Variable \"%s\" used before declaration\n", (char *) arg1);
             exit(1);
     }

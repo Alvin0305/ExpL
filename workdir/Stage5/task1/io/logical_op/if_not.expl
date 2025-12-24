@@ -1,0 +1,18 @@
+begin
+    decl
+        int x;
+    enddecl
+
+    read(x);
+
+    if (x == 1) then
+        write("x is 1");
+    endif
+
+    if (not x == 10) then
+        write("x is not 10");
+    else 
+        write("x is 10");
+    endif
+
+end

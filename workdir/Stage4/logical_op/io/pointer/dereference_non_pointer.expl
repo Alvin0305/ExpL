@@ -1,0 +1,7 @@
+begin
+    decl
+        int x;
+    enddecl
+
+    *x = 10;      // ❌ invalid
+end

@@ -1,0 +1,10 @@
+begin
+    decl int x; enddecl
+
+    x = 20;
+    if (x < 10) then
+        write("Yes");
+    else
+        write("No");
+    endif
+end

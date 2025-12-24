@@ -1,0 +1,12 @@
+begin
+    decl
+        int i;
+    enddecl
+
+    i = 0;
+    repeat
+        i = i + 1;
+        write(i);
+    until (i > 10 or i > 5);
+
+end

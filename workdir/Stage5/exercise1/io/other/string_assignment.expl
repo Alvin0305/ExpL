@@ -1,0 +1,6 @@
+begin
+    decl str s; enddecl
+
+    s = "hello";
+    write(s);
+end

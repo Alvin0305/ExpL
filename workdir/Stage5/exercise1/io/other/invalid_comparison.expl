@@ -1,0 +1,7 @@
+begin
+    decl str s; enddecl
+
+    if (s < s) then
+        write(1);
+    endif
+end

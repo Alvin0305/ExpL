@@ -1,0 +1,26 @@
+begin
+    decl
+        int i, j, n;
+    enddecl
+    i = 0;
+    j = 0;
+    n = 20;
+
+    while (not i > n) do
+        i = i + 2;
+        j = j + 1;
+
+        if (j % 2 == 0) then
+            continue;
+        endif
+
+        if (i == 6) then
+            break;
+        endif
+
+        write(i);
+        write(j);
+
+    endwhile
+
+end

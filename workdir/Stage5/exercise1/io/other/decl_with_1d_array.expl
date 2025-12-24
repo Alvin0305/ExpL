@@ -1,0 +1,34 @@
+begin
+    decl
+        int a, i;
+        int b, c, arr[10];
+        int d[11], e[12], f[20];
+        str name, names[5];
+    enddecl
+
+    a = 1;
+    names[0] = "Alvin";
+    names[1] = "Hi";
+
+    e[0] = 10;
+    write(e[0]);
+    f[0] = e[0];
+    write(f[0]);
+
+i = 0;
+    while(i < 10) do
+        e[i] = i;
+        i = i + 1;
+    endwhile
+
+    i = 0;
+
+    while(i < 10) do
+        write(e[i]);
+        i = i + 1;
+    endwhile
+
+    write(names[0]);
+    write(names[1]);
+    write(names[2]);
+end

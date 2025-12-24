@@ -1,0 +1,5 @@
+begin
+    decl str s; enddecl
+
+    write(s + 5);
+end

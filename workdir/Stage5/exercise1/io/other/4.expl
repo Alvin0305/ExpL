@@ -1,0 +1,16 @@
+begin
+    decl
+        str s[3];
+        int i;
+    enddecl
+
+    s[0] = "Apple";
+    s[1] = "Ball";
+    s[2] = "Cat";
+
+    i = 0;
+    while(i < 3) do
+        write(s[i]);
+        i = i + 1;
+    endwhile
+end

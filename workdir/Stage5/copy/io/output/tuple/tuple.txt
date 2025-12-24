@@ -1,0 +1,7 @@
+Alvin
+6
+CSE
+2023
+Orange
+10
+Machine is halting.

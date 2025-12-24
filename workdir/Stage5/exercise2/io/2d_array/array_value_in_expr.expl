@@ -1,0 +1,12 @@
+begin
+    decl
+        int a[2][2];
+        int x;
+    enddecl
+
+    a[0][0] = 5;
+    a[0][1] = 10;
+
+    x = a[0][0] + a[0][1];
+    write(x);        // 15
+end

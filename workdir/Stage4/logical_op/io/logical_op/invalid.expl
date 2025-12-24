@@ -1,0 +1,11 @@
+begin
+    decl
+        int num;
+    enddecl
+
+    num = 1;
+
+    if (num % 2) then
+        write(num);
+    endif
+end
