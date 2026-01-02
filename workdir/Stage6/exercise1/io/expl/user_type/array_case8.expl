@@ -1,0 +1,28 @@
+type
+    node {
+        int value;
+    }
+endtype
+
+decl
+    node arr[1];
+    void update(node n);
+    int x;
+enddecl
+
+void update(node n) {
+    begin
+        n.value = 777;
+    end
+}
+
+int main() {
+    begin
+        x = initialize();
+        arr[0] = alloc();
+        arr[0].value = 1;
+
+        update(arr[0]);
+        write(arr[0].value);   // should print 777
+    end
+}

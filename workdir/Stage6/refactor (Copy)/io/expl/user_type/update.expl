@@ -1,0 +1,27 @@
+type
+    data {
+        int v;
+    }
+endtype
+
+decl
+    void update(data d);
+    data x;
+    int y;
+enddecl
+
+void update(data d) {
+    begin
+        d.v = 500;
+    end
+}
+
+int main() {
+    begin
+        y = initialize();
+        x = alloc();
+        x.v = 10;
+        update(x);
+        write(x.v);   // should print 500
+    end
+}

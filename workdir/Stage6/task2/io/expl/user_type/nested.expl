@@ -1,0 +1,28 @@
+type
+    C {
+        int x;
+    }
+    
+    B {
+        C c;
+    }
+
+    A {
+        B b;
+    }
+endtype
+
+decl
+    A a;
+enddecl
+
+int main() {
+    begin
+        a = alloc();
+        a.b = alloc();
+        a.b.c = alloc();
+
+        a.b.c.x = 777;
+        write(a.b.c.x);
+    end
+}

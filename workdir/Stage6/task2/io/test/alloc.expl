@@ -1,0 +1,40 @@
+type
+    node {
+        int value;
+        int val;
+        node next;
+    }
+endtype
+
+decl
+enddecl
+
+int main() {
+    decl
+        int num;
+        node head, temp;
+        int num2;
+    enddecl
+    begin
+        brkp;
+        head = alloc();
+        temp = alloc();
+        
+        temp.val = 1;
+        write(temp.val);
+
+        head.value = 10;
+        head.val = 1;
+        head.next = temp;
+
+        temp.val = 20;
+
+        write(head.value);
+        write(head.val);
+        write(head.next.val);
+        
+        free(head);
+
+        write(10);
+    end
+}

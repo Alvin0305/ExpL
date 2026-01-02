@@ -9,7 +9,7 @@ OUT_DIR = io
 COMPILER_EXE = $(OUT_DIR)/compiler
 LINKER_EXE = $(OUT_DIR)/linker
 
-C_SRCS = node/node.c code_gen/code_gen.c register/register.c evaluator/evaluator.c label/label.c label/label_stack.c util/util.c error_handler/error_handler.c g_symbol_table/g_symbol_table.c g_symbol_table/param_list.c local_symbol_table/local_symbol_table.c tuple_type_table/tuple_type_table.c code_gen/control_flow/control_flow.c code_gen/function/function.c code_gen/tuple/tuple.c code_gen/array/array.c code_gen/arithmetic/arithmetic.c node/array/node_array.c node/control_flow/node_control_flow.c node/function/node_function.c node/tuple/node_tuple.c
+C_SRCS = node/node.c code_gen/code_gen.c register/register.c evaluator/evaluator.c label/label.c label/label_stack.c util/util.c error_handler/error_handler.c g_symbol_table/g_symbol_table.c g_symbol_table/param_list.c local_symbol_table/local_symbol_table.c tuple_type_table/tuple_type_table.c code_gen/control_flow/control_flow.c code_gen/function/function.c code_gen/tuple/tuple.c code_gen/array/array.c code_gen/arithmetic/arithmetic.c node/array/node_array.c node/control_flow/node_control_flow.c node/function/node_function.c node/tuple/node_tuple.c type_table/type_table.c
 COMPILER_LEX = lexer.l
 COMPILER_YACC = parser.y
 LINKER_LEX = label/label_lexer.l

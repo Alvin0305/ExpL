@@ -1,0 +1,13 @@
+Inorder
+10
+10
+10
+Preorder
+10
+10
+10
+Postorder
+10
+10
+10
+Machine is halting.

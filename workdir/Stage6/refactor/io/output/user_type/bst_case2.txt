@@ -1,0 +1,7 @@
+Inorder
+42
+Preorder
+42
+Postorder
+42
+Machine is halting.

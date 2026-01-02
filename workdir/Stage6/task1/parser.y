@@ -9,6 +9,7 @@
     #include "local_symbol_table/local_symbol_table.h"
     #include "util/util.h"
     #include "error_handler/error_handler.h"
+    #include "type_table/type_table.h"
 
     int yylex(void);
     void yyerror(char const *msg);
@@ -21,15 +22,19 @@
 
 %union {
     struct tnode *node;
+    struct FieldList *field;
 }
 
-%type <node> expr program programBody statementList statement inputStatement outputStatement assignmentStatement compoundAssignment
+%type <node> expr statementList statement inputStatement outputStatement assignmentStatement compoundAssignment
 %type <node> whileStatement ifStatement repeatUntilStatement doWhileStatement boolexpr
 %type <node> globalDeclarationsBlock globalDeclarationList globalDecl globalVarList type dimensionDecl dimensionUsage
 %type <node> paramList param 
 %type <node> mainBlock body
 %type <node> functionDefinitionBlock functionDefinition localDeclBlock localDeclList localDecl idList argList functionCall returnStatement funcDeclParamList funcDeclParam
-%type <node> globalTupleDeclaration tupleFieldList tupleIdList tupleField localTupleDecl tupleAssignmentStatement tupleAccess
+%type <node> globalTupleDeclaration tupleFieldList tupleIdList tupleField localTupleDecl tupleAssignmentStatement tupleAccess 
+%type <node> fieldAccess fieldAssignmentStatement memberAccess
+%type program programBody
+%type <field> typeField typeFieldList 
 
 %token READ WRITE
 %token PLUS MUL MINUS DIV MOD ASSIGN SEMI AMPERSAND
@@ -61,24 +66,32 @@ program : programBody                                       { exit(0); }
     ;
 
 programBody : typeDefBlock globalDeclarationsBlock functionDefinitionBlock mainBlock
-    | globalDeclarationsBlock mainBlock
+    | typeDefBlock globalDeclarationsBlock mainBlock
     | mainBlock
     ;
 
-typeDefBlock : KW_TYPE typeDef KW_ENDTYPE
+typeDefBlock : KW_TYPE typeDefList KW_ENDTYPE                       { printTypeTable(); }
     | KW_TYPE KW_ENDTYPE
+    |
     ;
 
-typeDef : ID '{' typeFieldList '}'
-
-typeFieldList : typeFieldList typeField
-    typeField
+typeDefList : typeDefList typeDef
+    | typeDef
     ;
 
-typeField : type ID SEMI
+typeDef : ID { createNewType($1->varName); } '{' typeFieldList '}'  { setFieldsOfType($1->varName, $4); }
     ;
 
-globalDeclarationsBlock : KW_DECL globalDeclarationList KW_ENDDECL  { printGSymbolTable(); $$ = NULL; }
+typeFieldList : typeFieldList typeField                     { $$ = mergeTypeFields($1, $2); }
+    | typeField                                             { $$ = $1; }
+    ;
+
+typeField : TYPE_INT ID SEMI                                { $$ = createNewTypeField($2->varName, typeTableLookup("INT")); }
+    | TYPE_STRING ID SEMI                                   { $$ = createNewTypeField($2->varName, typeTableLookup("STRING")); }
+    | ID ID SEMI                                            { $$ = createNewTypeField($2->varName, typeTableLookup($1->varName)); }
+    ;
+
+globalDeclarationsBlock : KW_DECL globalDeclarationList KW_ENDDECL  { printGST(); $$ = NULL; }
     | KW_DECL KW_ENDDECL                                            { $$ = NULL; }
     ;
 
@@ -129,6 +142,7 @@ type : TYPE_INT                                             { $$ = createTypeNod
     | TYPE_STRING                                           { $$ = createTypeNode(STRING); }
     | KW_TUPLE ID                                           { $$ = createTupleTypeNode($2); }
     | TYPE_VOID                                             { $$ = createTypeNode(VOID); }
+    | ID                                                    { $$ = createUserTypeNode($1); }
     ;
 
 functionDefinitionBlock : functionDefinitionBlock functionDefinition    { $$ = createConnectorNode($1, $2); }   
@@ -180,7 +194,7 @@ dimensionDecl : dimensionDecl '[' NUM ']'                   { $$ = createConnect
     | '[' NUM ']'                                           { $$ = $2; }
     ;
 
-mainBlock : TYPE_INT MAIN '(' ')' '{' localDeclBlock body '}' { generateMainCode($7); freeLocalSymbolTable(); $$ = NULL; }
+mainBlock : TYPE_INT MAIN '(' ')' '{' localDeclBlock body '}' { generateMainCode($7); printLocalSymbolTable(); freeLocalSymbolTable(); $$ = NULL; }
     ;
 
 statementList : statementList statement                     { $$ = createConnectorNode($1, $2); }
@@ -217,11 +231,28 @@ assignmentStatement : ID ASSIGN expr SEMI                   { $$ = createAssignN
     | ID INCREMENT SEMI                                     { $$ = createIncrementNode($1); }
     | ID DECREMENT SEMI                                     { $$ = createDecrementNode($1); }
     | compoundAssignment SEMI                               { $$ = $1; }
-    | tupleAssignmentStatement SEMI                         { $$ = $1; }
+    // | tupleAssignmentStatement SEMI                         { $$ = $1; }
+    | fieldAssignmentStatement SEMI                         { $$ = $1; }
     ;
 
-tupleAssignmentStatement : ID DOT ID ASSIGN expr            { $$ = createTupleAssignmentNode($1, $3, $5); }
-    | ID ARROW ID ASSIGN expr                               { $$ = createTuplePointerAssignmentNode($1, $3, $5); }
+memberAccess : memberAccess DOT ID                          { $$ = createMemberAccessNode($1, $3, ACCESS_DOT); }
+    | ID DOT ID                                             { $$ = createMemberAccessNode($1, $3, ACCESS_DOT); }
+    | ID ARROW ID                                           { $$ = createMemberAccessNode($1, $3, ACCESS_ARROW); }
+    ;
+
+// tupleAccess : ID DOT ID                                     { $$ = createTupleAccessNode($1, $3); }
+//     | ID ARROW ID                                           { $$ = createTuplePointerAccessNode($1, $3); }
+//     ;              
+
+// fieldAccess : fieldAccess DOT ID                            { $$ = createUserTypeAccessNode($1, $3); }
+//     | ID DOT ID                                             { $$ = createUserTypeAccessNode($1, $3); }
+//     ;
+
+// tupleAssignmentStatement : ID DOT ID ASSIGN expr            { $$ = createTupleAssignmentNode($1, $3, $5); }
+//     | ID ARROW ID ASSIGN expr                               { $$ = createTuplePointerAssignmentNode($1, $3, $5); }
+//     ;
+
+fieldAssignmentStatement : memberAccess ASSIGN expr         { $$ = createMemberAssignmentNode($1, $3); }
     ;
 
 compoundAssignment : ID ASSIGN_ADD expr                     { $$ = createCompoundAssignNode(NODE_ADD, $1, $3); }
@@ -261,12 +292,10 @@ expr : expr PLUS expr                                       { $$ = createArithOp
     | MUL ID                                                { $$ = createDereferenceNode($2); }
     | AMPERSAND ID                                          { $$ = createAddressToNode($2); }
     | functionCall                                          { $$ = $1; }
-    | tupleAccess                                           { $$ = $1; }
+    // | tupleAccess                                           { $$ = $1; }
+    // | fieldAccess                                           { $$ = $1; }
+    | memberAccess                                          { $$ = $1; }
     ;
-
-tupleAccess : ID DOT ID                                     { $$ = createTupleAccessNode($1, $3); }
-    | ID ARROW ID                                           { $$ = createTuplePointerAccessNode($1, $3); }
-    ;              
 
 functionCall : ID '('')'                                    { $$ = createFunctionCallNode($1, NULL); }
     | ID '(' argList ')'                                    { $$ = createFunctionCallNode($1, $3); }
@@ -310,6 +339,7 @@ int main(int argc, char **argv) {
 
     yyin = source_file;
     generateHeader();
+    initializeTypeTable();
 
     return yyparse();
 }

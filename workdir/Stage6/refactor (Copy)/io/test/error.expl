@@ -1,0 +1,45 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+
+    tree {
+        int value;
+        tree left;
+        tree right;
+    }
+endtype
+
+decl
+    bst array[10];
+enddecl
+
+int main() {
+    decl
+        bst root;
+        tree y;
+        int x;
+        str name;
+        tuple student(int rollno, str name) s;
+    enddecl
+
+    begin
+        x = initialize();
+        
+        s.name = "Alvin";
+        s.rollno = 10;
+
+        root = alloc();
+        y = alloc();
+
+//        array[0] = y;
+
+        root.left = y;
+        root = y;
+        root.value = 10;
+        root.value = y.value + y.value;
+        write(root.value);
+    end
+}

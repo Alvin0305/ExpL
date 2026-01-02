@@ -1,0 +1,24 @@
+type
+    inner {
+        int x;
+    }
+    outer {
+        inner in;
+    }
+endtype
+
+decl
+    outer arr[2];
+    int x;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        arr[0] = alloc();
+        arr[0].in = alloc();
+        arr[0].in.x = 123;
+
+        write(arr[0].in.x);
+    end
+}

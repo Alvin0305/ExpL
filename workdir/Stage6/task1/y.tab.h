@@ -100,9 +100,11 @@ extern int yydebug;
     KW_TUPLE = 306,
     DOT = 307,
     ARROW = 308,
-    ID = 309,
-    NUM = 310,
-    STRING_LITERAL = 311
+    KW_TYPE = 309,
+    KW_ENDTYPE = 310,
+    ID = 311,
+    NUM = 312,
+    STRING_LITERAL = 313
   };
 #endif
 /* Tokens.  */
@@ -157,19 +159,22 @@ extern int yydebug;
 #define KW_TUPLE 306
 #define DOT 307
 #define ARROW 308
-#define ID 309
-#define NUM 310
-#define STRING_LITERAL 311
+#define KW_TYPE 309
+#define KW_ENDTYPE 310
+#define ID 311
+#define NUM 312
+#define STRING_LITERAL 313
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 22 "parser.y"
+#line 23 "parser.y"
 
     struct tnode *node;
+    struct FieldList *field;
 
-#line 173 "y.tab.h"
+#line 178 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

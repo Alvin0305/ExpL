@@ -22,11 +22,13 @@ void compilerError(int error, ...) {
     char *paramName;
     char *labelName;
     char *where;
+    char *typeName;
 
     int expectedReturnType;
     int givenReturnType;
     int expectedType;
     int givenType;
+    int size;
 
     switch (error) {
         case E_ACCESS_NON_EXISTING_FIELD_OF_TUPLE: 
@@ -193,6 +195,40 @@ void compilerError(int error, ...) {
 
         case E_STACK_MEMORY_EXHAUSTED:
             fprintf(stderr, "Stack Memory Exhausted\n");
+            break;
+
+        case E_USER_DEF_VAR_SIZE_OVERFLOW:
+            size = va_arg(ap, int);
+            fprintf(stderr, 
+                "[ERROR]: Maximum size of user defined variable is %d, but got %d\n",
+                MAX_USER_DEF_VAR_SIZE, size
+            );
+            break;
+        
+        case E_USER_TYPE_REDECLARATION:
+            typeName = va_arg(ap, char *);
+            fprintf(stderr, 
+                "[ERROR]: User defined type \"%s\" is redefined\n", typeName
+            );
+            break;
+
+        case E_FIELD_TYPE_UNDEFINED:
+            variableName = va_arg(ap, char *);
+            fprintf(stderr,
+                "[ERROR]: Field \"%s\" in user defined type has a undefined type\n", variableName
+            );
+            break;
+
+        case E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE:
+            variableName = va_arg(ap, char *);
+            givenType = va_arg(ap, int);
+            fprintf(stderr, 
+                "[ERROR]: Accessing a member is supported in TUPLE and User Defined Typed. Used in %s having type %s\n",
+                variableName, dataTypeToString(givenType)
+            );
+            break;
+
+        case E_ACCESS_NON_EXISTING_FIELD_OF_TYPE:
             break;
 
         default:

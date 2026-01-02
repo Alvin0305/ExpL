@@ -6,6 +6,8 @@
 #include "../local_symbol_table/local_symbol_table.h"
 #include "../tuple_type_table/tuple_type_table.h"
 #include "../util/util.h"
+#include "../type_table/type_table.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,10 +77,14 @@ struct tnode *createVariableUsageNode(char *varName) {
         node->type = localEntry->type;
         node->gSymbolTableEntry = NULL;
         node->lSymbolTableEntry = localEntry;
+        node->typeTableEntry = localEntry->typeTableEntry;
+        node->tupleType = localEntry->tupleType;
     } else if (globalEntry) {
         node->type = globalEntry->type;
         node->gSymbolTableEntry = globalEntry;
         node->lSymbolTableEntry = NULL;
+        node->typeTableEntry = globalEntry->typeTableEntry;
+        node->tupleType = globalEntry->tupleType;
     } else {
         compilerError(E_VARIABLE_USED_BEFORE_DECLARATION, varName);
     }
@@ -169,10 +175,10 @@ struct tnode *createReadToArrayNode(struct tnode *idNode, struct tnode *dimensio
 struct tnode *createWriteNode(tnode *exprNode) {
     struct tnode *node = createEmptyNode();
 
-    if (exprNode->type != INT && exprNode->type != STRING) {
-        printf("[ERROR]: [%d] Type mismatch, type is: %s\n", lineNumber, dataTypeToString(exprNode->type));
-        exit(1);
-    }
+    // if (exprNode->type != INT && exprNode->type != STRING) {
+    //     printf("[ERROR]: [%d] Type mismatch, type is: %s\n", lineNumber, dataTypeToString(exprNode->type));
+    //     exit(1);
+    // }
 
     node->left = exprNode;
     node->nodeType = NODE_WRITE;
@@ -200,6 +206,16 @@ struct tnode *createTupleTypeNode(struct tnode *tupleTypeName) {
     }
 
     node->tupleType = tupleType;
+
+    return node;
+}
+
+struct tnode *createUserTypeNode(struct tnode *typeNameNode) {
+    struct tnode *node = createLeafNode(NODE_TYPE);
+    node->type = USER_TYPE;
+
+    struct TypeTable *type = typeTableLookup(typeNameNode->varName);
+    node->typeTableEntry = type;
 
     return node;
 }
@@ -332,6 +348,83 @@ struct tnode *createCompoundAssignNode(int nodeType, struct tnode *idNode, struc
 
 struct tnode *createBreakPointNode() {
     return createLeafNode(NODE_BREAK_POINT);
+}
+
+struct tnode *createMemberAssignmentNode(struct tnode *fieldAccess, struct tnode *exprNode) {
+    struct tnode *node = createConnectorNode(fieldAccess, exprNode);
+
+    if (fieldAccess->nodeType == NODE_TUPLE_ACCESS) {
+        node->nodeType = NODE_TUPLE_ASSIGN;
+    } else if (fieldAccess->nodeType == NODE_TUPLE_POINTER_ACCESS) {
+        node->nodeType = NODE_TUPLE_POINTER_ASSIGN;
+    } else if (fieldAccess->nodeType == NODE_USER_DEF_TYPE_ACCESS) {
+        node->nodeType = NODE_USER_DEF_TYPE_ASSIGNMENT;
+    } else {
+        printf("[ERROR]");
+        printNode(fieldAccess);
+    }
+
+    return node;
+}
+
+struct tnode *createMemberAccessNode(struct tnode *field1Node, struct tnode *field2Node, AccessType accessType) {
+    if (field1Node->nodeType == NODE_VARIABLE) {
+        struct tnode *idNode = createVariableUsageNode(field1Node->varName);
+        struct tnode *node = createConnectorNode(idNode, field2Node);
+        printf("type: %s\n", dataTypeToString(field2Node->type));
+        node->type = field2Node->type;
+
+        if (idNode->type == TUPLE) {
+            struct TupleType *tupleType;
+            if (idNode->lSymbolTableEntry) {
+                tupleType = idNode->lSymbolTableEntry->tupleType;
+            } else if (idNode->gSymbolTableEntry) {
+                tupleType = idNode->gSymbolTableEntry->tupleType;
+            } else {
+                compilerError(E_VARIABLE_USED_BEFORE_DECLARATION, idNode->varName);
+            }
+
+            struct TupleField *field = getFieldOfTuple(tupleType, field2Node->varName);
+            if (!field) {
+                compilerError(E_ACCESS_NON_EXISTING_FIELD_OF_TUPLE, idNode->varName, field2Node->varName);
+            }
+
+            if (accessType == ACCESS_DOT) {
+                node->nodeType = NODE_TUPLE_ACCESS;
+            } else {
+                node->nodeType = NODE_TUPLE_POINTER_ACCESS;
+            }
+            return node;
+
+        } else if (idNode->type == USER_TYPE) {
+            node->nodeType = NODE_USER_DEF_TYPE_ACCESS;
+            return node;
+        } else {
+            compilerError(E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE, idNode->varName, idNode->type);
+            return NULL;
+        }
+    } else {
+        struct tnode *node = createConnectorNode(field1Node, field2Node);
+        node->nodeType = NODE_USER_DEF_TYPE_ACCESS;
+
+        return node;
+    }
+}
+
+// struct tnode *createUserTypeAccessNode(struct tnode *field1Node, struct tnode *field2Node) {
+//     struct tnode *node = createConnectorNode(field1Node, field2Node);
+    
+//     node->nodeType = NODE_USER_DEF_TYPE_ACCESS;
+//     node->type = field2Node->type;
+
+//     return node;
+// }
+
+struct tnode *createUserTypeAssignmentNode(struct tnode *accessNode, struct tnode *exprNode) {
+    struct tnode *node = createConnectorNode(accessNode, exprNode);
+
+    node->nodeType = NODE_USER_DEF_TYPE_ASSIGNMENT;
+    return node;
 }
 
 void print_helper(struct tnode *root) {

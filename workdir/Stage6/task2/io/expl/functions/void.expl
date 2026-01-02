@@ -1,0 +1,20 @@
+decl
+    int num;
+    void print(str name);
+enddecl
+
+void print(str name) {
+    begin
+        write(name);
+    end
+}
+
+int main() {
+    decl
+        str name;
+    enddecl
+    begin
+        read(name);
+        print(name);
+    end
+}

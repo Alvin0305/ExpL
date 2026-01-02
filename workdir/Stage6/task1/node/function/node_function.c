@@ -30,15 +30,26 @@ struct tnode *createParamNode(struct tnode *typeNode, struct tnode *idNode, bool
         }
 
         if (addToLocalSymbolTable) {
-            installLST(idNode->varName, TUPLE, true, true, tupleType);
+            installLST(idNode->varName, TUPLE, true, true, tupleType, NULL);
         }
 
         node->nodeType = NODE_TUPLE_POINTER_PARAM;
 
         return node;
+    } else if (type == USER_TYPE) {
+        struct TypeTable *typeTableEntry = typeNode->typeTableEntry;
+
+        if (addToLocalSymbolTable) {
+            installLST(idNode->varName, TUPLE, true, true, NULL, typeTableEntry);
+        }
+
+        node->nodeType = NODE_USER_DEF_TYPE_PARAM;
+
+        return node;
+
     } else {
         if (addToLocalSymbolTable) {
-            installLST(idNode->varName, typeNode->type, true, false, NULL);
+            installLST(idNode->varName, typeNode->type, true, false, NULL, NULL);
         }
 
         node->nodeType = NODE_PARAM;

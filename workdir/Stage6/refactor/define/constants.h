@@ -1,0 +1,138 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define NOT_CONSTANT 1000000
+#define NO_RETURN -100
+#define NO_LABEL -200
+#define __NONE__ -1
+
+#define SOURCE_FILE "io/test/error.expl"
+#define INTERMEDIATE_FILE "io/intermediate.xsm"
+#define TRANSLATED_FILE "io/translated.xsm"
+
+#define STACK_START 4096
+#define STACK_END 5119
+#define CODE_START 2056
+#define HEAP_START 1024
+#define HEAP_END 2047
+
+#define NUM_STATIC_VARS 26
+#define HEADER_SIZE 8
+#define MAX_USER_DEF_VAR_SIZE 8
+
+#define regIndex int
+
+#define TOTAL_REGISTERS 20
+
+#define NULL_VALUE 0
+
+enum Size {
+    INT_SIZE = 1,
+    STRING_SIZE = 1,
+    NONE_SIZE = 0,
+    VOID_SIZE = 0
+};
+
+enum Type {
+    INT,
+    STRING,
+    BOOL,
+    TUPLE,
+    VOID,
+    USER_TYPE,
+    NONE,
+    NULL_TYPE
+};
+
+enum NodeType {
+    NODE_EMPTY,
+    NODE_ASSIGN,
+    NODE_CONNECTOR,
+
+    NODE_PARAM,
+    NODE_POINTER_PARAM,
+
+    NODE_FUNC_DECL,
+    NODE_FUNC_DEF,
+    NODE_FUNC_CALL,
+    NODE_LOCAL_DECL,
+    NODE_RETURN,
+
+    NODE_NULL,
+
+    NODE_INIT,
+    NODE_ALLOC,
+    NODE_ALLOC_ARRAY,
+    NODE_FREE,
+
+    NODE_TUPLE_DECL,
+    NODE_TUPLE_ACCESS,
+    NODE_TUPLE_POINTER_ACCESS,
+    NODE_TUPLE_ASSIGN,
+    NODE_TUPLE_POINTER_ASSIGN,
+    NODE_TUPLE_VAR_DECL,
+    NODE_TUPLE_PARAM,
+    NODE_TUPLE_POINTER_PARAM,
+
+    NODE_USER_DEF_TYPE_PARAM,
+    NODE_USER_DEF_TYPE_ACCESS,
+    NODE_USER_DEF_TYPE_ASSIGNMENT,
+
+    NODE_BREAK_POINT,
+
+    NODE_VARIABLE,
+    NODE_CONSTANT,
+    NODE_STRING_LITERAL,
+
+    NODE_TYPE,
+    NODE_DECL,
+
+    NODE_ARRAY_DECL,
+    NODE_ARRAY_ASSIGN,
+    NODE_ARRAY_ACCESS,
+
+    NODE_DEREFERENCE,
+    NODE_ADDRESS_TO,
+    NODE_ASSIGN_TO_DEREFERENCED,
+
+    NODE_INC,
+    NODE_DEC,
+
+    NODE_READ,
+    NODE_READ_TO_ARRAY,
+    NODE_WRITE,
+
+    NODE_GT,
+    NODE_GE,
+    NODE_EQ,
+    NODE_NE,
+    NODE_LE,
+    NODE_LT,
+
+    NODE_OR,
+    NODE_AND,
+    NODE_NOT,
+    
+    NODE_WHILE,
+    NODE_BREAK,
+    NODE_CONTINUE,
+    NODE_REPEAT_UNTIL,
+    NODE_DO_WHILE,
+
+    NODE_IF_ELSE,
+    NODE_IF,
+
+    NODE_ADD,
+    NODE_SUB,
+    NODE_MUL,
+    NODE_DIV,
+    NODE_MOD
+};
+
+#define SUCCESS 0
+#define FAILURE -1
+
+// error returns for labels
+#define E_LABEL_EXISTS -3
+
+#endif

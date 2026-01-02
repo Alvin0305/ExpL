@@ -7,10 +7,12 @@
 #include "../g_symbol_table/g_symbol_table.h"
 #include "../node/node.h"
 #include "../util/util.h"
+#include "../type_table/type_table.h"
 #include "local_symbol_table.h"
 
 static int currentDataType = NONE;
 static struct TupleType *currentTupleType = NULL;
+static struct TypeTable *currentUserDefinedType = NULL;
 
 static struct LSymbol *LSTHead = NULL;
 static int paramCount = 0;
@@ -20,7 +22,7 @@ int localBinding = 1;
 
 // static helpers
 
-static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, struct TupleType *tupleType) {
+static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, struct TupleType *tupleType, struct TypeTable *typeTableEntry) {
     struct LSymbol *entry = (struct LSymbol *)malloc(sizeof(struct LSymbol));
 
     if (isParam) {
@@ -29,6 +31,8 @@ static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, s
         entry->binding = localBinding;
         if (type == TUPLE) {
             localBinding += tupleType->size;
+        } else if (type == USER_TYPE) {
+            
         } else {
             localBinding += getSizeOfDataType(type);
         }
@@ -36,8 +40,9 @@ static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, s
 
     entry->name = strdup(name);
     entry->type = type;
-    entry->isPtr = isPtr;
+    entry->isPtr = typeTableEntry ? true : isPtr;
     entry->tupleType = tupleType;
+    entry->typeTableEntry = typeTableEntry;
     entry->next = NULL;
 
     if (stackTop + localBinding >= STACK_END) {
@@ -62,6 +67,7 @@ static void populateLST(struct tnode *declNode) {
         case NODE_TYPE:
             currentDataType = declNode->type;
             currentTupleType = declNode->tupleType;
+            currentUserDefinedType = declNode->typeTableEntry;
             break;
 
         case NODE_VARIABLE:
@@ -75,7 +81,7 @@ static void populateLST(struct tnode *declNode) {
                 compilerError(E_VARIABLE_REDECLARATION, declNode->varName);
             }
 
-            installLST(declNode->varName, currentDataType, false, false, currentTupleType);
+            installLST(declNode->varName, currentDataType, false, false, currentTupleType, currentUserDefinedType);
             break;
 
         case NODE_DEREFERENCE:
@@ -90,7 +96,7 @@ static void populateLST(struct tnode *declNode) {
                     compilerError(E_VARIABLE_REDECLARATION, idNode->varName);
                 }
 
-                installLST(idNode->varName, currentDataType, false, true, currentTupleType);
+                installLST(idNode->varName, currentDataType, false, true, currentTupleType, currentUserDefinedType);
                 break;
             }
     }
@@ -98,8 +104,9 @@ static void populateLST(struct tnode *declNode) {
 
 // core methods
 
-struct LSymbol *installLST(char *name, int type, bool isParam, bool isPtr, struct TupleType *tupleType) {
-    struct LSymbol *entry = createLSTEntry(name, type, isPtr, isParam, tupleType);
+struct LSymbol *installLST(char *name, int type, bool isParam, bool isPtr, struct TupleType *tupleType, struct TypeTable *typeTableEntry) {
+    struct LSymbol *entry = createLSTEntry(name, type, isPtr, isParam, tupleType, typeTableEntry);
+    entry->typeTableEntry = typeTableEntry;
 
     if (!LSTHead) {
         LSTHead = entry;
@@ -133,6 +140,7 @@ struct LSymbol *lookupLST(char *name) {
 void addToLST(struct tnode *typeNode, struct tnode *idListNode) {
     currentDataType = typeNode->type;
     currentTupleType = typeNode->tupleType;
+    currentUserDefinedType = typeNode->typeTableEntry;
 
     populateLST(idListNode);
 }
@@ -181,4 +189,6 @@ void freeLocalSymbolTable() {
     currentDataType = NONE;
     paramCount = 0;
     currentFunction = NULL;
+    currentUserDefinedType = NULL;
+    currentTupleType = NULL;
 }

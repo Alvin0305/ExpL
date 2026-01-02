@@ -6,7 +6,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/test/void.expl"
+#define SOURCE_FILE "io/test/type.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -15,6 +15,7 @@
 #define CODE_START 2056
 #define NUM_STATIC_VARS 26
 #define HEADER_SIZE 8
+#define MAX_USER_DEF_VAR_SIZE 8
 
 #define regIndex int
 
@@ -33,6 +34,7 @@ typedef enum {
     BOOL,
     TUPLE,
     VOID,
+    USER_TYPE,
     NONE
 } Type;
 
@@ -58,6 +60,10 @@ typedef enum {
     NODE_TUPLE_VAR_DECL,
     NODE_TUPLE_PARAM,
     NODE_TUPLE_POINTER_PARAM,
+
+    NODE_USER_DEF_TYPE_PARAM,
+    NODE_USER_DEF_TYPE_ACCESS,
+    NODE_USER_DEF_TYPE_ASSIGNMENT,
 
     NODE_BREAK_POINT,
 
@@ -151,7 +157,13 @@ enum errors {
 
     E_VARIABLE_WITH_TYPE_VOID,
 
-    E_TYPE_MISMATCH
+    E_TYPE_MISMATCH,
+
+    E_USER_DEF_VAR_SIZE_OVERFLOW,
+    E_USER_TYPE_REDECLARATION,
+    E_FIELD_TYPE_UNDEFINED,
+    E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE,
+    E_ACCESS_NON_EXISTING_FIELD_OF_TYPE
 };
 
 // error returns for labels

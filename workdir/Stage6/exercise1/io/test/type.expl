@@ -1,0 +1,38 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+
+    node {
+        int value;
+        node next;
+    }
+endtype
+
+decl
+    int in, opt;
+    bst root, temp;
+    bst insert(bst h, int key);
+    int inOrder(bst h);
+    int preOrder(bst h);
+    int postOrder(bst h);
+
+    bst a;
+    int num1, num2;
+enddecl
+
+int main() {
+    decl
+        int num;
+        bst root, temp;
+        str name;
+        int num2;
+    enddecl
+    begin
+        root.value = 10;
+        
+        write(root.value);
+    end
+}

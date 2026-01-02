@@ -3,6 +3,8 @@
 
 struct GSymbol;
 struct LSymbol;
+struct TupleType;
+struct TypeTable;
 
 typedef struct tnode {
     union {
@@ -12,9 +14,13 @@ typedef struct tnode {
     int type;
     char *varName;
     int nodeType;
+
     struct GSymbol *gSymbolTableEntry;
     struct LSymbol *lSymbolTableEntry;
+    
     struct TupleType *tupleType;
+
+    struct TypeTable *typeTableEntry;
 
     struct tnode *left;
     struct tnode *right;
@@ -65,5 +71,17 @@ struct tnode *createAssignToDereferencedNode(struct tnode *idNode, struct tnode 
 struct tnode *createNewPointerNode(struct tnode *idNode);
 
 struct tnode *createBreakPointNode();
+
+struct tnode *createUserTypeNode(struct tnode *typeNameNode);
+struct tnode *createUserTypeAccessNode(struct tnode *field1Node, struct tnode *field2Node);
+struct tnode *createUserTypeAssignmentNode(struct tnode *accessNode, struct tnode *exprNode);
+
+typedef enum {
+    ACCESS_DOT,
+    ACCESS_ARROW
+} AccessType;
+
+struct tnode *createMemberAccessNode(struct tnode *field1Node, struct tnode *field2Node, AccessType accessType);
+struct tnode *createMemberAssignmentNode(struct tnode *fieldAccess, struct tnode *exprNode);
 
 #endif

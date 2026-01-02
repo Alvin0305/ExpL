@@ -12,6 +12,7 @@
 #include "../node/node.h"
 #include "../register/register.h"
 #include "../util/util.h"
+#include "../type_table/type_table.h"
 #include "code_gen.h"
 
 #include "arithmetic/arithmetic.h"

@@ -1,0 +1,23 @@
+type
+    node {
+        int value;
+    }
+endtype
+
+decl
+    node arr[1];
+    int x;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        arr[0] = alloc();
+        arr[0].value = 10;
+
+        arr[0] = alloc();     // overwrite pointer
+        arr[0].value = 20;
+
+        write(arr[0].value);  // should print 20
+    end
+}

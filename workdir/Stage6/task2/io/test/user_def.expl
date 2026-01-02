@@ -1,0 +1,48 @@
+type
+    student {
+        str name;
+        int rollno;
+    }
+
+    bst {
+        student value;
+        bst left;
+        bst right;
+    }
+endtype
+
+decl
+    bst func(bst root);
+enddecl
+
+bst func(bst root) {
+    decl
+    enddecl
+
+    begin
+        write(root.value.name);
+
+        root.value.name = "Kiran";
+
+        return root;
+    end
+}
+
+int main() {
+    decl
+        bst root;
+    enddecl
+
+    begin
+        root = alloc();
+        root.value = alloc();
+        root.left = NULL;
+        root.right = NULL;
+
+        root.value.name = "Alvin";
+        root.value.rollno = 6;
+
+        root = func(root);
+        write(root.value.name);
+    end
+}

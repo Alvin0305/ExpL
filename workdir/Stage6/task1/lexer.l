@@ -33,7 +33,7 @@
 "/"         { return DIV; }
 "%"         { return MOD; }
 "="         { return ASSIGN; }
-"; "        { return SEMI; }
+";"        { return SEMI; }
 ","         { return COMMA; }
 "&"         { return AMPERSAND; }
 
@@ -90,7 +90,7 @@
 "tuple"     { return KW_TUPLE; }
 "void"      { return TYPE_VOID; }
 
-" return"   { return KW_RETURN; }
+"return"    { return KW_RETURN; }
 "main"      { return MAIN; }
 "brkp"      { return KW_BRKP; }
 

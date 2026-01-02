@@ -1,0 +1,26 @@
+type
+    pair {
+        int x;
+        int y;
+    }
+endtype
+
+decl
+    pair a, b;
+    int x;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        a = alloc();
+        a.x = 10;
+        a.y = 20;
+
+        b = a;          // aliasing test
+        b.x = 99;
+
+        write(a.x);     // should print 99
+        write(b.y);     // should print 20
+    end
+}

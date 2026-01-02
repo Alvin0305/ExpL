@@ -22,6 +22,10 @@ char *dataTypeToString(int dataType) {
             return "BOOL";
         case TUPLE:
             return "TUPLE";
+        case USER_TYPE:
+            return "USER TYPE";
+        case VOID:
+            return "VOID";
         default:
             return "NONE";
     }

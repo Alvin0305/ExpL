@@ -1,0 +1,98 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+endtype
+
+decl
+    int in, opt;
+    bst createNode(int key);
+    bst insert(bst root, int key);
+    void inorder(bst root);
+    void preorder(bst root);
+    void postorder(bst root);
+enddecl
+
+bst createNode(int key) {
+    decl
+        bst root;
+    enddecl
+    begin
+        root = alloc();
+        root.value = key;
+        root.left = NULL;
+        root.right = NULL;
+
+        return root;
+    end
+}
+
+bst insert(bst root, int key) {
+    decl
+        bst node;
+    enddecl
+
+    begin
+        if (root == NULL) then
+            return createNode(key);
+        else 
+            if (root.value > key) then
+                root.left = insert(root.left, key);
+            else
+                root.right = insert(root.right, key);
+            endif
+        endif
+
+        return root;
+    end
+}
+
+void inorder(bst root) {
+    begin
+        if (root != NULL) then
+            inorder(root.left);
+            write(root.value);
+            inorder(root.right);
+        endif
+    end
+}
+
+void preorder(bst root) {
+    begin
+        if (root != NULL) then
+            write(root.value);
+            preorder(root.left);
+            preorder(root.right);
+        endif
+    end
+}
+
+void postorder(bst root) {
+    begin
+        if (root != NULL) then
+            postorder(root.left);
+            postorder(root.right);
+            write(root.value);
+        endif
+    end
+}
+
+int main() {
+    decl
+        bst root;
+    enddecl
+
+    begin
+        root = createNode(42);
+
+
+        write("Inorder");
+        inorder(root);
+        write("Preorder");
+        preorder(root);
+        write("Postorder");
+        postorder(root);
+    end
+}

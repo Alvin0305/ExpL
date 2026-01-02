@@ -1,0 +1,22 @@
+decl
+    int a[3][3];
+    int i;
+enddecl
+
+int main() {
+    decl
+    enddecl
+
+    begin
+
+        i = 0;
+        while (i < 3) do
+            a[i][1] = i * 10;
+            i = i + 1;
+        endwhile
+
+        write(a[0][1]);   // 0
+        write(a[1][1]);   // 10
+        write(a[2][1]);   // 20
+    end
+}
