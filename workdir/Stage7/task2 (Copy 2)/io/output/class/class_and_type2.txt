@@ -1,2 +1,0 @@
-77
-Machine is halting.

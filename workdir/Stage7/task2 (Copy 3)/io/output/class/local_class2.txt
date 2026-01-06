@@ -1,3 +1,0 @@
-20
-5
-Machine is halting.

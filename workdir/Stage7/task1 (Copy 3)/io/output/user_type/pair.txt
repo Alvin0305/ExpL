@@ -1,3 +1,0 @@
-99
-20
-Machine is halting.

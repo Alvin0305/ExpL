@@ -1,2 +1,0 @@
-12
-Machine is halting.
