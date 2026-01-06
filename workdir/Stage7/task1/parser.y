@@ -1,6 +1,8 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <signal.h>
+    
     #include "node/node.h"
     #include "node/library/node_library.h"
     #include "node/user_type/node_user_type.h"
@@ -14,9 +16,12 @@
     #include "error_handler/error_handler.h"
     #include "type_table/type_table.h"
     #include "register/register.h"
+    #include "class_table/class_table.h"
+    #include "semantic_context/semantic_context.h"
 
     int yylex(void);
     void yyerror(char const *msg);
+    void segFaultHandler(int sigNum);
 
     FILE *target_file;
     extern FILE *yyin;
@@ -26,14 +31,24 @@
 
 %union {
     struct tnode *node;
+
     struct FieldList *field;
+    
+    struct ClassField *classField;
+    struct ClassMethod *classMethod;
+    
+    struct Param *param;
+
+    struct TupleField *tupleField;
+
+    struct Dimension *dimension;
+    struct TypeInfo *typeInfo;
+    struct VarList *varList;
 }
 
 %type program programBody
-%type <node> globalDecl globalTupleDecl globalVarList
 %type <node> funcDefBlock funcDef funcCall argList
-%type <node> paramList param 
-%type <node> funcDeclParamList funcDeclParam
+
 %type <node> mainBlock body
 
 %type <node> expr boolexpr
@@ -41,13 +56,24 @@
 %type <node> stmtList stmt assignmentStmt compoundAssignment
 %type <node> whileStmt ifStmt repeatUntilStmt doWhileStmt
 %type <node> inputStmt outputStmt allocStmt freeStmt initStmt
-%type <node> localDeclBlock idList 
-%type <node> type
-%type <node> dimensionDecl dimensionUsage
+%type <node> localDeclBlock
+
+%type <node> dimensionUsage
 
 %type <node> returnStmt 
-%type <node> tupleFieldList tupleField tupleIdList 
-%type <node> fieldAssignStmt fieldAccess
+%type <node> fieldAssignStmt fieldAccess methodBodyBlock
+
+%type <classField> classFieldDecl classFieldsDeclList
+%type <param> methodParamList methodParam
+%type <param> funcDeclParamList funcDeclParam
+%type <param> paramList param
+%type <classMethod> classMethodDecl classMethodsDeclList
+
+%type <tupleField> tupleField tupleFieldList
+%type <dimension> dimensionDecl
+
+%type <typeInfo> type
+%type <varList> globalVarList idList tupleIdList 
 
 %token KW_READ KW_WRITE KW_ALLOC KW_FREE KW_INIT
 %token PLUS MUL MINUS DIV MOD 
@@ -65,6 +91,7 @@
 %token KW_RETURN MAIN KW_BRKP
 %token KW_TYPE KW_ENDTYPE
 %token KW_NULL
+%token KW_CLASS KW_ENDCLASS
 
 %token <node> ID NUM STRING_LITERAL
 
@@ -82,21 +109,92 @@
 program : programBody                                               { exit(0); }
     ;
 
-programBody : typeDefBlock globalDeclBlock funcDefBlock mainBlock
-    | typeDefBlock globalDeclBlock mainBlock
+programBody : typeDefBlock classDefBlock globalDeclBlock funcDefBlock mainBlock
+    | typeDefBlock classDefBlock globalDeclBlock mainBlock
     | mainBlock
     ;
 
-typeDefBlock : KW_TYPE typeDefList KW_ENDTYPE                       { printTypeTable(); }
-    | KW_TYPE KW_ENDTYPE
+classDefBlock : KW_CLASS classDefList KW_ENDCLASS                   { printCT(); }
+    | KW_CLASS KW_ENDCLASS;
     |
+    ;
+
+classDefList : classDefList classDef
+    | classDef
+    ;
+
+classDef : ID                                           { createNewClass($1->varName); } 
+        '{' classFieldsDeclBlock classMethodsDefBlock '}'
+    ;
+
+classFieldsDeclBlock : KW_DECL classFieldsDeclList classMethodsDeclList KW_ENDDECL   { setFieldsToClass($2); setMethodsToClass($3); }
+    | KW_DECL KW_ENDDECL
+    |
+    ;
+
+classFieldsDeclList : classFieldsDeclList classFieldDecl                { $$ = mergeClassFields($1, $2); }
+    | classFieldDecl                                                    { $$ = $1; }
+    ;
+
+classFieldDecl : type idList SEMI                                       { $$ = installVarsToCT($1, $2); }
+    ;
+
+classMethodsDeclList : classMethodsDeclList classMethodDecl             { $$ = mergeClassMethods($1, $2); }
+    | classMethodDecl                                                   { $$ = $1; }
+    ;
+
+classMethodDecl : type ID '(' methodParamList ')' SEMI                        { $$ = createNewClassMethod($1, $2->varName, $4); }
+    ;
+
+classMethodsDefBlock : classMethodDefList
+    |
+    ;
+
+classMethodDefList : classMethodDefList classMethodDef              
+    | classMethodDef
+    ;
+
+classMethodDef : type ID                                                { activeMethod = lookupMethodInActiveClass($2->varName); }
+        '(' methodParamList ')'                                         { addMethodParamsToLST($5); }
+        '{' methodLocalDeclBlock methodBodyBlock '}'                    { checkMethodSignature($1, $2->varName, $5);
+                                                                            generateFunctionCode(activeMethod->methodLabel, $10);
+                                                                            freeLocalSymbolTable(); }
+    ;
+
+methodParamList : methodParamList COMMA methodParam                     { $$ = mergeParams($1, $3); }
+    | methodParam                                                       { $$ = $1; }
+    |                                                                   { $$ = NULL; }
+    ;
+
+methodParam : type ID                                                   { $$ = createParam($1, $2->varName, false); }
+    | type MUL ID                                                       { $$ = createParam($1, $3->varName, true); }
+    ;
+
+methodLocalDeclBlock : KW_DECL methodLocalDeclList KW_ENDDECL           { printLST(); }
+    | KW_DECL KW_ENDDECL                                                { printLST(); }
+    ;
+
+methodLocalDeclList : methodLocalDeclList methodLocalDecl
+    | methodLocalDecl
+    ;
+
+methodLocalDecl : type idList SEMI                                      { installVarsToLST($1, $2); }
+    ;
+
+methodBodyBlock : KW_BEGIN stmtList KW_END                          { $$ = $2; }
+    ;
+
+typeDefBlock : KW_TYPE typeDefList KW_ENDTYPE                       { printTypeTable(); }
+    | KW_TYPE KW_ENDTYPE                                            { printTypeTable(); }
+    |                                                               { printTypeTable(); }
     ;
 
 typeDefList : typeDefList typeDef
     | typeDef
     ;
 
-typeDef : ID { createNewType($1->varName, USER_TYPE); } '{' typeFieldList '}'  { setFieldsOfType($1->varName, $4); }
+typeDef : ID                                { createNewType($1->varName, TYPE); } 
+        '{' typeFieldList '}'               { setFieldsOfType($1->varName, $4); }
     ;
 
 typeFieldList : typeFieldList typeField                             { $$ = mergeTypeFields($1, $2); }
@@ -109,84 +207,92 @@ typeField : TYPE_INT ID SEMI                                        { $$ = creat
     ;
 
 globalDeclBlock : KW_DECL globalDeclList KW_ENDDECL                 { printGST(); }
-    | KW_DECL KW_ENDDECL
+    | KW_DECL KW_ENDDECL                                            { printGST(); }
     ;
 
 globalDeclList : globalDeclList globalDecl
     | globalDecl
     ;
 
-globalDecl : type globalVarList SEMI                                { addToGST($1, $2); }
+globalDecl : type globalVarList SEMI                                { installVarsToGST($1, $2); }    
     | globalTupleDecl SEMI
     ;
 
-globalVarList : globalVarList COMMA ID                              { $$ = createConnectorNode($1, $3); }
-    | globalVarList COMMA ID dimensionDecl                          { $$ = createConnectorNode($1, createNewArrayNode($3, $4)); }
-    | globalVarList COMMA MUL ID                                    { $$ = createConnectorNode($1, createNewPointerNode($4)); }
-    | globalVarList COMMA ID '(' funcDeclParamList ')'              { $$ = createConnectorNode($1, createFunctionDeclarationNode($3, $5)); }
-    | ID dimensionDecl                                              { $$ = createNewArrayNode($1, $2); }
-    | MUL ID                                                        { $$ = createNewPointerNode($2); }
-    | ID                                                            { $$ = $1; }
-    | ID '(' funcDeclParamList ')'                                  { $$ = createFunctionDeclarationNode($1, $3); }
+globalVarList : globalVarList COMMA ID                              { $$ = mergeVars($1, createVar($3->varName, false, false, NULL, NULL)); }
+    | globalVarList COMMA ID dimensionDecl                          { $$ = mergeVars($1, createVar($3->varName, false, false, NULL, $4)); }
+    | globalVarList COMMA MUL ID                                    { $$ = mergeVars($1, createVar($4->varName, true, false, NULL, NULL)); }
+    | globalVarList COMMA ID '(' funcDeclParamList ')'              { $$ = mergeVars($1, createVar($3->varName, false, true, $5, NULL)); }
+    | ID dimensionDecl                                              { $$ = createVar($1->varName, false, false, NULL, $2); }
+    | MUL ID                                                        { $$ = createVar($2->varName, true, false, NULL, NULL); }
+    | ID                                                            { $$ = createVar($1->varName, false, false, NULL, NULL); }
+    | ID '(' funcDeclParamList ')'                                  { $$ = createVar($1->varName, false, true, $3, NULL); }
     ;
 
-globalTupleDecl : KW_TUPLE ID '(' tupleFieldList ')' tupleIdList    { addNewTupleTypeToGST($2, $4, $6); $$ = NULL; }
+globalTupleDecl : KW_TUPLE ID               { createNewTupleType($2->varName); } 
+    '(' tupleFieldList ')'                  { setFieldsToTupleType($2->varName, $5); }
+    tupleIdList                             { installVarsToGST(createTypeInfo(TUPLE, lookupTupleTypeTable($2->varName), lookupTT($2->varName), NULL), $8); }
     ;
 
-tupleFieldList : tupleFieldList COMMA tupleField                    { $$ = createConnectorNode($1, $3); }
+tupleFieldList : tupleFieldList COMMA tupleField                    { $$ = mergeTupleFields($1, $3); }
     | tupleField                                                    { $$ = $1; }
     ;
 
-tupleField : type ID                                                { $$ = createConnectorNode($1, $2); }
+tupleField : type ID                                                { $$ = createTupleField($1, $2->varName); }
     ;
 
-tupleIdList : tupleIdList COMMA ID                                  { $$ = createConnectorNode($1, $3); }
-    | tupleIdList COMMA MUL ID                                      { $$ = createConnectorNode($1, createNewPointerNode($4)); }
-    | MUL ID                                                        { $$ = createNewPointerNode($2); }
-    | ID                                                            { $$ = $1; }
+tupleIdList : tupleIdList COMMA ID                                  { $$ = mergeVars($1, createVar($3->varName, false, false, NULL, NULL)); }
+    | tupleIdList COMMA MUL ID                                      { $$ = mergeVars($1, createVar($4->varName, true, false, NULL, NULL)); }
+    | MUL ID                                                        { $$ = createVar($2->varName, true, false, NULL, NULL); }
+    | ID                                                            { $$ = createVar($1->varName, false, false, NULL, NULL); }
     ;
 
-funcDeclParamList : funcDeclParamList COMMA funcDeclParam           { $$ = createConnectorNode($1, $3); }
+funcDeclParamList : funcDeclParamList COMMA funcDeclParam           { $$ = mergeParams($1, $3); }
     | funcDeclParam                                                 { $$ = $1; }
     |                                                               { $$ = NULL; }
     ;
 
-funcDeclParam : type ID                                             { $$ = createParamNode($1, $2, false, false); }
-    | type MUL ID                                                   { $$ = createParamNode($1, $3, false, true); }
+funcDeclParam : type ID                                             { $$ = createParam($1, $2->varName, false); }
+    | type MUL ID                                                   { $$ = createParam($1, $3->varName, true); }
     ;
 
-type : TYPE_INT                                                     { $$ = createTypeNode(INT); }
-    | TYPE_STRING                                                   { $$ = createTypeNode(STRING); }
-    | KW_TUPLE ID                                                   { $$ = createTupleTypeNode($2); }
-    | TYPE_VOID                                                     { $$ = createTypeNode(VOID); }
-    | ID                                                            { $$ = createUserTypeNode($1); }
+type : TYPE_INT                                 { $$ = createTypeInfo(INT, NULL, lookupTT("INT"), NULL); }
+    | TYPE_STRING                               { $$ = createTypeInfo(STRING, NULL, lookupTT("STRING"), NULL); }
+    | KW_TUPLE ID                               { $$ = createTypeInfo(TUPLE, lookupTupleTypeTable($2->varName), NULL, NULL); }
+    | TYPE_VOID                                 { $$ = createTypeInfo(VOID, NULL, lookupTT("VOID"), NULL); }
+    | ID                                        { $$ = createTypeInfo(UNKNOWN, NULL, lookupTT($1->varName), lookupCT($1->varName)); }
     ;
 
 funcDefBlock : funcDefBlock funcDef                                 { $$ = createConnectorNode($1, $2); }   
     | funcDef                                                       { $$ = $1; }
     ;
 
-funcDef : type ID '(' paramList ')' 
-        { currentFunction = lookupGST($2->varName); } 
-    '{' localDeclBlock body '}'
-        { $$ = createFunctionDefinitionNode($1, $2, $4, $8, $9); }
+funcDef : type ID                               { currentFunction = lookupGST($2->varName); }
+    '(' paramList ')' 
+    '{' localDeclBlock body '}'                 { checkFunctionSignature($1, $2->varName, $5);
+                                                  generateFunctionCode(currentFunction->functionLabel, $9);
+                                                  freeLocalSymbolTable();
+                                                }
     ;
 
 body : KW_BEGIN stmtList KW_END                                     { $$ = $2; }
     ;
 
-paramList : paramList COMMA param                                   { $$ = createConnectorNode($1, $3); }
+paramList : paramList COMMA param                                   { $$ = mergeParams($1, $3); }
     | param                                                         { $$ = $1; }
     |                                                               { $$ = NULL; }
     ;
 
-param : type ID                                                     { $$ = createParamNode($1, $2, true, false); }
-    | type MUL ID                                                   { $$ = createParamNode($1, $3, true, true); }
+param : type ID                                         { $$ = createParam($1, $2->varName, false); 
+                                                            installToLST($1, $2->varName, false, true, NULL); 
+                                                        }
+    | type MUL ID                                       { $$ = createParam($1, $3->varName, true); 
+                                                            installToLST($1, $3->varName, true, true, NULL); 
+                                                        }
     ;
 
-localDeclBlock : KW_DECL localDeclList KW_ENDDECL                   { printLST(); $$ = NULL; }
-    | KW_DECL KW_ENDDECL                                            { $$ = NULL; }
-    |                                                               { $$ = NULL; }
+localDeclBlock : KW_DECL localDeclList KW_ENDDECL                   { printLST(); }
+    | KW_DECL KW_ENDDECL                                            { printLST(); }
+    |                                                               { printLST(); }
     ;
 
 localDeclList : localDeclList localDecl
@@ -195,24 +301,26 @@ localDeclList : localDeclList localDecl
     | localTupleDecl
     ;
 
-localDecl : type idList SEMI                                        { addToLST($1, $2); }
+localDecl : type idList SEMI                            { installVarsToLST($1, $2); }
     ;
 
-localTupleDecl : KW_TUPLE ID '(' tupleFieldList ')' tupleIdList SEMI        { addNewTupleTypeToLST($2, $4, $6); }
+localTupleDecl : KW_TUPLE ID                            { createNewTupleType($2->varName); } 
+        '(' tupleFieldList ')'                          { setFieldsToTupleType($2->varName, $5); }
+        tupleIdList SEMI                                { installVarsToLST(createTypeInfo(TUPLE, lookupTupleTypeTable($2->varName), lookupTT($2->varName), NULL), $8); }
     ;
 
-idList : idList COMMA ID                                            { $$ = createConnectorNode($1, $3); }
-    | idList COMMA MUL ID                                           { $$ = createConnectorNode($1, createNewPointerNode($4)); }
-    | ID                                                            { $$ = $1; }
-    | MUL ID                                                        { $$ = createNewPointerNode($2); }
+idList : idList COMMA ID                                            { $$ = mergeVars($1, createVar($3->varName, false, false, NULL, NULL)); }
+    | idList COMMA MUL ID                                           { $$ = mergeVars($1, createVar($4->varName, true, false, NULL, NULL)); }
+    | ID                                                            { $$ = createVar($1->varName, false, false, NULL, NULL); }
+    | MUL ID                                                        { $$ = createVar($2->varName, true, false, NULL, NULL); }
     ;
 
-dimensionDecl : dimensionDecl '[' NUM ']'                           { $$ = createConnectorNode($1, $3); }
-    | '[' NUM ']'                                                   { $$ = $2; }
+dimensionDecl : dimensionDecl '[' NUM ']'                           { $$ = mergeDimensions($1, createDimension($3->numVal)); }
+    | '[' NUM ']'                                                   { $$ = createDimension($2->numVal); }
     ;
 
-mainBlock : TYPE_INT MAIN '(' ')' '{' localDeclBlock body '}'       { printLST(); generateMainCode($7); 
-                                                                    freeLocalSymbolTable(); $$ = NULL; }
+mainBlock : TYPE_INT MAIN '(' ')' '{' localDeclBlock body '}'       { generateMainCode($7); 
+                                                                      freeLocalSymbolTable(); $$ = NULL; }
     ;
 
 stmtList : stmtList stmt                                            { $$ = createConnectorNode($1, $2); }
@@ -266,10 +374,12 @@ assignmentStmt : ID ASSIGN expr SEMI                                { $$ = creat
     | fieldAssignStmt SEMI                                          { $$ = $1; }
     ;
 
-fieldAccess : fieldAccess DOT ID                                    { $$ = createMemberAccessNode($1, $3, ACCESS_DOT); }
-    | ID dimensionUsage DOT ID                                      { $$ = createMemberAccessNode(createArrayAccessNode($1, $2), $4, ACCESS_DOT); }
-    | ID DOT ID                                                     { $$ = createMemberAccessNode($1, $3, ACCESS_DOT); }
-    | ID ARROW ID                                                   { $$ = createMemberAccessNode($1, $3, ACCESS_ARROW); }
+fieldAccess : fieldAccess DOT ID                                    { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
+    | ID dimensionUsage DOT ID                                      { $$ = createMemberAccessNode(createArrayAccessNode($1, $2), $4, ACCESS_DOT, false, NULL); }
+    | ID DOT ID                                                     { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
+    | ID ARROW ID                                                   { $$ = createMemberAccessNode($1, $3, ACCESS_ARROW, false, NULL); }
+    | ID DOT ID '(' argList ')'                                     { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }
+    | fieldAccess DOT ID '(' argList ')'                            { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }
     ;
 
 fieldAssignStmt : fieldAccess ASSIGN expr                           { $$ = createMemberAssignmentNode($1, $3); }
@@ -321,6 +431,7 @@ funcCall : ID '('')'                                                { $$ = creat
 
 argList : argList COMMA expr                                        { $$ = createConnectorNode($1, $3); }
     | expr                                                          { $$ = $1; }
+    |                                                               { $$ = NULL; }
     ;
 
 boolexpr : expr LE expr                                             { $$ = createConditionNode(NODE_LE, $1, $3); }
@@ -336,6 +447,16 @@ boolexpr : expr LE expr                                             { $$ = creat
     ;
 
 %%
+
+void segFaultHandler(int sigNum) {
+    printf("SEGMENTATION FAULT!!\n");
+    printf("current line number is: %d\n", lineNumber);
+    printf("current character is: %s\n", yytext);
+    if (currentFunction) {
+        printf("current expl function was %s\n", currentFunction->name);
+    }
+    exit(FAILURE);
+}
 
 void yyerror(char const *msg) {
     printf("[Error] : %s in line: %d [%s]\n", msg, lineNumber, yytext);
@@ -360,6 +481,11 @@ int main(int argc, char **argv) {
     initializeRegisters();
     generateHeader();
     initializeTypeTable();
+
+    if (signal(SIGSEGV, segFaultHandler) == SIG_ERR) {
+        printf("Error registering signal handler\n");
+        return FAILURE;
+    }
 
     return yyparse();
 }

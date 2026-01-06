@@ -1,0 +1,23 @@
+type
+    box {
+        int value;
+    }
+endtype
+
+decl
+    box b;
+    int i, x;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        i = 1;
+        while (i <= 5) do
+            b = alloc();
+            b.value = i;
+            write(b.value);
+            i = i + 1;
+        endwhile
+    end
+}

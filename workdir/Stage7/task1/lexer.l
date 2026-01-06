@@ -59,6 +59,9 @@
 
 "read"          { return KW_READ; }
 "write"         { return KW_WRITE; }
+"initialize"    { return KW_INIT; }
+"alloc"         { return KW_ALLOC; }
+"free"          { return KW_FREE; }
 
 "if"            { return KW_IF; }
 "then"          { return KW_THEN; }
@@ -79,20 +82,19 @@
 "type"          { return KW_TYPE; }
 "endtype"       { return KW_ENDTYPE; }
 
-"initialize"    { return KW_INIT; }
-"alloc"         { return KW_ALLOC; }
-"free"          { return KW_FREE; }
-
 "int"           { return TYPE_INT; }
 "str"           { return TYPE_STRING; }
 "tuple"         { return KW_TUPLE; }
 "void"          { return TYPE_VOID; }
+"NULL"          { return KW_NULL; }
 
 "return"        { return KW_RETURN; }
 "main"          { return MAIN; }
-"brkp"          { return KW_BRKP; }
 
-"NULL"          { return KW_NULL; }
+"class"         { return KW_CLASS; }
+"endclass"      { return KW_ENDCLASS; }
+
+"brkp"          { return KW_BRKP; }
 
 [a-zA-Z][a-zA-Z0-9_]* { yylval.node = createNewVariableNode(yytext); return ID; }
 

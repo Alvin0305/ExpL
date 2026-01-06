@@ -1,0 +1,41 @@
+class
+    simple{
+        decl
+            int x;
+            int set(int v);
+            int show();
+        enddecl
+
+        int set(int v){
+            decl enddecl
+            begin
+                self.x = v;
+                return 1;
+            end
+        }
+
+        int show(){
+            decl enddecl
+            begin
+                write(self.x);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+enddecl
+
+int main(){
+    decl
+        simple s;
+    enddecl
+    begin
+        initialize();
+        s = new(simple);
+        s.set(11);
+        s.show();
+        return 0;
+    end
+}

@@ -1,0 +1,88 @@
+class
+    Person {
+        decl
+            str name;
+            int age;
+
+            int printPerson();
+            str findName();
+            int createPerson(str name, int age);
+        enddecl
+
+        int printPerson() {
+            decl
+            enddecl
+
+            begin
+                write(self.name);
+                write(self.age);
+                return 1;
+            end
+        }
+
+        str findName() {
+            decl enddecl
+            begin
+                return self.name;
+            end
+        }
+
+        int createPerson(str name, int age) {
+            decl enddecl
+            begin
+                self.name = name;
+                self.age = age;
+                return 1;
+            end
+        }
+    }
+
+    Dog {
+        decl
+            str name;
+            str breed;
+            int printDog();
+            str findName();
+            int createDog(str name, str breed);
+        enddecl
+
+        int printDog() {
+            decl
+            enddecl
+
+            begin
+                write(self.name);
+                write(self.breed);
+                return 1;
+            end
+        }
+
+        str findName() {
+            decl enddecl
+            begin
+                return self.name;
+            end
+        }
+
+        int createDog(str name, str breed) {
+            decl enddecl
+            begin
+                self.name = name;
+                self.breed = breed;
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+enddecl
+
+int main() {
+    decl
+    enddecl
+
+    begin
+        write("hi");
+    end
+}

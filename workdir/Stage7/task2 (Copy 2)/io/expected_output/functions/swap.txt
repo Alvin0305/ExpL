@@ -1,0 +1,6 @@
+10
+20
+after swap
+20
+10
+Machine is halting.

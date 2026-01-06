@@ -1,0 +1,12 @@
+int main() {
+    decl
+        int num;
+    enddecl
+    begin
+        write(100);
+        brkp;
+        read(num);
+        brkp;
+        write(num);
+    end
+}

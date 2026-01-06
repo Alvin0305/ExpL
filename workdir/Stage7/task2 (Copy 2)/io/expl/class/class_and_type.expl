@@ -1,0 +1,49 @@
+type
+    node{
+        int val;
+    }
+endtype
+
+class
+    box{
+        decl
+            node n;
+            int set(int x);
+            int show();
+        enddecl
+
+        int set(int x){
+            decl enddecl
+            begin
+                self.n = alloc();
+                self.n.val = x;
+                return 1;
+            end
+        }
+
+        int show(){
+            decl enddecl
+            begin
+                write(self.n.val);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    box b;
+enddecl
+
+int main(){
+    decl
+        int x; 
+    enddecl
+    begin
+        x = initialize();
+        b = new(box);
+        b.set(99);
+        b.show();
+        return 0;
+    end
+}

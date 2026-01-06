@@ -1,0 +1,35 @@
+class
+    fact{
+        decl
+            int k;
+            int f(int n);
+        enddecl
+
+        int f(int n){
+            decl enddecl
+            begin
+                if (n == 0) then
+                    return 1;
+                endif
+                return n * self.f(n - 1);
+            end
+        }
+    }
+endclass
+
+decl
+    fact f1;
+enddecl
+
+int main(){
+    decl
+        int r;
+    enddecl
+    begin
+        r = initialize();
+        f1 = new(fact);
+        r = f1.f(5);
+        write(r);
+        return 0;
+    end
+}

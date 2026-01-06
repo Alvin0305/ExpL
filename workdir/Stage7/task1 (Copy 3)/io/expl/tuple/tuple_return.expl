@@ -1,0 +1,35 @@
+decl
+    tuple item (str name, int price) item1;
+    tuple item func(int num, tuple item it);
+enddecl
+
+tuple item func(int num, tuple item it) {
+    decl
+    enddecl
+
+    begin
+        write(it->name);
+        write(it->price);
+
+        it->name = "Banana";
+
+        return it;
+    end
+}
+
+int main() {
+    decl
+        tuple item it1, *it2;
+    enddecl
+
+    begin
+        it1.name = "Orange";
+        it1.price = 10;
+
+        it2 = func(100, &it1);
+        write(it2->price);
+        write(it2->name);
+
+        return 0;
+    end
+}

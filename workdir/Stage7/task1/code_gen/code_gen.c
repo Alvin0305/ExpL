@@ -266,6 +266,12 @@ int generateCode(struct tnode *root) {
             generateFreeCode(root);
             break;
 
+        case NODE_CLASS_FIELD_ACCESS:
+            return 0;
+        
+        case NODE_CLASS_METHOD_ACCESS:
+            return 0;
+
         default:
             printf("[WARNING]: Unhandled node came while generating code: ");
             printNode(root);

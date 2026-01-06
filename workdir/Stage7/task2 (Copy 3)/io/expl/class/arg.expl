@@ -1,0 +1,40 @@
+class
+    calc{
+        decl
+            int k;
+            int add(int a, int b);
+            int square(int x);
+        enddecl
+
+        int add(int a, int b){
+            decl enddecl
+            begin
+                return a + b;
+            end
+        }
+
+        int square(int x){
+            decl enddecl
+            begin
+                return self.add(x, x) * x / x;
+            end
+        }
+    }
+endclass
+
+decl
+    calc c;
+enddecl
+
+int main(){
+    decl
+        int r;
+    enddecl
+    begin
+        r = initialize();
+        c = new(calc);
+        r = c.square(6);
+        write(r);
+        return 0;
+    end
+}

@@ -6,7 +6,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/test/error.expl"
+#define SOURCE_FILE "io/test/class.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -26,55 +26,33 @@
 
 #define NULL_VALUE 0
 
-enum Size {
-    INT_SIZE = 1,
-    STRING_SIZE = 1,
-    NONE_SIZE = 0,
-    VOID_SIZE = 0
-};
+enum Size { INT_SIZE = 1, STRING_SIZE = 1, NONE_SIZE = 0, VOID_SIZE = 0 };
 
-enum Type {
-    INT,
-    STRING,
-    BOOL,
-    TUPLE,
-    VOID,
-    USER_TYPE,
-    NONE,
-    NULL_TYPE
-};
+enum Type { INT, STRING, BOOL, TUPLE, VOID, TYPE, NONE, NULL_TYPE, CLASS, UNKNOWN };
 
 enum NodeType {
     NODE_EMPTY,
     NODE_ASSIGN,
     NODE_CONNECTOR,
 
-    NODE_PARAM,
-    NODE_POINTER_PARAM,
-
-    NODE_FUNC_DECL,
-    NODE_FUNC_DEF,
     NODE_FUNC_CALL,
-    NODE_LOCAL_DECL,
     NODE_RETURN,
 
     NODE_NULL,
+
+    NODE_CLASS_FIELD_ACCESS,
+    NODE_CLASS_METHOD_ACCESS,
 
     NODE_INIT,
     NODE_ALLOC,
     NODE_ALLOC_ARRAY,
     NODE_FREE,
 
-    NODE_TUPLE_DECL,
     NODE_TUPLE_ACCESS,
     NODE_TUPLE_POINTER_ACCESS,
     NODE_TUPLE_ASSIGN,
     NODE_TUPLE_POINTER_ASSIGN,
-    NODE_TUPLE_VAR_DECL,
-    NODE_TUPLE_PARAM,
-    NODE_TUPLE_POINTER_PARAM,
 
-    NODE_USER_DEF_TYPE_PARAM,
     NODE_USER_DEF_TYPE_ACCESS,
     NODE_USER_DEF_TYPE_ASSIGNMENT,
 
@@ -84,10 +62,6 @@ enum NodeType {
     NODE_CONSTANT,
     NODE_STRING_LITERAL,
 
-    NODE_TYPE,
-    NODE_DECL,
-
-    NODE_ARRAY_DECL,
     NODE_ARRAY_ASSIGN,
     NODE_ARRAY_ACCESS,
 
@@ -112,7 +86,7 @@ enum NodeType {
     NODE_OR,
     NODE_AND,
     NODE_NOT,
-    
+
     NODE_WHILE,
     NODE_BREAK,
     NODE_CONTINUE,

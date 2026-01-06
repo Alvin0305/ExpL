@@ -1,0 +1,26 @@
+type
+    node {
+        int value;
+        node next;
+    }
+endtype
+
+decl
+    node arr[2];
+    int x;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        arr[0] = alloc();
+        arr[0].value = 50;
+
+        arr[1] = arr[0];   // aliasing
+
+        arr[1].value = 99;
+
+        write(arr[0].value);   // should print 99
+        write(arr[1].value);   // should print 99
+    end
+}

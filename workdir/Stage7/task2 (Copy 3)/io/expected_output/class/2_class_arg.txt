@@ -1,0 +1,2 @@
+30
+Machine is halting.

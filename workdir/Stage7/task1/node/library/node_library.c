@@ -3,6 +3,9 @@
 #include "../../error_handler/error_handler.h"
 #include "node_library.h"
 #include "../../util/util.h"
+#include "../../semantic_context/semantic_context.h"
+#include "../../type_table/type_table.h"
+#include "../../class_table/class_table.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +40,7 @@ struct tnode *createReadToArrayNode(struct tnode *idNode, struct tnode *dimensio
 struct tnode *createWriteNode(tnode *exprNode) {
     struct tnode *node = createEmptyNode();
 
-    if (exprNode->type != INT && exprNode->type != STRING && exprNode->type != USER_TYPE) {
+    if (exprNode->type != INT && exprNode->type != STRING && exprNode->type != TYPE) {
         printf("[ERROR]: [%d] Type mismatch, type is: %s\n", lineNumber, dataTypeToString(exprNode->type));
         exit(1);
     }
@@ -57,6 +60,7 @@ struct tnode *createInitNode(struct tnode *idNode) {
 
     node->left = idUsageNode;
     node->nodeType = NODE_INIT;
+    node->typeInfo = createTypeInfo(INT, NULL, lookupTT("INT"), NULL);
 
     return node;
 }
@@ -66,14 +70,15 @@ struct tnode *createAllocNode(struct tnode *node) {
         struct tnode *allocNode = createEmptyNode();
         struct tnode *idNode = createVariableUsageNode(node->varName);
 
-        struct TypeTable *type = idNode->typeTableEntry;
-        if (!type) {
+        struct TypeTable *type = idNode->typeInfo->type;
+        struct ClassTable *_class = idNode->typeInfo->_class;
+        if (!type && !_class) {
             compilerError(E_USER_TYPE_USED_BEFORE_DECLARATION, idNode->varName);
         }
 
         allocNode->nodeType = NODE_ALLOC;
-        allocNode->typeTableEntry = type;
         allocNode->left = idNode;
+        allocNode->typeInfo = idNode->typeInfo;
         return allocNode;
 
     } else if (node->nodeType == NODE_USER_DEF_TYPE_ACCESS) {
@@ -86,14 +91,14 @@ struct tnode *createAllocNode(struct tnode *node) {
         }
 
         prev->left = createVariableUsageNode(idNode->varName);
-        struct TypeTable *type = prev->left->typeTableEntry;
+        struct TypeTable *type = prev->left->typeInfo->type;
         if (!type) {
             compilerError(E_USER_TYPE_USED_BEFORE_DECLARATION, idNode->varName);
         }
 
         allocNode->nodeType = NODE_ALLOC;
+        allocNode->typeInfo = prev->left->typeInfo;
         allocNode->left = node;
-        allocNode->typeTableEntry = type;
 
         return allocNode;
 
@@ -101,13 +106,13 @@ struct tnode *createAllocNode(struct tnode *node) {
         struct tnode *allocNode = createEmptyNode();
         struct tnode *idNode = createVariableUsageNode(node->left->varName);
  
-        struct TypeTable *type = idNode->typeTableEntry;
+        struct TypeTable *type = idNode->typeInfo->type;
         if (!type) {
             compilerError(E_USER_TYPE_USED_BEFORE_DECLARATION, idNode->varName);
         }
 
         allocNode->nodeType = NODE_ALLOC;
-        allocNode->typeTableEntry = type;
+        allocNode->typeInfo = idNode->typeInfo;
         allocNode->left = node;
         return allocNode;
     } else {

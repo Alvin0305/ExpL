@@ -1,5 +1,7 @@
 #include "util.h"
+#include "../class_table/class_table.h"
 #include "../define/constants.h"
+#include "../g_symbol_table/g_symbol_table.h"
 #include "../node/node.h"
 #include "../type_table/type_table.h"
 
@@ -7,21 +9,47 @@
 #include <stdio.h>
 #include <string.h>
 
+int calcSizeOfType(struct TupleType *tupleType, struct TypeTable *type, struct ClassTable *_class, struct Dimension *dimensions,
+                   bool isFunction) {
+    int baseSize;
+    if (tupleType) {
+        baseSize = tupleType->size;
+    } else if (type) {
+        baseSize = 1;
+    } else if (_class) {
+        baseSize = 1;
+    } else if (isFunction) {
+        baseSize = 0;
+    } else {
+        printf("[WARNING]: Unhandled type.\n");
+    }
+
+    if (dimensions) {
+        baseSize *= getDimensionProduct(dimensions);
+    }
+
+    return baseSize;
+}
+
 bool isTypeCompatible(enum Type leftType, enum Type rightType) {
-    if (leftType == USER_TYPE && rightType == NULL_TYPE) {
+    if (leftType == TYPE && rightType == NULL_TYPE) {
         return true;
     } else {
         return leftType == rightType;
     }
 }
 
-bool areTypeCompatible(struct TypeTable *leftType, struct TypeTable *rightType) {
-    if (strcmp(dataTypeToString(typeTableEntryToType(leftType)), "USER_TYPE") == 0 &&
-        strcmp(dataTypeToString(typeTableEntryToType(rightType)), "NULL_TYPE") == 0) {
-        return true;
+bool areTypeCompatible(struct TypeInfo *leftType, struct TypeInfo *rightType) {
+    if (leftType->kind == TYPE && rightType->kind == NULL_TYPE) return true;
+    if (leftType->kind != rightType->kind) return false;
+    if (leftType->kind == TUPLE) {
+        return (strcmp(leftType->tupleType->name, rightType->tupleType->name) == 0);
     }
-    
-    return (strcmp(leftType->name, rightType->name) == 0);
+    if (leftType->kind == CLASS) {
+        return (strcmp(leftType->_class->name, rightType->_class->name) == 0);
+    }
+
+    return (strcmp(leftType->type->name, rightType->type->name) == 0);
 }
 
 char *booleanToString(bool b) {
@@ -42,12 +70,14 @@ char *dataTypeToString(enum Type dataType) {
             return "BOOL";
         case TUPLE:
             return "TUPLE";
-        case USER_TYPE:
-            return "USER_TYPE";
+        case TYPE:
+            return "TYPE";
         case VOID:
             return "VOID";
         case NULL_TYPE:
             return "NULL_TYPE";
+        case CLASS:
+            return "CLASS";
         default:
             return "NONE";
     }
@@ -69,7 +99,7 @@ int typeTableEntryToType(struct TypeTable *type) {
     } else if (strcmp(type->name, "NULL_TYPE") == 0) {
         return NULL_TYPE;
     } else {
-        return USER_TYPE;
+        return TYPE;
     }
 }
 
@@ -82,7 +112,7 @@ int getSizeOfDataType(enum Type dataType) {
         case TUPLE:
             printf("[COMPILER ERROR]: tuple size cannot be found by this function\n");
             return NONE_SIZE;
-        case USER_TYPE:
+        case TYPE:
             printf("[COMPILER ERROR]: user defined type size cannot be found by this function\n");
             return NONE_SIZE;
         default:
@@ -137,14 +167,6 @@ void printNode(struct tnode *node) {
 
         case NODE_WRITE:
             printf("WRITE\n");
-            break;
-
-        case NODE_DECL:
-            printf("DECL\n");
-            break;
-
-        case NODE_TYPE:
-            printf("%s\n", dataTypeToString(node->type));
             break;
 
         case NODE_WHILE:
@@ -227,26 +249,6 @@ void printNode(struct tnode *node) {
             printf("/\n");
             break;
 
-        case NODE_FUNC_DECL:
-            printf("FUNC DECL\n");
-            break;
-
-        case NODE_PARAM:
-            printf("PARAM\n");
-            break;
-
-        case NODE_LOCAL_DECL:
-            printf("LOCAL DECL\n");
-            break;
-
-        case NODE_POINTER_PARAM:
-            printf("POINTER PARAM\n");
-            break;
-
-        case NODE_TUPLE_DECL:
-            printf("TUPLE DECL\n");
-            break;
-
         case NODE_TUPLE_ASSIGN:
             printf("TUPLE ASSIGN\n");
             break;
@@ -261,10 +263,6 @@ void printNode(struct tnode *node) {
 
         case NODE_USER_DEF_TYPE_ASSIGNMENT:
             printf("USER TYPE ASSIGNMENT\n");
-            break;
-
-        case NODE_USER_DEF_TYPE_PARAM:
-            printf("USER TYPE PARAM\n");
             break;
 
         case NODE_ALLOC:

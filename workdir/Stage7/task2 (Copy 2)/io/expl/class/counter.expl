@@ -1,0 +1,44 @@
+class
+    counter{
+        decl
+            int x;
+            int init(int v);
+            int inc();
+        enddecl
+
+        int init(int v){
+            decl enddecl
+            begin
+                self.x = v;
+                return 1;
+            end
+        }
+
+        int inc(){
+            decl enddecl
+            begin
+                self.x = self.x + 1;
+                write(self.x);
+                return self.x;
+            end
+        }
+    }
+endclass
+
+decl
+    counter c;
+enddecl
+
+int main(){
+    decl
+        int x; 
+    enddecl
+    begin
+        x = initialize();
+        c = new(counter);
+        c.init(5);
+        c.inc();
+        c.inc();
+        return 0;
+    end
+}

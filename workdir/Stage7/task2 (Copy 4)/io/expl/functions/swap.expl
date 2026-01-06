@@ -1,0 +1,43 @@
+decl
+    int swap(int *a, int *b);
+    int *p1, *p2;
+enddecl
+
+int swap(int *a, int *b) {
+    decl
+        int temp;
+    enddecl
+
+    begin
+        brkp;
+        temp = *a;
+        *a = *b;
+        *b = temp;
+
+        return 0;
+    end
+}
+
+int main() {
+    decl
+        int num1, num2;
+    enddecl
+
+    begin
+        num1 = 10;
+        num2 = 20;
+        
+        p1 = &num1;
+        p2 = &num2;
+
+        write(num1);
+        write(num2);
+
+        swap(p1, p2);
+
+        write("after swap");
+
+        write(num1);
+        write(num2);
+    end
+}

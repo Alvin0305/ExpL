@@ -1,0 +1,68 @@
+decl
+    int matrix1[3][3], matrix2[3][3];
+    int result[3][3];
+    int i, j, k;
+enddecl
+int main() {
+    decl
+    enddecl
+    
+    begin
+        i = 0;
+        k = 0;
+        while (i < 3) do
+            j = 0;
+            while (j < 3) do
+                write(k);
+                matrix1[i][j] = k;
+                matrix2[i][j] = k;
+                k = k + 1;
+                j = j + 1;
+            endwhile
+            i = i + 1;
+        endwhile
+
+        i = 0;
+        write("Matrix 1");
+        while (i < 3) do
+            j = 0;
+            while (j < 3) do
+                write(matrix1[i][j]);
+                j = j + 1;
+            endwhile
+            i = i + 1;
+        endwhile
+
+        i = 0;
+        write("Matrix 2");
+        while (i < 3) do
+            j = 0;
+            while (j < 3) do
+                write(matrix2[i][j]);
+                j = j + 1;
+            endwhile
+            i = i + 1;
+        endwhile
+
+        i = 0;
+        while (i < 3) do
+            j = 0;
+            while (j < 3) do
+                result[i][j] = matrix1[i][j] + matrix2[i][j];
+                j = j + 1;
+            endwhile
+            i = i + 1;
+        endwhile
+
+        i = 0;
+        write("Result");
+        while (i < 3) do
+            j = 0;
+            while (j < 3) do
+                write(result[i][j]);
+                j = j + 1;
+            endwhile
+            i = i + 1;
+        endwhile
+    end
+}

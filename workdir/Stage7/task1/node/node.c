@@ -1,4 +1,5 @@
 #include "node.h"
+#include "../class_table/class_table.h"
 #include "../code_gen/code_gen.h"
 #include "../define/constants.h"
 #include "../error_handler/error_handler.h"
@@ -57,7 +58,7 @@ struct tnode *createConstantNode(int val) {
 
     node->numVal = val;
     node->type = INT;
-    node->typeTableEntry = lookupTT("INT");
+    node->typeInfo = createTypeInfo(INT, NULL, lookupTT("INT"), NULL);
 
     return node;
 }
@@ -67,7 +68,7 @@ struct tnode *createStringLiteralNode(char *stringLiteral) {
 
     node->strVal = strdup(stringLiteral);
     node->type = STRING;
-    node->typeTableEntry = lookupTT("STRING");
+    node->typeInfo = createTypeInfo(STRING, NULL, lookupTT("STRING"), NULL);
 
     return node;
 }
@@ -89,17 +90,15 @@ struct tnode *createVariableUsageNode(char *varName) {
     GSymbol *globalEntry = lookupGST(varName);
 
     if (localEntry) {
-        node->type = localEntry->type;
+        node->type = localEntry->typeInfo->kind;
         node->gSymbolTableEntry = NULL;
         node->lSymbolTableEntry = localEntry;
-        node->typeTableEntry = localEntry->typeTableEntry;
-        node->tupleType = localEntry->tupleType;
+        node->typeInfo = localEntry->typeInfo;
     } else if (globalEntry) {
-        node->type = globalEntry->type;
+        node->type = globalEntry->typeInfo->kind;
         node->gSymbolTableEntry = globalEntry;
         node->lSymbolTableEntry = NULL;
-        node->typeTableEntry = globalEntry->typeTableEntry;
-        node->tupleType = globalEntry->tupleType;
+        node->typeInfo = globalEntry->typeInfo;
     } else {
         compilerError(E_VARIABLE_USED_BEFORE_DECLARATION, varName);
     }
@@ -122,7 +121,7 @@ struct tnode *createArithOpNode(enum NodeType nodeType, tnode *left, tnode *righ
     node->numVal = NOT_CONSTANT;
     node->varName = NULL;
     node->type = INT;
-    node->typeTableEntry = lookupTT("INT");
+    node->typeInfo = left->typeInfo;
 
     return node;
 }
@@ -133,8 +132,8 @@ struct tnode *createAssignNode(tnode *idNode, tnode *exprNode) {
     // if (!isTypeCompatible(idUsageNode->type, exprNode->type)) {
     //     compilerError(E_ASSIGN_TYPE_MISMATCH, idUsageNode->type, exprNode->type);
     // } else
-    if (!areTypeCompatible(idUsageNode->typeTableEntry, exprNode->typeTableEntry)) {
-        compilerError(E_ASSIGN_USER_TYPE_MISMATCH, idUsageNode->typeTableEntry, exprNode->typeTableEntry);
+    if (!areTypeCompatible(idUsageNode->typeInfo, exprNode->typeInfo)) {
+        compilerError(E_ASSIGN_USER_TYPE_MISMATCH, idUsageNode->typeInfo->type, exprNode->typeInfo->type);
     }
 
     idUsageNode->type = exprNode->type;
@@ -151,45 +150,20 @@ struct tnode *createAssignNode(tnode *idNode, tnode *exprNode) {
     return node;
 }
 
-struct tnode *createTypeNode(enum Type type) {
-    struct tnode *node = createLeafNode(NODE_TYPE);
-    node->type = type;
-    node->typeTableEntry = lookupTT(dataTypeToString(type));
-
-    return node;
-}
-
 struct tnode *createNullNode() {
     struct tnode *node = createLeafNode(NODE_NULL);
     node->type = NULL_TYPE;
     node->numVal = NULL_VALUE;
-    node->typeTableEntry = lookupTT("NULL_TYPE");
+    node->typeInfo = createTypeInfo(NULL_TYPE, NULL, lookupTT("NULL_TYPE"), NULL);
 
-    printf("type of null is: %s\n", node->typeTableEntry->name);
     return node;
-}
-
-struct tnode *createDeclarationNode(struct tnode *typeNode, struct tnode *varListNode) {
-    struct tnode *node = createConnectorNode(typeNode, varListNode);
-    int type = typeNode->type;
-    node->typeTableEntry = lookupTT(dataTypeToString(type));
-
-    if (type == TUPLE) {
-        node->nodeType = NODE_TUPLE_VAR_DECL;
-    } else {
-        node->nodeType = NODE_DECL;
-    }
-
-    addToGST(typeNode, node);
-
-    return NULL;
 }
 
 struct tnode *createIncrementNode(struct tnode *idNode) {
     struct tnode *node = createEmptyNode();
     struct tnode *newIdNode = createVariableUsageNode(idNode->varName);
 
-    if (strcmp(newIdNode->typeTableEntry->name, "INT") != 0) {
+    if (newIdNode->typeInfo->kind != INT) {
         printf("[ERROR]: Increment allowed only on INT\n");
         exit(1);
     }
@@ -198,9 +172,9 @@ struct tnode *createIncrementNode(struct tnode *idNode) {
     node->left = newIdNode;
     node->right = NULL;
     node->type = newIdNode->type;
-    node->typeTableEntry = newIdNode->typeTableEntry;
     node->numVal = NOT_CONSTANT;
     node->varName = NULL;
+    node->typeInfo = newIdNode->typeInfo;
 
     return node;
 }
@@ -209,7 +183,7 @@ struct tnode *createDecrementNode(struct tnode *idNode) {
     struct tnode *node = createEmptyNode();
     struct tnode *newIdNode = createVariableUsageNode(idNode->varName);
 
-    if (strcmp(newIdNode->typeTableEntry->name, "INT") != 0) {
+    if (newIdNode->typeInfo->kind != INT) {
         printf("[ERROR]: Decrement allowed only on INT\n");
         exit(1);
     }
@@ -218,9 +192,9 @@ struct tnode *createDecrementNode(struct tnode *idNode) {
     node->left = newIdNode;
     node->right = NULL;
     node->type = newIdNode->type;
-    node->typeTableEntry = newIdNode->typeTableEntry;
     node->numVal = NOT_CONSTANT;
     node->varName = NULL;
+    node->typeInfo = newIdNode->typeInfo;
 
     return node;
 }

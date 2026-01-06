@@ -1,0 +1,18 @@
+decl
+    int nums[10];
+    int matrix[3][3];
+enddecl
+
+int main() {
+    decl
+    enddecl
+
+    begin
+
+        read(nums[0]);
+        write(nums[0]);
+
+        read(matrix[2][1]);
+        write(matrix[2][1]);
+    end
+}

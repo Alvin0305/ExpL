@@ -1,0 +1,62 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+endtype
+
+decl
+    bst func(bst root);
+    int inorder(bst root);
+enddecl
+
+int inorder(bst root) {
+    decl
+        bst left;
+        bst right;
+    enddecl
+    
+    begin
+        if (root == NULL) then
+            return 0;
+        else 
+            inorder(root.left);
+            write(root.value);
+            inorder(root.right);
+        endif
+    end
+}
+
+bst func(bst root) {
+    decl
+    enddecl
+
+    begin
+        write(root.value);
+        root.value = 10;
+        return root;
+    end
+}
+
+int main() {
+    decl
+        bst root;
+    enddecl
+
+    begin
+        root = alloc();
+        root.left = alloc();
+        root.right = alloc();
+        root.left.left = NULL;
+        root.left.right = NULL;
+        root.right.left = NULL;
+        root.right.right = NULL;
+
+        root.value = 10;
+        root.left.value = 20;
+        root.right.value = 30;
+
+        inorder(root);
+    end
+}

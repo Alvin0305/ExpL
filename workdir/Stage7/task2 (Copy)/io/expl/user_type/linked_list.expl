@@ -1,0 +1,47 @@
+type
+    node {
+        int value;
+        node next;
+    }
+endtype
+
+decl
+    node create(int v);
+    void printList(node h);
+enddecl
+
+node create(int v) {
+    decl
+        node t;
+    enddecl
+    begin
+        t = alloc();
+        t.value = v;
+        t.next = NULL;
+        return t;
+    end
+}
+
+void printList(node h) {
+    begin
+        while (h != NULL) do
+            write(h.value);
+            h = h.next;
+        endwhile
+    end
+}
+
+int main() {
+    decl
+        node a;
+        int x;
+    enddecl
+
+    begin
+        x = initialize();
+        a = create(1);
+        a.next = create(2);
+        a.next.next = create(3);
+        printList(a);
+    end
+}

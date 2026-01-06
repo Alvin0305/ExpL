@@ -1,0 +1,32 @@
+type
+    node {
+        int value;
+        node next;
+    }
+endtype
+
+decl
+    int x;
+    node arr[3];
+    int y;
+enddecl
+
+int main() {
+    begin
+        x = initialize();
+        y = 10;
+        arr[0] = alloc();
+        arr[1] = alloc();
+        arr[2] = alloc();
+
+        arr[0].value = 10;
+        arr[1].value = 20;
+        arr[2].value = 30;
+
+        write(arr[0].value);
+        write(arr[1].value);
+        write(arr[2].value);
+        
+        write(y);
+    end
+}

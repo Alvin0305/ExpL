@@ -1,0 +1,5 @@
+Orange
+10
+10
+Banana
+Machine is halting.

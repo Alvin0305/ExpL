@@ -21,7 +21,7 @@ void findUserTypeFieldAddr(int *fieldAddrReg, struct tnode *node, struct TypeTab
 
         case NODE_ARRAY_ACCESS:
             if (*fieldAddrReg == -1) {
-                *activeType = node->left->typeTableEntry;
+                *activeType = node->left->typeInfo->type;
             }
 
             *fieldAddrReg = generateArrayElementAddress(node);
@@ -29,7 +29,7 @@ void findUserTypeFieldAddr(int *fieldAddrReg, struct tnode *node, struct TypeTab
 
         case NODE_VARIABLE:
             if (*fieldAddrReg == -1) {
-                *activeType = node->typeTableEntry;
+                *activeType = node->typeInfo->type;
                 char *name = node->varName;
 
                 struct GSymbol *globalEntry = lookupGST(name);
@@ -47,7 +47,6 @@ void findUserTypeFieldAddr(int *fieldAddrReg, struct tnode *node, struct TypeTab
                     printf("error\n");
                 }
             } else {
-                printf("offsetting: %s on %s\n", node->varName, (*activeType)->name);
                 struct FieldList *field = fieldListLookup(*activeType, node->varName);
                 *activeType = field->type;
                 fprintf(target_file, "MOV R%d, [R%d]\n", *fieldAddrReg, *fieldAddrReg);

@@ -7,6 +7,7 @@ struct GSymbol;
 struct LSymbol;
 struct TupleType;
 struct TypeTable;
+struct ClassTable;
 
 enum NodeType;
 
@@ -22,9 +23,7 @@ typedef struct tnode {
     struct GSymbol *gSymbolTableEntry;
     struct LSymbol *lSymbolTableEntry;
     
-    struct TupleType *tupleType;
-
-    struct TypeTable *typeTableEntry;
+    struct TypeInfo *typeInfo;
 
     struct tnode *left;
     struct tnode *right;

@@ -1,0 +1,46 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+endtype
+
+class
+endclass
+
+decl
+    tuple st(str name, str roll) s, *ss;
+    int a, b, *c, d;
+    int array[10][2][3];
+    str arr[2][3][5];
+    str name;
+
+    int func(int a, int b);
+    int p();
+    int q(str name, str a, str b);
+
+    bst root1, root2;
+enddecl
+
+int func(int a, int b) {
+    decl
+        int *x, y;
+        st p, *q;
+    enddecl
+    begin
+        write(10);
+    end
+}
+
+int main() {
+    decl
+        int x, y, z;
+        str name, abcd;
+        int a;
+    enddecl
+
+    begin
+        write(10);
+    end
+}

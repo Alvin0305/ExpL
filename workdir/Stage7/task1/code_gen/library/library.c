@@ -9,6 +9,7 @@
 #include "../array/array.h"
 #include "../function/function.h"
 #include "../user_type/user_type.h"
+#include "../../class_table/class_table.h"
 
 #include <stdlib.h>
 
@@ -107,11 +108,12 @@ void generateAllocCode(struct tnode *node) {
     struct tnode *left = node->left;
     int nodeType = left->nodeType;
 
-    struct TypeTable *typeTableEntry = node->typeTableEntry;
-    int size = typeTableEntry->size;
+    struct TypeTable *typeTableEntry = node->typeInfo->type;
+    struct ClassTable *_class = node->typeInfo->_class;
+    int size = typeTableEntry ? typeTableEntry->size : _class ? _class->numFields : 0;
 
     if (size <= 0 || size > 8) {
-        compilerError(E_INVALID_SIZE_FOR_USER_DEFINED_TYPE, node->typeTableEntry->name, size);
+        compilerError(E_INVALID_SIZE_FOR_USER_DEFINED_TYPE, node->typeInfo->type->name, size);
     }
 
     int freeReg = getFreeRegister();

@@ -1,0 +1,16 @@
+decl
+    int a[3][3];
+    int i;
+enddecl
+
+int main() {
+    decl
+    enddecl
+
+    begin
+        i = 1;
+        a[i+1][i-1] = 99;
+
+        write(a[2][0]);   // 99
+    end
+}

@@ -11,50 +11,6 @@
 #include "../node.h"
 #include "node_function.h"
 
-struct tnode *createFunctionDeclarationNode(struct tnode *functionNameNode, struct tnode *paramListNode) {
-    struct tnode *node = createConnectorNode(functionNameNode, paramListNode);
-
-    node->nodeType = NODE_FUNC_DECL;
-
-    return node;
-}
-
-struct tnode *createParamNode(struct tnode *typeNode, struct tnode *idNode, bool addToLocalSymbolTable, bool isPtr) {
-    struct tnode *node = createConnectorNode(typeNode, idNode);
-    int type = typeNode->type;
-
-    if (type == TUPLE) {
-        struct TupleType *tupleType = typeNode->tupleType;
-
-        if (addToLocalSymbolTable) {
-            installLST(idNode->varName, TUPLE, true, isPtr, tupleType, lookupTT(tupleType->name));
-        }
-
-        node->nodeType = NODE_TUPLE_POINTER_PARAM;
-
-        return node;
-    } else if (type == USER_TYPE) {
-        struct TypeTable *typeTableEntry = typeNode->typeTableEntry;
-
-        if (addToLocalSymbolTable) {
-            installLST(idNode->varName, USER_TYPE, true, isPtr, NULL, typeTableEntry);
-        }
-
-        node->nodeType = NODE_USER_DEF_TYPE_PARAM;
-
-        return node;
-
-    } else {
-        if (addToLocalSymbolTable) {
-            installLST(idNode->varName, typeNode->type, true, isPtr, NULL, lookupTT(dataTypeToString(typeNode->type)));
-        }
-
-        node->nodeType = isPtr ? NODE_POINTER_PARAM : NODE_PARAM;
-
-        return node;
-    }
-}
-
 bool checkArgs(Param **param, struct tnode *argListNode, char *functionName) {
     if (!argListNode) return true;
     if (!*param) compilerError(E_FUNCTION_CALL_MORE_ARG, functionName);
@@ -66,9 +22,8 @@ bool checkArgs(Param **param, struct tnode *argListNode, char *functionName) {
             return leftOK && rightOK;
 
         default:
-            printNode(argListNode);
-            if ((*param)->type != argListNode->type) {
-                compilerError(E_FUNCTION_PASSED_ARG_MISMATCH, functionName, (*param)->name, (*param)->type, argListNode->type);
+            if ((*param)->typeInfo->kind != argListNode->typeInfo->kind) {
+                compilerError(E_FUNCTION_PASSED_ARG_MISMATCH, functionName, (*param)->name, (*param)->typeInfo->kind, argListNode->type);
             }
             *param = (*param)->next;
             return true;
@@ -85,8 +40,8 @@ struct tnode *createFunctionCallNode(struct tnode *functionNameNode, struct tnod
     }
 
     node->nodeType = NODE_FUNC_CALL;
-    node->type = entry->type;
-    node->typeTableEntry = entry->typeTableEntry;
+    node->type = entry->typeInfo->kind;
+    node->typeInfo = entry->typeInfo;
 
     Param *paramIter = entry->paramList;
 
@@ -98,33 +53,33 @@ struct tnode *createFunctionCallNode(struct tnode *functionNameNode, struct tnod
     return node;
 }
 
-struct tnode *createFunctionDefinitionNode(struct tnode *returnTypeNode, struct tnode *functionNameNode,
-                                           struct tnode *paramListNode, struct tnode *localDeclarationsNode,
-                                           struct tnode *functionBodyNode) {
+// struct tnode *createFunctionDefinitionNode(struct tnode *returnTypeNode, struct tnode *functionNameNode,
+//                                            struct tnode *paramListNode, struct tnode *localDeclarationsNode,
+//                                            struct tnode *functionBodyNode) {
 
-    struct tnode *declBodyConnectorNode = createConnectorNode(localDeclarationsNode, functionBodyNode);
-    struct tnode *paramDeclConnectorNode = createConnectorNode(paramListNode, declBodyConnectorNode);
-    struct tnode *typeNameNode = createConnectorNode(returnTypeNode, functionNameNode);
-    struct tnode *definitionNode = createConnectorNode(typeNameNode, paramDeclConnectorNode);
+//     struct tnode *declBodyConnectorNode = createConnectorNode(localDeclarationsNode, functionBodyNode);
+//     struct tnode *paramDeclConnectorNode = createConnectorNode(paramListNode, declBodyConnectorNode);
+//     struct tnode *typeNameNode = createConnectorNode(returnTypeNode, functionNameNode);
+//     struct tnode *definitionNode = createConnectorNode(typeNameNode, paramDeclConnectorNode);
 
-    definitionNode->nodeType = NODE_FUNC_DEF;
-    checkFunctionSignature(definitionNode);
+//     definitionNode->nodeType = NODE_FUNC_DEF;
+//     checkFunctionSignature(definitionNode);
 
-    GSymbol *functionEntry = lookupGST(functionNameNode->varName);
-    if (!functionEntry) {
-        compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, functionNameNode->varName);
-    }
+//     GSymbol *functionEntry = lookupGST(functionNameNode->varName);
+//     if (!functionEntry) {
+//         compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, functionNameNode->varName);
+//     }
 
-    generateFunctionCode(functionEntry->functionLabel, functionBodyNode);
-    freeLocalSymbolTable();
-    return NULL;
-}
+//     generateFunctionCode(functionEntry->functionLabel, functionBodyNode);
+//     freeLocalSymbolTable();
+//     return NULL;
+// }
 
 struct tnode *createReturnNode(struct tnode *exprNode) {
     if (!currentFunction) return NULL;
 
-    if (currentFunction->type != exprNode->type) {
-        compilerError(E_FUNCTION_RETURN_TYPE_MISMATCH, currentFunction->name, currentFunction->type, exprNode->type);
+    if (currentFunction->typeInfo->kind != exprNode->type) {
+        compilerError(E_FUNCTION_RETURN_TYPE_MISMATCH, currentFunction->name, currentFunction->typeInfo->kind, exprNode->type);
     }
 
     struct tnode *node = createEmptyNode();

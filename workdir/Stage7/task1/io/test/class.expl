@@ -1,0 +1,62 @@
+class
+    Person {
+        decl
+            str name;
+            int age;
+
+            int printPerson();
+            str findName();
+            int createPerson(str name, int age);
+        enddecl
+
+        int printPerson() {
+            decl
+            enddecl
+
+            begin
+                write(self.findName());
+                write(self.age);
+                return 1;
+            end
+        }
+
+        str findName() {
+            decl enddecl
+            begin
+                return self.name;
+            end
+        }
+
+        int createPerson(str name, int age) {
+            decl enddecl
+            begin
+                self.name = "Alvin";
+                self.age = 10;
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    int x;
+    str name;
+    int array[10][2][3];
+    int func(int a, int b);
+    str fun(str a);
+    Person me, him;
+    //Dog toby, tom;
+    int *ptr;
+    str *sptr;
+enddecl
+
+int main() {
+    decl
+    enddecl
+
+    begin
+        me = alloc();
+        name = me.findName();
+        write("hi");
+    end
+}
