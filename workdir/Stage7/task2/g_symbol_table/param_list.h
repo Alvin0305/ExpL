@@ -29,7 +29,4 @@ void printParamList(struct Param *head);
 struct Param *createParam(struct TypeInfo *typeInfo, char *name, bool isPtr);
 struct Param *mergeParams(struct Param *params1, struct Param *params2);
 
-struct Arg *createArg(struct Node *arg);
-struct Arg *mergeArgs(struct Arg *args, struct Arg *arg);
-
 #endif

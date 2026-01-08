@@ -1,4 +1,5 @@
 #include "dimension.h"
+#include "../error_handler/error_handler.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +19,7 @@ struct Dimension *mergeDimensions(struct Dimension *dimensions, struct Dimension
 
 struct Dimension *createDimension(int value) {
     if (value <= 0) {
-        printf("[error]\n");
+        compilerError(E_INVALID_DIMENSION, value);
     }
 
     struct Dimension *dim = (struct Dimension *)malloc(sizeof(struct Dimension));

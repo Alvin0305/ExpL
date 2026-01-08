@@ -1,0 +1,14 @@
+type
+    A { int x; }
+    B { int x; }
+endtype
+
+int main() {
+decl
+    A a;
+    B b;
+enddecl
+begin
+    a = b;
+end
+}

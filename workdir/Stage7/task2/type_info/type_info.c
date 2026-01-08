@@ -5,6 +5,7 @@
 #include "../tuple_type_table/tuple_type_table.h"
 #include "../type_info/dimension.h"
 #include "../type_table/type_table.h"
+#include "../error_handler/error_handler.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -17,8 +18,11 @@ struct TypeInfo *createTypeInfo(enum Kind kind, struct TupleType *tupleType, str
     if (kind == UNKNOWN) {
         kind = _class ? CLASS : type ? TYPE : NONE;
     }
-    // printf("creating type: %s %p %p %p [%d]\n", dataTypeToString(kind), tupleType, type, _class, lineNumber);
 
+    if (kind == NONE || (!tupleType && !type && !_class)) {
+        compilerError(E_UNDEFINED_TYPE);
+    }
+    
     typeInfo->kind = kind;
     typeInfo->type = type;
     typeInfo->tupleType = tupleType;

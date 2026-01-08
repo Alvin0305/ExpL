@@ -9,18 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node *createNewPointerNode(struct Node *idNode) {
-    struct Node *node = createEmptyNode();
-
-    node->nodeType = NODE_DEREFERENCE;
-    node->left = idNode;
-    node->right = NULL;
-    node->numVal = __NONE__;
-    node->varName = NULL;
-
-    return node;
-}
-
 struct Node *createDereferenceNode(struct Node *idNode) {
     struct Node *node = createEmptyNode();
     struct Node *newIdNode = createVariableUsageNode(idNode->varName);
@@ -30,7 +18,6 @@ struct Node *createDereferenceNode(struct Node *idNode) {
     node->right = NULL;
     node->numVal = __NONE__;
     node->varName = NULL;
-    // node->typeTableEntry = newIdNode->typeTableEntry;
     node->typeInfo = newIdNode->typeInfo;
 
     struct LSymbol *localEntry = lookupLST(idNode->varName);
@@ -74,10 +61,12 @@ struct Node *createAssignToDereferencedNode(struct Node *idNode, struct Node *ex
     struct Node *node = createEmptyNode();
     struct Node *newIdNode = createVariableUsageNode(idNode->varName);
 
-    if (!isTypeCompatible(newIdNode->typeInfo, exprNode->typeInfo)) {
-        compilerError(E_TYPE_MISMATCH, newIdNode->typeInfo->kind, exprNode->typeInfo->kind);
-    } else if (newIdNode->gSymbolTableEntry && !newIdNode->gSymbolTableEntry->isPtr) {
+    if (newIdNode->gSymbolTableEntry && !newIdNode->gSymbolTableEntry->isPtr) {
         compilerError(E_DEREFERENCING_NON_POINTER_VARIABLE, newIdNode->varName);
+    } else if (newIdNode->lSymbolTableEntry && !newIdNode->lSymbolTableEntry->isPtr) {
+        compilerError(E_DEREFERENCING_NON_POINTER_VARIABLE, newIdNode->varName);
+    } else if (!isTypeCompatible(newIdNode->typeInfo, exprNode->typeInfo)) {
+        compilerError(E_TYPE_MISMATCH, "Assignment", newIdNode->typeInfo->kind, exprNode->typeInfo->kind);
     }
 
     node->nodeType = NODE_ASSIGN_TO_DEREFERENCED;

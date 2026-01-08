@@ -35,6 +35,8 @@ void compilerError(enum Error error, ...) {
     int givenType;
     int size;
     int leftType, rightType;
+    int dimension;
+
     struct TypeTable *leftT, *rightT;
 
     fprintf(stderr, "[ERROR E%d] Line %d: ", error, lineNumber);
@@ -181,7 +183,7 @@ void compilerError(enum Error error, ...) {
             where = va_arg(ap, char *);
             expectedType = va_arg(ap, int);
             givenType = va_arg(ap, int);
-            fprintf(stderr, "Expected %s type in %s, but got %s", dataTypeToString(expectedType), where,
+            fprintf(stderr, "Expected %s type in %s, but got %s\n", dataTypeToString(expectedType), where,
                     dataTypeToString(givenType));
             break;
 
@@ -189,9 +191,8 @@ void compilerError(enum Error error, ...) {
             fprintf(stderr, "Stack Memory Exhausted\n");
             break;
 
-        case E_USER_DEF_VAR_SIZE_OVERFLOW:
-            size = va_arg(ap, int);
-            fprintf(stderr, "Maximum size of user defined variable is %d, but got %d\n", MAX_USER_DEF_VAR_SIZE, size);
+        case E_INVALID_UDT_SIZE:
+            fprintf(stderr, "Maximum size of user defined variable is %d\n", DYNAMIC_MEM_ALLOC_BLOCK_SIZE);
             break;
 
         case E_USER_TYPE_REDECLARATION:
@@ -204,6 +205,11 @@ void compilerError(enum Error error, ...) {
             fprintf(stderr, "Field \"%s\" in user defined type has a undefined type\n", variableName);
             break;
 
+        case E_ALLOC_ON_NON_UDT:
+            variableName = va_arg(ap, char *);
+            fprintf(stderr, "Alloc should be used only on UDTs, used on \"%s\"\n", variableName);
+            break;
+
         case E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE:
             variableName = va_arg(ap, char *);
             givenType = va_arg(ap, int);
@@ -212,7 +218,9 @@ void compilerError(enum Error error, ...) {
             break;
 
         case E_ACCESS_NON_EXISTING_FIELD_OF_TYPE:
-            printf("error");
+            typeName = va_arg(ap, char *);
+            fieldName = va_arg(ap, char *);
+            fprintf(stderr, "Type \"%s\" has no field named \"%s\"\n", typeName, fieldName);
             break;
 
         case E_USER_TYPE_USED_BEFORE_DECLARATION:
@@ -220,10 +228,10 @@ void compilerError(enum Error error, ...) {
             fprintf(stderr, "User defined type \"%s\" is used before declaration\n", typeName);
             break;
 
-        case E_INVALID_SIZE_FOR_USER_DEFINED_TYPE:
+        case E_INVALID_SIZE_FOR_ALLOCATION:
             typeName = va_arg(ap, char *);
             size = va_arg(ap, int);
-            fprintf(stderr, "Size for user defined type \"%s\" should be between 1 and 8, but given %d\n", typeName, size);
+            fprintf(stderr, "Size for allocation \"%s\" should be between 1 and 8, but given %d\n", typeName, size);
             break;
 
         case E_ASSIGN_TYPE_MISMATCH:
@@ -246,8 +254,7 @@ void compilerError(enum Error error, ...) {
 
         case E_INVALID_SIZE_FOR_CLASS:
             className = va_arg(ap, char *);
-            size = va_arg(ap, int);
-            fprintf(stderr, "Number of fields in a class \"%s\" should be between 0 and 8, but given %d\n", className, size);
+            fprintf(stderr, "Number of fields in a class \"%s\" should be between 0 and 8\n", className);
             break;
 
         case E_ACCESS_NON_EXISTING_FIELD_OF_CLASS:
@@ -265,6 +272,25 @@ void compilerError(enum Error error, ...) {
             className = va_arg(ap, char *);
             methodName = va_arg(ap, char *);
             fprintf(stderr, "Class \"%s\" has no method named \"%s\"\n", className, methodName);
+            break;
+
+        case E_INVALID_DIMENSION:
+            dimension = va_arg(ap, int);
+            fprintf(stderr, "Dimension value of \"%d\" is invalid\n", dimension);
+            break;
+
+        case E_UNDEFINED_TYPE:
+            fprintf(stderr, "Use of undefine datatype\n");
+            break;
+
+        case E_USE_OF_NON_PRIMITIVE_TYPE_IN_TUPLE:
+            typeName = va_arg(ap, char *);
+            fprintf(stderr, "Tuple Type can contain only primitive type, got \"%s\"", typeName);
+            break;
+
+        case E_DUPLICATE_FIELD_IN_TUPLE:
+            fieldName = va_arg(ap, char *);
+            fprintf(stderr, "Tuple Type is having duplicate fields \"%s\"\n", fieldName);
             break;
 
         default:

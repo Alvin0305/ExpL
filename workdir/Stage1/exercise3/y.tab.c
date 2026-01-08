@@ -38,6 +38,10 @@
     int freeReg();
 
     regIndex codeGen(struct tnode *node);
+    void generateHeader();
+    void generateExitCode();
+    void store(int memAddr, int reg);
+    void write(int memAddr);
 
     FILE* target_file;
 #ifdef YYSTYPE
@@ -46,12 +50,12 @@
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-#line 23 "exprtree.y"
+#line 27 "exprtree.y"
 typedef union YYSTYPE {
     struct tnode * node;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 55 "y.tab.c"
+#line 59 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -368,11 +372,28 @@ static YYINT  *yylexp = 0;
 
 static YYINT  *yylexemes = 0;
 #endif /* YYBTYACC */
-#line 50 "exprtree.y"
+#line 57 "exprtree.y"
 
 void yyerror(char const *msg) {
     printf("[Error] : %s\n", msg);
     return;
+}
+
+void store(int memAddr, int reg) {
+    fprintf(target_file, "MOV [%d], R%d\n", memAddr, reg);
+}
+
+void write(int varMemAddr) {
+    int reg = getReg();
+    fprintf(target_file, "MOV R%d, \"%s\"\n", reg, "Write");
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "MOV R%d, %d\n", reg, -2);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "MOV R%d, [%d]\n", reg, varMemAddr);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "CALL 0\n");
 }
 
 int getReg() {
@@ -407,6 +428,23 @@ void operatorInstructionGen(char op, regIndex leftReg, regIndex rightReg) {
     }
 }
 
+void generateHeader() {
+    fprintf(target_file, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, 2056, 0, 0, 0, 0, 0, 0);
+    fprintf(target_file, "BRKP\n");
+    fprintf(target_file, "MOV SP, %d\n", 4097);
+}
+
+void generateExitCode() {
+    int reg = getReg();
+    fprintf(target_file, "MOV R%d, \"%s\"\n", reg, "Exit");
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "CALL 0\n");
+}
+
 regIndex codeGen(struct tnode *node) {
     if (!node) return -1;
 
@@ -432,7 +470,7 @@ int main() {
     target_file = fopen("result.xsm", "w");
     return yyparse();
 }
-#line 436 "y.tab.c"
+#line 474 "y.tab.c"
 
 /* For use in generated program */
 #define yydepth (int)(yystack.s_mark - yystack.s_base)
@@ -1103,45 +1141,48 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 35 "exprtree.y"
+#line 39 "exprtree.y"
 	{
-    codeGen(yystack.l_mark[-1].node);
+    generateHeader();
+    store(4096, codeGen(yystack.l_mark[-1].node));
+    write(4096);
+    generateExitCode();
     printf("Finished\n");
     exit(0);
 }
-#line 1113 "y.tab.c"
+#line 1154 "y.tab.c"
 break;
 case 2:
-#line 41 "exprtree.y"
+#line 48 "exprtree.y"
 	{ yyval.node = createOperatorNode('+', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1118 "y.tab.c"
+#line 1159 "y.tab.c"
 break;
 case 3:
-#line 42 "exprtree.y"
+#line 49 "exprtree.y"
 	{ yyval.node = createOperatorNode('-', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1123 "y.tab.c"
+#line 1164 "y.tab.c"
 break;
 case 4:
-#line 43 "exprtree.y"
+#line 50 "exprtree.y"
 	{ yyval.node = createOperatorNode('*', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1128 "y.tab.c"
+#line 1169 "y.tab.c"
 break;
 case 5:
-#line 44 "exprtree.y"
+#line 51 "exprtree.y"
 	{ yyval.node = createOperatorNode('/', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1133 "y.tab.c"
+#line 1174 "y.tab.c"
 break;
 case 6:
-#line 45 "exprtree.y"
+#line 52 "exprtree.y"
 	{ yyval.node = yystack.l_mark[-1].node; }
-#line 1138 "y.tab.c"
+#line 1179 "y.tab.c"
 break;
 case 7:
-#line 46 "exprtree.y"
+#line 53 "exprtree.y"
 	{ yyval.node = createLeafNode(yystack.l_mark[0].node->val); }
-#line 1143 "y.tab.c"
+#line 1184 "y.tab.c"
 break;
-#line 1145 "y.tab.c"
+#line 1186 "y.tab.c"
     default:
         break;
     }

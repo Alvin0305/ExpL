@@ -1,0 +1,9 @@
+Alvin
+6
+Alvin
+6
+CSE
+2023
+Banana
+10
+Machine is halting.

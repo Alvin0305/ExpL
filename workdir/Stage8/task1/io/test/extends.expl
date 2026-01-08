@@ -1,0 +1,44 @@
+type
+endtype
+
+class
+    Animal {
+        decl
+            str name;
+            int age;
+
+            void eat();
+            void drink();
+        enddecl
+    }
+
+    Dog extends Animal {
+        decl
+            str breed;
+
+            void bark(int times);
+        enddecl
+
+        void bark() {
+            decl
+            enddecl
+
+            begin
+                write("Bau bau");
+            end
+        }
+    }
+endclass
+
+decl
+enddecl
+
+int main() {
+    decl
+        Dog dog;
+    enddecl
+    begin
+        dog = new(Dog);
+        dog.bark();
+    end
+}

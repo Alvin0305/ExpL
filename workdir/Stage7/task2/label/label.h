@@ -1,10 +1,8 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#define MAX_LABEL_LENGTH 10
-
 typedef struct LabelTableEntry {
-    char labelName[MAX_LABEL_LENGTH];
+    char *labelName;
     int memAddr;
     struct LabelTableEntry *next;
 

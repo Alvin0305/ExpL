@@ -35,7 +35,6 @@ struct Node *createArrayAccessNode(struct Node *idNode, struct Node *indexExprNo
     arrayNode->nodeType = NODE_ARRAY_ACCESS;
     arrayNode->numVal = __NONE__;
     arrayNode->type = idUsageNode->type;
-    // arrayNode->typeTableEntry = idUsageNode->typeTableEntry;
     arrayNode->typeInfo = idUsageNode->typeInfo;
     arrayNode->varName = NULL;
 

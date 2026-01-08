@@ -12,9 +12,11 @@
 %option noinput
 %option nounput
 
+number [0-9]+
+
 %%
 
-[0-9]+          { yylval.node = createConstantNode(atoi(yytext)); return NUM; }
+{number}          { yylval.node = createConstantNode(atoi(yytext)); return NUM; }
 
 \"[^\n]*\"      { yylval.node = createStringLiteralNode(yytext); return STRING_LITERAL; }
 

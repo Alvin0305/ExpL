@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../class_table/class_table.h"
 #include "../define/constants.h"
 #include "../error_handler/error_handler.h"
 #include "../type_table/type_table.h"
@@ -15,7 +16,10 @@ static struct TupleType *tupleTableHead = NULL;
 
 struct TupleField *createTupleField(struct TypeInfo *type, char *name) {
     if (!isPrimitive(type->kind)) {
-        printf("[ERROR]\n");
+        compilerError(E_USE_OF_NON_PRIMITIVE_TYPE_IN_TUPLE, type->type        ? type->type->name
+                                                            : type->tupleType ? type->tupleType->name
+                                                            : type->_class    ? type->_class->name
+                                                                              : "NONE");
     }
 
     struct TupleField *field = (struct TupleField *)malloc(sizeof(struct TupleField));
@@ -36,7 +40,7 @@ struct TupleField *mergeTupleFields(struct TupleField *fields, struct TupleField
     struct TupleField *head = fields;
     while (head) {
         if (strcmp(head->name, field->name) == 0) {
-            printf("[error]\n");
+            compilerError(E_DUPLICATE_FIELD_IN_TUPLE, head->name);
         }
         prev = head;
         head = head->next;
@@ -59,6 +63,11 @@ static int countNumFields(struct TupleField *fields) {
 }
 
 struct TupleType *createNewTupleType(char *name) {
+    struct TupleType *alreadyExisting = lookupTupleTypeTable(name);
+    if (alreadyExisting) {
+        compilerError(E_TUPLE_TYPE_REDECLARATION, name);
+    }
+    
     struct TupleType *tupleType = (struct TupleType *)malloc(sizeof(struct TupleType));
 
     tupleType->name = strdup(name);

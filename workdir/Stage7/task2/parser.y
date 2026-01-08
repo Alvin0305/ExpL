@@ -5,7 +5,7 @@
     
     #include "node/node.h"
     #include "node/library/node_library.h"
-    #include "node/user_type/node_user_type.h"
+    #include "node/member_access/node_member_access.h"
     #include "node/pointer/node_pointer.h"
     #include "code_gen/code_gen.h"
     #include "code_gen/function/function.h"
@@ -57,7 +57,7 @@
 %type <node> inputStmt outputStmt allocStmt freeStmt initStmt newStmt
 %type <node> dimensionUsage
 %type <node> returnStmt 
-%type <node> fieldAssignStmt fieldAccess 
+%type <node> fieldAssignStmt memberAccess 
 %type <node> methodBodyBlock methodCall
 
 %type <classField> classFieldDecl classFieldsDeclList
@@ -101,6 +101,7 @@
 
 %left PLUS MINUS
 %left MUL DIV MOD
+%right UMINUS
 
 %%
 
@@ -360,14 +361,14 @@ stmt : inputStmt                                                    { $$ = $1; }
     ;
 
 newStmt : ID ASSIGN KW_NEW '(' ID ')'                               { $$ = createNewNode($1, $5); }
-    | fieldAccess ASSIGN KW_NEW '(' ID ')'                          { $$ = createNewNode($1, $5); }
+    | memberAccess ASSIGN KW_NEW '(' ID ')'                         { $$ = createNewNode($1, $5); }
     ;
 
 initStmt : KW_INIT '(' ')'                                          { $$ = createInitNode(); }
     ;
 
 allocStmt : ID ASSIGN KW_ALLOC '(' ')'                              { $$ = createAllocNode($1); }
-    | fieldAccess ASSIGN KW_ALLOC '(' ')'                           { $$ = createAllocNode($1); }
+    | memberAccess ASSIGN KW_ALLOC '(' ')'                          { $$ = createAllocNode($1); }
     | ID dimensionUsage ASSIGN KW_ALLOC '(' ')'                     { $$ = createAllocNode(createArrayAccessNode($1, $2)); }
     ;
 
@@ -393,7 +394,7 @@ assignmentStmt : ID ASSIGN expr SEMI                                { $$ = creat
     | fieldAssignStmt SEMI                                          { $$ = $1; }
     ;
 
-fieldAccess : fieldAccess DOT ID                                    { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
+memberAccess : memberAccess DOT ID                                  { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
     | ID dimensionUsage DOT ID                                      { $$ = createMemberAccessNode(createArrayAccessNode($1, $2), $4, 
                                                                       ACCESS_DOT, false, NULL); }
     | ID DOT ID                                                     { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
@@ -402,10 +403,10 @@ fieldAccess : fieldAccess DOT ID                                    { $$ = creat
     ;
 
 methodCall : ID DOT ID '(' argList ')'                              { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }
-    | fieldAccess DOT ID '(' argList ')'                            { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }
+    | memberAccess DOT ID '(' argList ')'                           { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }
     ;
 
-fieldAssignStmt : fieldAccess ASSIGN expr                           { $$ = createMemberAssignmentNode($1, $3); }
+fieldAssignStmt : memberAccess ASSIGN expr                          { $$ = createMemberAssignmentNode($1, $3); }
     ;
 
 compoundAssignment : ID ASSIGN_ADD expr                             { $$ = createCompoundAssignNode(NODE_ADD, $1, $3); }
@@ -433,7 +434,8 @@ repeatUntilStmt: KW_REPEAT stmtList KW_UNTIL '(' boolexpr ')' SEMI  { $$ = creat
 doWhileStmt: KW_DO stmtList KW_WHILE '(' boolexpr ')' SEMI          { $$ = createDoWhileNode($2, $5); }
     ;
 
-expr : expr PLUS expr                                               { $$ = createArithOpNode(NODE_ADD, $1, $3); }
+expr : MINUS expr %prec UMINUS                                      { $$ = createArithOpNode(NODE_SUB, createConstantNode(0), $2); }
+    | expr PLUS expr                                                { $$ = createArithOpNode(NODE_ADD, $1, $3); }
     | expr MINUS expr                                               { $$ = createArithOpNode(NODE_SUB, $1, $3); }
     | expr MUL expr                                                 { $$ = createArithOpNode(NODE_MUL, $1, $3); }
     | expr DIV expr                                                 { $$ = createArithOpNode(NODE_DIV, $1, $3); }
@@ -446,7 +448,7 @@ expr : expr PLUS expr                                               { $$ = creat
     | MUL ID                                                        { $$ = createDereferenceNode($2); }
     | AMPERSAND ID                                                  { $$ = createAddressToNode($2); }
     | funcCall                                                      { $$ = $1; }
-    | fieldAccess                                                   { $$ = $1; }
+    | memberAccess                                                  { $$ = $1; }
     | KW_NULL                                                       { $$ = createNullNode(); }
     | KW_INIT '('')'                                                { $$ = createInitNode(); }
     ;
@@ -484,8 +486,7 @@ void segFaultHandler(int sigNum) {
 }
 
 void yyerror(char const *msg) {
-    printf("[Error] : %s in line: %d [%s]\n", msg, lineNumber, yytext);
-    return;
+    fprintf(stderr, "Syntax Error: %s at '%s' (Line %d)\n", msg, yytext, lineNumber);
 }
 
 int main(int argc, char **argv) {

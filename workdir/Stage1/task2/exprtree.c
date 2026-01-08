@@ -101,7 +101,7 @@ void postfix_helper(struct tnode *root) {
 }
 
 void postfix(struct tnode *root) {
-    printf("[PRE FIX]\n");
+    printf("[POST FIX]\n");
     postfix_helper(root);
     printf("\n");
 }

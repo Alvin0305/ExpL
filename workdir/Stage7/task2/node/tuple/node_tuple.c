@@ -107,6 +107,7 @@ struct Node *createTupleAssignmentNode(struct Node *idNode, struct Node *fieldNo
 struct Node *createTuplePointerAssignmentNode(struct Node *idNode, struct Node *fieldNode, struct Node *exprNode) {
     struct Node *idUsageNode = createVariableUsageNode(idNode->varName);
 
+    // printf("here %d\n", idUsageNode->lSymbolTableEntry->isPtr);
     struct TupleType *tupleType = NULL;
     if (idUsageNode->lSymbolTableEntry) {
         tupleType = idUsageNode->lSymbolTableEntry->typeInfo->tupleType;

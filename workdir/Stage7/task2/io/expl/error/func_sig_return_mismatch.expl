@@ -1,0 +1,9 @@
+decl
+    int foo();
+enddecl
+
+str foo() {
+    begin
+        return "hi";
+    end
+}

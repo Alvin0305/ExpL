@@ -1,0 +1,9 @@
+decl
+    void a;
+enddecl
+
+int main() {
+    begin
+        write(a);
+    end
+}

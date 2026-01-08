@@ -14,7 +14,7 @@ static struct LabelTableEntry *tail = NULL;
 static struct LabelTableEntry *createNewLabelTableEntry(char *labelName, int memAddr) {
     struct LabelTableEntry *node = (struct LabelTableEntry *) malloc(sizeof(LabelTableEntry));
 
-    strcpy(node->labelName, labelName);
+    node->labelName = strdup(labelName);
     node->memAddr = memAddr;
     node->next = NULL;
 

@@ -36,7 +36,7 @@ C_SRCS = \
 	code_gen/array/array.c \
 	code_gen/arithmetic/arithmetic.c \
 	code_gen/library/library.c \
-	code_gen/user_type/user_type.c \
+	code_gen/member_access/member_access.c \
 	code_gen/pointer/pointer.c \
 	\
 	node/node.c \
@@ -45,7 +45,7 @@ C_SRCS = \
 	node/function/node_function.c \
 	node/tuple/node_tuple.c \
 	node/library/node_library.c \
-	node/user_type/node_user_type.c \
+	node/member_access/node_member_access.c \
 	node/pointer/node_pointer.c \
 	\
 	register/register.c \

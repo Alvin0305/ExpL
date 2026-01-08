@@ -55,28 +55,6 @@ struct Node *createFunctionCallNode(struct Node *functionNameNode, struct Node *
     return node;
 }
 
-// struct tnode *createFunctionDefinitionNode(struct tnode *returnTypeNode, struct tnode *functionNameNode,
-//                                            struct tnode *paramListNode, struct tnode *localDeclarationsNode,
-//                                            struct tnode *functionBodyNode) {
-
-//     struct tnode *declBodyConnectorNode = createConnectorNode(localDeclarationsNode, functionBodyNode);
-//     struct tnode *paramDeclConnectorNode = createConnectorNode(paramListNode, declBodyConnectorNode);
-//     struct tnode *typeNameNode = createConnectorNode(returnTypeNode, functionNameNode);
-//     struct tnode *definitionNode = createConnectorNode(typeNameNode, paramDeclConnectorNode);
-
-//     definitionNode->nodeType = NODE_FUNC_DEF;
-//     checkFunctionSignature(definitionNode);
-
-//     GSymbol *functionEntry = lookupGST(functionNameNode->varName);
-//     if (!functionEntry) {
-//         compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, functionNameNode->varName);
-//     }
-
-//     generateFunctionCode(functionEntry->functionLabel, functionBodyNode);
-//     freeLocalSymbolTable();
-//     return NULL;
-// }
-
 struct Node *createReturnNode(struct Node *exprNode) {
     if (!currentFunction && !activeMethod) return NULL;
 

@@ -32,8 +32,8 @@ static struct TypeTable *createTypeTableEntry(char *name, struct TypeField *fiel
     struct TypeTable *typeTableEntry = (struct TypeTable *)malloc(sizeof(struct TypeTable));
     int size = getSizeFromFields(fields);
 
-    if (size > MAX_USER_DEF_VAR_SIZE) {
-        compilerError(E_USER_DEF_VAR_SIZE_OVERFLOW, size);
+    if (size > DYNAMIC_MEM_ALLOC_BLOCK_SIZE) {
+        compilerError(E_INVALID_UDT_SIZE, size);
     }
 
     typeTableEntry->name = strdup(name);
@@ -54,6 +54,9 @@ static struct TypeField *createTypeFieldEntry(char *name, struct TypeTable *type
     field->next = NULL;
 
     fieldIndex++;
+    if (fieldIndex > DYNAMIC_MEM_ALLOC_BLOCK_SIZE) {
+        compilerError(E_INVALID_UDT_SIZE);
+    }
 
     return field;
 }
@@ -81,7 +84,6 @@ struct TypeTable *createNewTypeForTuple(struct TupleType *tupleType) {
     }
 
     setFieldsOfType(type->name, head);
-    // type->isPtr = false;
     return type;
 }
 
@@ -130,7 +132,6 @@ struct TypeTable *lookupTT(char *name) {
         head = head->next;
     }
 
-    // printf("%s not found in TT\n", name);
     printTypeTable();
 
     return NULL;

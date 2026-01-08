@@ -1,1 +1,1 @@
-[ERROR E1002] Line 30: Class "INT" has no field named "x"
+[ERROR E804] Line 30: Type "INT" has no field named "x"

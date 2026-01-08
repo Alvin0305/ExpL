@@ -31,15 +31,7 @@ static LSymbol *createLSTEntry(char *name, struct TypeInfo *typeInfo, bool isPar
         entry->binding = -(++paramCount + 2);
     } else {
         entry->binding = localBinding;
-        if (typeInfo->kind == CLASS) {
-            localBinding += 1;
-        } else if (typeInfo->kind == TUPLE) {
-            localBinding += typeInfo->tupleType->size;
-        } else if (typeInfo->kind == TYPE) {
-            localBinding += 1;
-        } else {
-            localBinding += sizeOfTypeOnStack(typeInfo, NULL, isPtr, false);
-        }
+        localBinding += sizeOfTypeOnStack(typeInfo, NULL, isPtr, false);
     }
 
     entry->name = strdup(name);
@@ -68,7 +60,23 @@ struct LSymbol *lookupLST(char *name) {
     return NULL;
 }
 
+static void checkLSTEntry(struct TypeInfo *typeInfo, char *name, bool isParam) {
+    struct LSymbol *alreadyExisting = lookupLST(name);
+    if (alreadyExisting) {
+        if (isParam) {
+            compilerError(E_PARAMETER_DUPLICATION, name);
+        } else {
+            compilerError(E_VARIABLE_REDECLARATION, name);
+        }
+    }
+
+    if (typeInfo->kind == VOID) {
+        compilerError(E_VARIABLE_WITH_TYPE_VOID, name);
+    }
+}
+
 struct LSymbol *installToLST(struct TypeInfo *typeInfo, char *name, bool isPtr, bool isParam, struct Dimension *dimensions) {
+    checkLSTEntry(typeInfo, name, isParam);
     struct LSymbol *symbol = createLSTEntry(name, typeInfo, isParam, isPtr);
 
     if (!LSTHead) {
@@ -102,7 +110,6 @@ void printLST() {
     while (head) {
         if (head->typeInfo->kind == TUPLE) {
             printf("%s [%s] %d (%s)\n", head->name, head->typeInfo->tupleType->name, head->binding, booleanToString(head->isPtr));
-            printTupleType(head->typeInfo->tupleType);
         } else if (head->typeInfo->kind == CLASS) {
             printf("%s [%s] %d (%s)\n", head->name, head->typeInfo->_class->name, head->binding, booleanToString(head->isPtr));
         } else {

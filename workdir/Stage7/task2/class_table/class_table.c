@@ -133,6 +133,10 @@ struct ClassField *createNewClassField(struct TypeInfo *typeInfo, char *name) {
     field->next = NULL;
     field->fieldIndex = numField++;
 
+    if (numField > 8) {
+        compilerError(E_INVALID_SIZE_FOR_CLASS, activeClass->name);
+    }
+ 
     return field;
 }
 

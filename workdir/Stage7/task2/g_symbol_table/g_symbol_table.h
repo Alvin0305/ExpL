@@ -27,15 +27,16 @@ typedef struct GSymbol {
 
 extern int stackTop;
 
+// core methods
 struct GSymbol *lookupGST(char *name);
+struct GSymbol *installToGST(struct TypeInfo *typeInfo, char *name, bool isPtr, bool isFunction, struct Param *params,
+                             struct Dimension *dimensions);
+
+// utilities
+void populateGST(struct TypeInfo *typeInfo, struct VarList *vars);
+void checkFunctionSignature(struct TypeInfo *typeInfo, char *funcName, struct Param *givenParams);
 
 // debug
 void printGST();
-
-void checkFunctionSignature(struct TypeInfo *typeInfo, char *funcName, struct Param *givenParams);
-
-struct GSymbol *installToGST(struct TypeInfo *typeInfo, char *name, bool isPtr, bool isFunction, struct Param *params,
-                             struct Dimension *dimensions);
-void populateGST(struct TypeInfo *typeInfo, struct VarList *vars);
 
 #endif

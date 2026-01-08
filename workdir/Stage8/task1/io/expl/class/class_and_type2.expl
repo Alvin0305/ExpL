@@ -1,0 +1,49 @@
+type
+    box{
+        int v;
+    }
+endtype
+
+class
+    holder{
+        decl
+            box b;
+            int set(int x);
+            int show();
+        enddecl
+
+        int set(int x){
+            decl enddecl
+            begin
+                self.b = alloc();
+                self.b.v = x;
+                return 1;
+            end
+        }
+
+        int show(){
+            decl enddecl
+            begin
+                write(self.b.v);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    holder h;
+enddecl
+
+int main(){
+    decl
+        int x; 
+    enddecl
+    begin
+        x = initialize();
+        h = new(holder);
+        h.set(77);
+        h.show();
+        return 0;
+    end
+}

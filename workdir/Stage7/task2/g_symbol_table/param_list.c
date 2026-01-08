@@ -10,13 +10,12 @@
 #include "g_symbol_table.h"
 #include "param_list.h"
 
-// static methods
-
 struct Param *createParam(struct TypeInfo *typeInfo, char *name, bool isPtr) {
     struct Param *param = (struct Param *)malloc(sizeof(struct Param));
     param->name = strdup(name);
     param->isPtr = isPtr;
     param->typeInfo = typeInfo;
+    printf("created param %s\n", name);
 
     return param;
 }
@@ -70,6 +69,7 @@ struct Param *mergeParams(struct Param *params, struct Param *param) {
     struct Param *head = params;
     while (head) {
         if (strcmp(head->name, param->name) == 0) {
+            printf("error here\n");
             compilerError(E_PARAMETER_DUPLICATION, "", head->name);
         }
         prev = head;
@@ -78,24 +78,4 @@ struct Param *mergeParams(struct Param *params, struct Param *param) {
 
     prev->next = param;
     return params;
-}
-
-struct Arg *createArg(struct Node *arg) {
-    struct Arg *newArg = (struct Arg *)malloc(sizeof(struct Arg));
-
-    newArg->arg = arg;
-    newArg->next = NULL;
-
-    return newArg;
-}
-
-struct Arg *mergeArgs(struct Arg *args, struct Arg *arg) {
-    struct Arg *head = args;
-
-    while (head->next) {
-        head = head->next;
-    }
-
-    head->next = arg;
-    return args;
 }

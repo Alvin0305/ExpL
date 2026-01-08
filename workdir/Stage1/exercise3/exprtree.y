@@ -16,6 +16,10 @@
     int freeReg();
 
     regIndex codeGen(struct tnode *node);
+    void generateHeader();
+    void generateExitCode();
+    void store(int memAddr, int reg);
+    void write(int memAddr);
 
     FILE* target_file;
 %}
@@ -33,7 +37,10 @@
 %%
 
 program : expr END {
-    codeGen($1);
+    generateHeader();
+    store(4096, codeGen($1));
+    write(4096);
+    generateExitCode();
     printf("Finished\n");
     exit(0);
 };
@@ -51,6 +58,23 @@ expr : PLUS expr expr { $$ = createOperatorNode('+', $2, $3); }
 void yyerror(char const *msg) {
     printf("[Error] : %s\n", msg);
     return;
+}
+
+void store(int memAddr, int reg) {
+    fprintf(target_file, "MOV [%d], R%d\n", memAddr, reg);
+}
+
+void write(int varMemAddr) {
+    int reg = getReg();
+    fprintf(target_file, "MOV R%d, \"%s\"\n", reg, "Write");
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "MOV R%d, %d\n", reg, -2);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "MOV R%d, [%d]\n", reg, varMemAddr);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "CALL 0\n");
 }
 
 int getReg() {
@@ -83,6 +107,23 @@ void operatorInstructionGen(char op, regIndex leftReg, regIndex rightReg) {
             fprintf(target_file, "DIV R%d, R%d\n", leftReg, rightReg);
             break;
     }
+}
+
+void generateHeader() {
+    fprintf(target_file, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, 2056, 0, 0, 0, 0, 0, 0);
+    fprintf(target_file, "BRKP\n");
+    fprintf(target_file, "MOV SP, %d\n", 4097);
+}
+
+void generateExitCode() {
+    int reg = getReg();
+    fprintf(target_file, "MOV R%d, \"%s\"\n", reg, "Exit");
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "PUSH R%d\n", reg);
+    fprintf(target_file, "CALL 0\n");
 }
 
 regIndex codeGen(struct tnode *node) {

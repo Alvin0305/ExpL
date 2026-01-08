@@ -1,0 +1,46 @@
+class
+    demo{
+        decl
+            int x;
+            int test();
+            int show();
+        enddecl
+
+        int show(){
+            decl enddecl
+            begin
+                write(self.x);
+                return 1;
+            end
+        }
+
+        int test(){
+            decl
+                demo d2;
+            enddecl
+            begin
+                d2 = new(demo);
+                d2.x = 20;
+                d2.show();
+
+                self.x = 5;
+                self.show();
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    demo d1;
+enddecl
+
+int main(){
+    decl enddecl
+    begin
+        initialize();
+        d1 = new(demo);
+        d1.test();
+        return 0;
+    end
+}

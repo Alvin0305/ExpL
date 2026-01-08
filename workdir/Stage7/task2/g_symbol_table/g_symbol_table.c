@@ -3,12 +3,12 @@
 #include "../define/constants.h"
 #include "../error_handler/error_handler.h"
 #include "../label/label.h"
+#include "../type_info/dimension.h"
 #include "../type_info/type_info.h"
 #include "../type_table/type_table.h"
 #include "../util/util.h"
 #include "../util/var_list.h"
 #include "param_list.h"
-#include "../type_info/dimension.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -72,8 +72,20 @@ void populateGST(struct TypeInfo *typeInfo, struct VarList *vars) {
     }
 }
 
+static void checkGSTEntry(struct TypeInfo *typeInfo, char *name, bool isFunction) {
+    struct GSymbol *alreadyExisting = lookupGST(name);
+    if (alreadyExisting) {
+        compilerError(E_VARIABLE_REDECLARATION, name);
+    }
+
+    if (!isFunction && typeInfo->kind == VOID) {
+        compilerError(E_VARIABLE_WITH_TYPE_VOID, name);
+    }
+}
+
 struct GSymbol *installToGST(struct TypeInfo *typeInfo, char *name, bool isPtr, bool isFunction, struct Param *params,
                              struct Dimension *dimensions) {
+    checkGSTEntry(typeInfo, name, isFunction);
     struct ClassTable *_class = typeInfo->_class;
     struct TypeTable *type = typeInfo->type;
 
@@ -159,8 +171,6 @@ void checkParamsForFunction(struct Param *givenParams, struct Param *expectedPar
 
 void checkFunctionSignature(struct TypeInfo *typeInfo, char *funcName, struct Param *givenParams) {
     struct GSymbol *entry = lookupGST(funcName);
-    printParamList(givenParams);
-    printParamList(entry->paramList);
 
     if (!entry) {
         compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, funcName);
