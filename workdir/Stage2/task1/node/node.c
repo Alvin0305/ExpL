@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <string.h>
 #include "node.h"
 #include "../define/constants.h"
+#include <stdlib.h>
+#include <string.h>
 
 struct tnode *createTreeNode(int val, int nodeType, char *varName, struct tnode *left, struct tnode *right) {
     if (val != NOT_CONSTANT) {
@@ -9,7 +9,7 @@ struct tnode *createTreeNode(int val, int nodeType, char *varName, struct tnode 
     } else if (varName) {
         return createVariableNode(varName, INT);
     } else {
-        struct tnode *node = (tnode*) malloc(sizeof(tnode));
+        struct tnode *node = (tnode *)malloc(sizeof(tnode));
 
         node->left = left;
         node->right = right;
@@ -22,8 +22,8 @@ struct tnode *createTreeNode(int val, int nodeType, char *varName, struct tnode 
 }
 
 struct tnode *createEmptyNode() {
-    struct tnode *node = (struct tnode*) malloc(sizeof(tnode));
-    
+    struct tnode *node = (struct tnode *)malloc(sizeof(tnode));
+
     node->left = NULL;
     node->right = NULL;
     node->nodeType = NODE_EMPTY;
@@ -33,7 +33,7 @@ struct tnode *createEmptyNode() {
 
 struct tnode *createConstantNode(int val, int type) {
     struct tnode *node = createEmptyNode();
-    
+
     node->nodeType = NODE_CONSTANT;
     node->val = val;
     node->varName = NULL;
@@ -44,12 +44,12 @@ struct tnode *createConstantNode(int val, int type) {
 
 struct tnode *createVariableNode(char *varName, int type) {
     struct tnode *node = createEmptyNode();
-    
+
     node->nodeType = NODE_VARIABLE;
     node->val = NOT_CONSTANT;
     node->type = type;
 
-    node->varName = (char *) malloc(strlen(varName) + 1);
+    node->varName = (char *)malloc(strlen(varName) + 1);
     strcpy(node->varName, varName);
 
     return node;
@@ -101,7 +101,7 @@ struct tnode *createReadNode(tnode *idNode) {
     node->nodeType = NODE_READ;
     node->type = NONE;
     node->val = NOT_CONSTANT;
-    node->varName = NULL;   
+    node->varName = NULL;
 
     return node;
 }
@@ -118,10 +118,8 @@ struct tnode *createWriteNode(tnode *exprNode) {
     return node;
 }
 
-void print_helper(struct tnode *root) {
-    if (!root) return;
-    
-    switch(root->nodeType) {
+void printNode(struct tnode *node) {
+    switch (node->nodeType) {
         case NODE_CONNECTOR:
             printf("CONNECTOR\n");
             break;
@@ -143,17 +141,17 @@ void print_helper(struct tnode *root) {
             break;
 
         case NODE_CONSTANT:
-            printf("%d\n", root->val);
+            printf("%d\n", node->val);
             break;
 
         case NODE_VARIABLE:
-            printf("%s\n", root->varName);
+            printf("%s\n", node->varName);
             break;
 
         case NODE_ADD:
             printf("+\n");
             break;
-        
+
         case NODE_SUB:
             printf("-\n");
             break;
@@ -166,9 +164,22 @@ void print_helper(struct tnode *root) {
             printf("/\n");
             break;
     }
+}
+
+void print_helper(struct tnode *root) {
+    static int indent = 0;
+    if (!root) return;
+
+    for (int i = 0; i < indent; i++) {
+        printf(" ");
+    }
+    printf("|-");
+    printNode(root);
+    indent++;
 
     print_helper(root->left);
     print_helper(root->right);
+    indent--;
 }
 
 void print(struct tnode *root) {
@@ -181,58 +192,12 @@ void inorder_helper(struct tnode *root) {
     if (!root) return;
 
     inorder_helper(root->left);
-    
-    switch(root->nodeType) {
-        case NODE_CONNECTOR:
-            printf("CONNECTOR\n");
-            break;
-
-        case NODE_ASSIGN:
-            printf("ASSIGN\n");
-            break;
-
-        case NODE_READ:
-            printf("READ\n");
-            break;
-
-        case NODE_WRITE:
-            printf("WRITE\n");
-            break;
-
-        case NODE_EMPTY:
-            printf("EMPTY\n");
-            break;
-
-        case NODE_CONSTANT:
-            printf("%d\n", root->val);
-            break;
-
-        case NODE_VARIABLE:
-            printf("%s\n", root->varName);
-            break;
-
-        case NODE_ADD:
-            printf("+\n");
-            break;
-        
-        case NODE_SUB:
-            printf("-\n");
-            break;
-
-        case NODE_MUL:
-            printf("*\n");
-            break;
-
-        case NODE_DIV:
-            printf("/\n");
-            break;
-    }
-
+    printNode(root);
     inorder_helper(root->right);
 }
 
 void print_inorder(struct tnode *root) {
-    printf("[PRINTING IN INORDER]\n");
+    printf("[PRINTING IN INORDER]");
     inorder_helper(root);
     printf("\n");
 }

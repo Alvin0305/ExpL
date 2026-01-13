@@ -1,0 +1,3 @@
+In class C f0
+1
+Machine is halting.

@@ -1,0 +1,1 @@
+[ERROR E502] Line 9: Expected type for param "a" in function "foo" is STRING, but got INT

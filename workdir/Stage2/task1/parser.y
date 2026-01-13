@@ -36,7 +36,6 @@
 %%
 
 program : KW_BEGIN statementList KW_END {
-        generateHeader();
         print($2);
         print_inorder($2);
         printf("Finished\n");
@@ -77,121 +76,6 @@ expr : expr PLUS expr { $$ = createArithOpNode(NODE_ADD, $1, $3); }
 void yyerror(char const *msg) {
     printf("[Error] : %s\n", msg);
     return;
-}
-
-int getReg() {
-    if (regCount == totalRegs) {
-        freeReg();
-        return getReg();
-    } else {
-        return regCount++;
-    }
-}
-
-int freeReg() {
-    if (regCount != 0) {
-        return regCount--;
-    }
-}
-
-void generateHeader() {
-    fprintf(target_file, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", 
-        0, 2056, 0, 0, 0, 0, 0, 0);
-    fprintf(target_file, "BRKP\n");
-}
-
-void operatorInstructionGen(char op, regIndex leftReg, regIndex rightReg) {
-    switch (op) {
-        case '+':
-            fprintf(target_file, "ADD R%d, R%d\n", leftReg, rightReg);
-            break;
-        case '-':
-            fprintf(target_file, "SUB R%d, R%d\n", leftReg, rightReg);
-            break;
-        case '*':
-            fprintf(target_file, "MUL R%d, R%d\n", leftReg, rightReg);
-            break;
-        case '/':
-            fprintf(target_file, "DIV R%d, R%d\n", leftReg, rightReg);
-            break;
-    }
-}
-
-regIndex codeGen(struct tnode *node) {
-    if (!node) return -1;
-
-    int leftReg = codeGen(node->left);
-    int rightReg = codeGen(node->right);
-
-    switch(node->nodeType) {
-        case NODE_CONSTANT:
-            int newReg = getReg();
-            fprintf(target_file, "MOV R%d, %d\n", newReg, node->val);
-
-            return newReg;
-
-        case NODE_VARIABLE:
-            int offset = (int) node->varName[0] - 'a';
-            int memoryAddress = STACK_START + offset;
-
-            return memoryAddress;
-        
-        case NODE_ADD:
-            fprintf(target_file, "ADD R%d, R%d\n", leftReg, rightReg);
-            return leftReg;
-        
-        case NODE_SUB:
-            fprintf(target_file, "SUB R%d, R%d\n", leftReg, rightReg);
-            return leftReg;
-
-        case NODE_MUL:
-            fprintf(target_file, "MUL R%d, R%d\n", leftReg, rightReg);
-            return leftReg;
-
-        case NODE_DIV:
-            fprintf(target_file, "DIV R%d, R%d\n", leftReg, rightReg);
-            return leftReg;
-
-        
-
-    }
-
-    if (node->nodeType == NODE_CONSTANT) {
-        
-    } else if (node->nodeType == NODE_VARIABLE) {
-        
-    } else if (node->nodeType == NODE_ADD) {
-        
-    } else if (node->nodeType == NODE_SUB) {
-        fprintf(target_file, "SUB R%d, R%d\n", leftReg, rightReg);
-
-        return leftReg;
-    } else if (node->nodeType == NODE_MUL) {
-        fprintf(target_file, "MUL R%d, R%d\n", leftReg, rightReg);
-
-        return leftReg;
-    } else if (node->nodeType == NODE_DIV) {
-        fprintf(target_file, "DIV R%d, R%d\n", leftReg, rightReg);
-
-        return leftReg;
-    }
-
-    // int leftReg = codeGen(node->left);
-    // int rightReg = codeGen(node->right);
-
-    // if (!node->op) {
-    //     int newReg = getReg();
-    //     fprintf(target_file, "MOV R%d, %d\n", newReg, node->val);
-
-    //     return newReg;
-    // } else if (leftReg != -1 && rightReg != -1) {
-    //     operatorInstructionGen(node->op[0], leftReg, rightReg);
-    //     freeReg();
-
-    //     return leftReg;
-    // } else {
-    //     return -1;
-    // }
 }
 
 int main() {

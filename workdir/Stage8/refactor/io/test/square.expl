@@ -1,0 +1,34 @@
+class
+    square{
+        decl
+            int sq(int x);
+        enddecl
+
+        int sq(int x){
+            decl enddecl
+            begin
+                write(x);
+                return x * x;
+            end
+        }
+    }
+endclass
+
+decl
+    square s;
+enddecl
+
+int main(){
+    decl
+        int r;
+    enddecl
+    begin
+        r = initialize();
+        s = new(square);
+        write(10);
+        r = s.sq(7);
+        write("here");
+        write(r);
+        return 0;
+    end
+}

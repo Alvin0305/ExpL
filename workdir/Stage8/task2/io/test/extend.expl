@@ -1,0 +1,61 @@
+class 
+    A {
+        decl
+            int x;
+            int foo();
+            A create(int x);
+            int func();
+        enddecl
+        
+        int foo() {
+            begin
+                write(self);
+                write(self.x);
+                return 10;
+            end
+        }
+
+        A create(int x) {
+            decl
+                A n;
+            enddecl
+            begin
+                n = new(A);
+                n.x = x;
+
+                return n;
+            end
+        }
+
+        int func() {
+            begin
+                self.x = self.x + 1;
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    A a, b;
+    int r;
+enddecl
+
+int main() {
+    begin
+        r = initialize();
+        r = 20;
+        brkp;
+        a = new(A);
+        a.x = 40;
+        brkp;
+        r = a.foo();
+        write(r);
+        a.func();
+        write(a.x);
+
+        b = a.create(12);
+        write(b);
+        write(b.x);
+    end
+}

@@ -1,0 +1,36 @@
+class
+    A {
+        decl
+            int bar();
+        enddecl
+
+        int bar() {
+            decl
+            enddecl
+            begin
+                write(100);
+                return 100;
+            end
+        }
+    }
+
+    B extends A {
+        decl
+        enddecl
+    }
+endclass
+
+decl
+    A a;
+enddecl
+
+int main() {
+    decl
+        int temp;
+    enddecl
+    begin
+        temp = initialize();
+        a = new(B);
+        write(a.bar());
+    end
+}

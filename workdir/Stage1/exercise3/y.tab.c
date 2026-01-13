@@ -27,6 +27,8 @@
     #include "exprtree.c"
 
     #define regIndex int
+    extern FILE *yyin;
+    extern char *yytext;
 
     int yylex(void);
     void yyerror(char const *msg);
@@ -50,12 +52,12 @@
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-#line 27 "exprtree.y"
+#line 29 "exprtree.y"
 typedef union YYSTYPE {
     struct tnode * node;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 59 "y.tab.c"
+#line 61 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -372,10 +374,10 @@ static YYINT  *yylexp = 0;
 
 static YYINT  *yylexemes = 0;
 #endif /* YYBTYACC */
-#line 57 "exprtree.y"
+#line 59 "exprtree.y"
 
 void yyerror(char const *msg) {
-    printf("[Error] : %s\n", msg);
+    printf("[Error] : %s (%s)\n", msg, yytext);
     return;
 }
 
@@ -467,10 +469,11 @@ regIndex codeGen(struct tnode *node) {
 }
 
 int main() {
+    yyin = fopen("in.expl", "r");
     target_file = fopen("result.xsm", "w");
     return yyparse();
 }
-#line 474 "y.tab.c"
+#line 477 "y.tab.c"
 
 /* For use in generated program */
 #define yydepth (int)(yystack.s_mark - yystack.s_base)
@@ -1141,7 +1144,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 39 "exprtree.y"
+#line 41 "exprtree.y"
 	{
     generateHeader();
     store(4096, codeGen(yystack.l_mark[-1].node));
@@ -1150,39 +1153,39 @@ case 1:
     printf("Finished\n");
     exit(0);
 }
-#line 1154 "y.tab.c"
+#line 1157 "y.tab.c"
 break;
 case 2:
-#line 48 "exprtree.y"
+#line 50 "exprtree.y"
 	{ yyval.node = createOperatorNode('+', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1159 "y.tab.c"
+#line 1162 "y.tab.c"
 break;
 case 3:
-#line 49 "exprtree.y"
+#line 51 "exprtree.y"
 	{ yyval.node = createOperatorNode('-', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1164 "y.tab.c"
+#line 1167 "y.tab.c"
 break;
 case 4:
-#line 50 "exprtree.y"
+#line 52 "exprtree.y"
 	{ yyval.node = createOperatorNode('*', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1169 "y.tab.c"
+#line 1172 "y.tab.c"
 break;
 case 5:
-#line 51 "exprtree.y"
+#line 53 "exprtree.y"
 	{ yyval.node = createOperatorNode('/', yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1174 "y.tab.c"
+#line 1177 "y.tab.c"
 break;
 case 6:
-#line 52 "exprtree.y"
+#line 54 "exprtree.y"
 	{ yyval.node = yystack.l_mark[-1].node; }
-#line 1179 "y.tab.c"
+#line 1182 "y.tab.c"
 break;
 case 7:
-#line 53 "exprtree.y"
+#line 55 "exprtree.y"
 	{ yyval.node = createLeafNode(yystack.l_mark[0].node->val); }
-#line 1184 "y.tab.c"
+#line 1187 "y.tab.c"
 break;
-#line 1186 "y.tab.c"
+#line 1189 "y.tab.c"
     default:
         break;
     }

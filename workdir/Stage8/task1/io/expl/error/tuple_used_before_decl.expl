@@ -1,0 +1,3 @@
+decl
+    MyTuple t;
+enddecl

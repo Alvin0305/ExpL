@@ -4,7 +4,7 @@
 #define NOT_CONSTANT 1000000
 #define NO_RETURN -100
 
-#define SOURCE_FILE "io/if.a"
+#define SOURCE_FILE "io/if_else.expl"
 #define OUTPUT_FILE "io/result.xsm"
 
 #define STACK_START 4096

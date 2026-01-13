@@ -1,0 +1,3 @@
+A::foo
+100
+Machine is halting.

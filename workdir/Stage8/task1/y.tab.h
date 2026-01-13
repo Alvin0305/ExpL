@@ -65,6 +65,7 @@
 #define ID 318
 #define NUM 319
 #define STRING_LITERAL 320
+#define UMINUS 321
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1

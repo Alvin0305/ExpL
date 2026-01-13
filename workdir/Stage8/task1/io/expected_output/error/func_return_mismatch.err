@@ -1,0 +1,1 @@
+[ERROR E509] Line 7: Expected return type of function "foo" is INT, but got STRING

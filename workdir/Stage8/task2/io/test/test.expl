@@ -1,0 +1,29 @@
+type
+endtype
+
+class
+endclass
+
+decl
+    int array[10];
+enddecl
+
+int main() {
+    decl
+        int i;
+    enddecl
+    
+    begin
+        i = 0;
+        while (i < 5) do
+            array[i] = i;
+            i++;
+        endwhile
+
+        i = 0;
+        while (i < 5) do
+            write(array[i]);
+            i++;
+        endwhile
+    end
+}

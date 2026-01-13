@@ -61,11 +61,11 @@ static void printClassMethodsOfClass(struct ClassTable *_class) {
     while (method) {
         struct TypeInfo *returnType = method->returnType;
         if (returnType->kind == TUPLE) {
-            printf("  - %d %s %s\n", method->methodIndex, method->name, returnType->tupleType->name);
+            printf("  - %d %s %s %d\n", method->methodIndex, method->name, returnType->tupleType->name, method->methodLabel);
         } else if (returnType->kind == CLASS) {
-            printf("  - %d %s %s\n", method->methodIndex, method->name, returnType->_class->name);
+            printf("  - %d %s %s %d\n", method->methodIndex, method->name, returnType->_class->name, method->methodLabel);
         } else {
-            printf("  - %d %s %s\n", method->methodIndex, method->name, returnType->type->name);
+            printf("  - %d %s %s %d\n", method->methodIndex, method->name, returnType->type->name, method->methodLabel);
         }
         printClassMethodParam(method->params);
         method = method->next;
@@ -93,56 +93,65 @@ static struct Param *addSelfParam(struct Param *params) {
     return selfParam;
 }
 
-static struct ClassField *copyClassField(struct ClassField *field) {
+static ClassField *copyOfClassField(struct ClassField *field) {
     struct ClassField *copy = (struct ClassField *)malloc(sizeof(struct ClassField));
-
     copy->name = strdup(field->name);
+    copy->fieldIndex = field->fieldIndex;
     copy->typeInfo = field->typeInfo;
     copy->next = NULL;
-    copy->fieldIndex = field->fieldIndex;
 
     return copy;
 }
 
-static struct ClassMethod *copyClassMethod(struct ClassMethod *method) {
+static ClassMethod *copyOfClassMethod(struct ClassMethod *method) {
     struct ClassMethod *copy = (struct ClassMethod *)malloc(sizeof(struct ClassMethod));
-
     copy->name = strdup(method->name);
     copy->methodIndex = method->methodIndex;
     copy->methodLabel = method->methodLabel;
-    copy->next = NULL;
     copy->params = method->params;
     copy->returnType = method->returnType;
+    copy->next = NULL;
 
     return copy;
 }
 
-static void copyFieldsAndMethodsToChild(struct ClassTable *childClass, struct ClassTable *parentClass) {
-    struct ClassField *field = NULL;
-    struct ClassField *parentField = parentClass->fields;
+static void copyFieldsToChild(struct ClassTable *_class) {
+    struct ClassTable *parentClass = _class->parentClass;
+    struct ClassField *newField = NULL;
 
-    while (parentField) {
-        field = mergeClassFields(field, copyClassField(parentField));
-        parentField = parentField->next;
+    struct ClassField *field = parentClass->fields;
+    while (field) {
+        newField = mergeClassFields(newField, copyOfClassField(field));
+        field = field->next;
     }
-    childClass->fields = field;
-    childClass->numFields = parentClass->numFields;
 
-    struct ClassMethod *method = NULL;
-    struct ClassMethod *parentMethod = parentClass->methods;
-
-    while (parentMethod) {
-        method = mergeClassMethods(method, copyClassMethod(parentMethod));
-        parentMethod = parentMethod->next;
-    }
-    childClass->methods = method;
-    childClass->numMethods = parentClass->numMethods;
+    _class->fields = newField;
+    _class->numFields = parentClass->numFields;
 
     numField = parentClass->numFields;
+}
+
+static void copyMethodsToChild(struct ClassTable *_class) {
+    struct ClassTable *parentClass = _class->parentClass;
+    struct ClassMethod *newMethod = NULL;
+
+    struct ClassMethod *method = parentClass->methods;
+    while (method) {
+        newMethod = mergeClassMethods(newMethod, copyOfClassMethod(method));
+        method = method->next;
+    }
+
+    _class->methods = newMethod;
+    _class->numMethods = parentClass->numMethods;
+
     numMethods = parentClass->numMethods;
 }
 
 struct ClassTable *createNewClass(char *name, char *parentClassName) {
+    struct ClassTable *alreadyExisting = lookupCT(name);
+    if (alreadyExisting) {
+        compilerError(E_CLASS_REDECLARATION, name);
+    }
     struct ClassTable *_class = (struct ClassTable *)malloc(sizeof(struct ClassTable));
 
     _class->name = strdup(name);
@@ -158,13 +167,14 @@ struct ClassTable *createNewClass(char *name, char *parentClassName) {
     numMethods = 0;
 
     if (parentClassName) {
-        struct ClassTable *parentClass = lookupCT(parentClassName);
-        if (!parentClass) {
-            printf("Class %s used before declaration\n", parentClassName);
+        struct ClassTable *parent = lookupCT(parentClassName);
+        if (!parent) {
+            compilerError(E_CLASS_USED_BEFORE_DECLARATION, parentClassName);
         }
 
-        _class->parentClass = parentClass;
-        copyFieldsAndMethodsToChild(_class, parentClass);
+        _class->parentClass = parent;
+        copyFieldsToChild(_class);
+        copyMethodsToChild(_class);
     }
 
     installCT(_class);
@@ -192,6 +202,10 @@ struct ClassField *createNewClassField(struct TypeInfo *typeInfo, char *name) {
     field->typeInfo = typeInfo;
     field->next = NULL;
     field->fieldIndex = numField++;
+
+    if (numField > 8) {
+        compilerError(E_INVALID_SIZE_FOR_CLASS, activeClass->name);
+    }
 
     return field;
 }
@@ -254,12 +268,50 @@ struct ClassMethod *lookupClassMethod(struct ClassTable *_class, char *name) {
 
 void setFieldsToClass(struct ClassField *fields) {
     activeClass->numFields = numField;
-    activeClass->fields = fields;
+    activeClass->fields = mergeClassFields(activeClass->fields, fields);
+}
+
+static struct ClassMethod *mergeParentChildMethods(struct ClassMethod *parentMethods, struct ClassMethod *childMethods) {
+    printf("here with %s\n", activeClass->name);
+    if (!parentMethods) return childMethods;
+
+    struct ClassMethod *parentHead = parentMethods;
+    struct ClassMethod *childHead = childMethods;
+    struct ClassMethod *prev = NULL;
+    bool overriden = false;
+    int numOverriden = 0;
+
+    while (childHead) {
+        parentHead = parentMethods;
+        prev = NULL;
+        overriden = false;
+        while (parentHead) {
+            printf("comparing %s with %s\n", parentHead->name, childHead->name);
+            if (strcmp(parentHead->name, childHead->name) == 0) {
+                printf("%s is overriden\n", parentHead->name);
+                parentHead->methodLabel = childHead->methodLabel;
+                parentHead->params = childHead->params;
+                overriden = true;
+                numOverriden++;
+            }
+            prev = parentHead;
+            parentHead = parentHead->next;
+        }
+
+        if (!overriden) {
+            printf("%s is not overriden\n", childHead->name);
+            prev->next = childHead;
+        }
+        childHead = childHead->next;
+    }
+
+    numMethods -= numOverriden;
+    return parentMethods;
 }
 
 void setMethodsToClass(struct ClassMethod *methods) {
+    activeClass->methods = mergeParentChildMethods(activeClass->methods, methods);
     activeClass->numMethods = numMethods;
-    activeClass->methods = methods;
 }
 
 struct ClassField *mergeClassFields(struct ClassField *fields, struct ClassField *field) {
@@ -360,4 +412,10 @@ void checkMethodSignature(struct TypeInfo *returnType, char *methodName, struct 
     }
 
     checkMethodParams(givenParams, method->params, methodName);
+}
+
+bool isInherentOf(struct ClassTable *childClass, struct ClassTable *parentClass) {
+    if (!childClass) return false;
+    if (childClass == parentClass) return true;
+    return isInherentOf(childClass->parentClass, parentClass);
 }

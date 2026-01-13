@@ -1,0 +1,31 @@
+class
+    A {
+        decl
+            int foo();
+        enddecl
+
+        int foo() {
+            decl
+            enddecl
+            begin
+                write(10);
+                return 10;
+            end
+        }
+    }
+endclass
+
+decl
+    A a;
+enddecl
+
+int main() {
+    decl
+        int temp;
+    enddecl
+    begin
+        temp = initialize();
+        a = new(A);
+        write(a.foo());
+    end
+}

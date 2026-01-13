@@ -1,0 +1,9 @@
+decl
+    int foo(int a);
+enddecl
+
+int foo(int a, int b) {
+    begin
+        return a;
+    end
+}

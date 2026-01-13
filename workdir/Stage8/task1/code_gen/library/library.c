@@ -9,7 +9,7 @@
 #include "../../util/util.h"
 #include "../array/array.h"
 #include "../function/function.h"
-#include "../user_type/user_type.h"
+#include "../member_access/member_access.h"
 
 #include <stdlib.h>
 
@@ -109,7 +109,8 @@ void generateAllocCode(struct Node *node) {
     int size = typeTableEntry ? typeTableEntry->size : _class ? _class->numFields : 0;
 
     if (size <= 0 || size > 8) {
-        compilerError(E_INVALID_SIZE_FOR_USER_DEFINED_TYPE, node->typeInfo->type->name, size);
+        compilerError(E_INVALID_SIZE_FOR_ALLOCATION,
+                      node->typeInfo->type ? node->typeInfo->type->name : node->typeInfo->_class->name, size);
     }
 
     int freeReg = getFreeRegister();
@@ -132,25 +133,29 @@ void generateAllocCode(struct Node *node) {
 
     releaseRegister(freeReg);
 
-    if (nodeType == NODE_VARIABLE) {
-        freeReg = getAddressOfVariable(left);
-        fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
-    } else if (nodeType == NODE_ARRAY_ACCESS) {
-        freeReg = generateArrayElementAddress(left);
-        fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
-    } else if (nodeType == NODE_USER_DEF_TYPE_ACCESS) {
-        freeReg = -1;
-        struct TypeInfo *type = NULL;
-        findMemberAddr(&freeReg, left, &type);
+    switch (nodeType) {
+        case NODE_VARIABLE:
+            freeReg = getAddressOfVariable(left);
+            fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
+            break;
 
-        fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
-    } else if (nodeType == NODE_CLASS_FIELD_ACCESS) {
-        freeReg = -1;
-        struct TypeInfo *typeInfo = NULL;
-        findMemberAddr(&freeReg, left, &typeInfo);
-    } else {
-        printf("[WARNING]: Unknown node in alloc: ");
-        printNode(left);
+        case NODE_ARRAY_ACCESS:
+            freeReg = generateArrayElementAddress(left);
+            fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
+            break;
+
+        case NODE_USER_DEF_TYPE_ACCESS:
+            freeReg = resolveMemberAddress(left);
+            fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
+            break;
+
+        case NODE_CLASS_FIELD_ACCESS:
+            freeReg = resolveMemberAddress(left);
+            break;
+
+        default:
+            printf("[WARNING]: Unknown node in alloc: ");
+            printNode(left);
     }
 
     releaseRegister(freeReg);

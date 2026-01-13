@@ -1,2 +1,0 @@
-[ERROR E1004] Line 30: Class "node" has no method named "prin"
-make: *** [Makefile:107: generate] Error 1

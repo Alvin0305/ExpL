@@ -1,0 +1,50 @@
+decl
+    tuple student (str name, int roll_no, str branchname, int year_of_admission) a, *ptr;
+    tuple faculty (str name, int employee_id, str dept) x, y; 
+enddecl
+
+int main() {
+    decl
+        tuple item (str name, int price) item1, *itemptr;
+    enddecl
+
+    begin
+        a.name = "Alvin";
+        a.roll_no = 6;
+        a.branchname = "CSE";
+        a.year_of_admission = 2023;
+
+        write(a.name);
+        write(a.roll_no);
+        write(a.branchname);
+        write(a.year_of_admission);
+
+        ptr = &a;
+
+        write(ptr->name);
+        write(ptr->roll_no);
+        write(ptr->branchname);
+        write(ptr->year_of_admission);
+
+        ptr->name = "Kiran";
+        write(a.name);
+
+        item1.name = "Orange";
+        item1.price = 10;
+
+        write(item1.name);
+        write(item1.price);
+
+        itemptr = &item1;
+
+        write(itemptr->name);
+        write(itemptr->price);
+
+        itemptr->price = 20;
+        
+        write(itemptr->price);
+        write(item1.price);
+
+        return 0;
+    end
+}

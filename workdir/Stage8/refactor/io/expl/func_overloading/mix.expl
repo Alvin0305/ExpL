@@ -1,0 +1,34 @@
+decl
+    int mix(int a, str s);
+    int mix(str s, int a);
+enddecl
+
+int mix(int a, str s) {
+    decl
+    enddecl
+    begin
+        write(s);
+        return a;
+    end
+}
+
+int mix(str s, int a) {
+    decl
+    enddecl
+    begin
+        write(s);
+        return a + 1;
+    end
+}
+
+int main() {
+    decl
+        int x;
+    enddecl
+    begin
+        x = mix(10, "first");
+        write(x);
+        x = mix("second", 20);
+        write(x);
+    end
+}

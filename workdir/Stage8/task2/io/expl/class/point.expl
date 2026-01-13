@@ -1,0 +1,29 @@
+class
+    point{
+        decl
+            int x;
+            int y;
+
+            int f();
+        enddecl
+    }
+endclass
+
+decl
+    point p;
+enddecl
+
+int main(){
+    decl 
+        int x;
+    enddecl
+    begin
+        x = initialize();
+        p = new(point);
+        p.x = 3;
+        p.y = 4;
+        write(p.x);
+        write(p.y);
+        return 0;
+    end
+}

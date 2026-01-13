@@ -1,0 +1,7 @@
+1032
+1040
+Exception
+Found
+Program
+Terminated
+Machine is halting.

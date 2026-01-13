@@ -35,6 +35,7 @@
 
 program : KW_BEGIN statementList KW_END {
         generateCode($2);
+        generateExitCode();
         printf("Finished\n");
         exit(0);
     }

@@ -35,7 +35,6 @@
 
 program : KW_BEGIN statementList KW_END {
         print($2);
-        print_inorder($2);
         printf("Finished\n");
         exit(0);
     }
@@ -92,8 +91,8 @@ void yyerror(char const *msg) {
 }
 
 int main() {
-    target_file = fopen("io/result.xsm", "w");
-    FILE *source_file = fopen("io/input.a", "r");
+    target_file = fopen(OUTPUT_FILE, "w");
+    FILE *source_file = fopen(SOURCE_FILE, "r");
 
     yyin = source_file;
 

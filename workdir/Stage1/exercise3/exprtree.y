@@ -5,6 +5,8 @@
     #include "exprtree.c"
 
     #define regIndex int
+    extern FILE *yyin;
+    extern char *yytext;
 
     int yylex(void);
     void yyerror(char const *msg);
@@ -56,7 +58,7 @@ expr : PLUS expr expr { $$ = createOperatorNode('+', $2, $3); }
 %%
 
 void yyerror(char const *msg) {
-    printf("[Error] : %s\n", msg);
+    printf("[Error] : %s (%s)\n", msg, yytext);
     return;
 }
 
@@ -148,6 +150,7 @@ regIndex codeGen(struct tnode *node) {
 }
 
 int main() {
+    yyin = fopen("in.expl", "r");
     target_file = fopen("result.xsm", "w");
     return yyparse();
 }

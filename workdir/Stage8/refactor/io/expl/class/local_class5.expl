@@ -1,0 +1,32 @@
+class
+    box{
+        decl
+            int v;
+            int show();
+        enddecl
+
+        int show(){
+            decl enddecl
+            begin
+                write(self.v);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+enddecl
+
+int main(){
+    decl
+        box b;
+    enddecl
+    begin
+        initialize();
+        b = new(box);
+        b.v = 7;
+        b.show();
+        return 0;
+    end
+}

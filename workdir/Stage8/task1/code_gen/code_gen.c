@@ -23,7 +23,7 @@
 #include "library/library.h"
 #include "pointer/pointer.h"
 #include "tuple/tuple.h"
-#include "user_type/user_type.h"
+#include "member_access/member_access.h"
 
 void generateWriteToMemoryCode(int reg, int varMemAddr) {
     fprintf(target_file, "MOV [%d], R%d\n", varMemAddr, reg);
@@ -133,10 +133,7 @@ void generateNewClassCode(struct Node *node) {
         freeReg = getAddressOfVariable(left);
         fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
     } else if (nodeType == NODE_CLASS_FIELD_ACCESS) {
-        printf("i was here\n");
-        freeReg = -1;
-        struct TypeInfo *typeInfo = NULL;
-        findMemberAddr(&freeReg, left, &typeInfo);
+        freeReg = resolveMemberAddress(left);
         fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
     }
 

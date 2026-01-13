@@ -1,0 +1,12 @@
+type
+    T { int x; }
+endtype
+
+int main() {
+    decl
+        T t;
+    enddecl
+    begin
+        *t = 5;
+    end
+}

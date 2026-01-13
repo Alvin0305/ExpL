@@ -1,0 +1,12 @@
+decl
+    tuple pair (int a, int b) a;
+enddecl
+
+int main() {
+    decl
+        tuple pair p;
+    enddecl
+    begin
+        p.c = 10;
+    end
+}

@@ -1,0 +1,9 @@
+decl
+    int foo(int a, int b);
+enddecl
+
+int main() {
+begin
+    foo(1);
+end
+}

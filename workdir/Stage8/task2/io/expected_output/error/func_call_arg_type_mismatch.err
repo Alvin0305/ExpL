@@ -1,0 +1,1 @@
+[ERROR E600] Line 7: Expected type of argument "a" for function "foo" is INT, but got STRING

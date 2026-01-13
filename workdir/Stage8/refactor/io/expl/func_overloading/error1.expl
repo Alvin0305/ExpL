@@ -1,0 +1,12 @@
+decl
+    int bad(int a);
+    str bad(int a);
+enddecl
+
+int bad(int a) {
+    decl
+    enddecl
+    begin
+        return a;
+    end
+}

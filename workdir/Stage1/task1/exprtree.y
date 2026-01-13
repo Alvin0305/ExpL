@@ -6,6 +6,8 @@
 
     int yylex(void);
     void yyerror(char const *msg);
+
+    extern FILE *yyin;
 %}
 
 %union {
@@ -42,5 +44,6 @@ void yyerror(char const *msg) {
 }
 
 int main() {
+    yyin = fopen("in.expl", "r");
     return yyparse();
 }

@@ -8,8 +8,6 @@
 #include "../code_gen.h"
 #include "../library/library.h"
 
-// static helpers
-
 void generateFunctionHeader(int label) { fprintf(target_file, "F%d:\n", label); }
 
 void saveMachineStatus() {

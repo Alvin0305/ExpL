@@ -1,0 +1,37 @@
+class
+    node {
+        decl
+            int value;
+            node next;
+            void print();
+        enddecl
+
+        void print() {
+            decl
+            enddecl
+            begin
+                write(self.value);
+            end
+        }
+    }
+endclass
+
+decl
+enddecl
+
+int main() {
+    decl
+        node n;
+    enddecl
+
+    begin
+        n = new(node);
+        n.v = 10;
+        n.value = n.value.x;
+        n.next = new(node);
+        n.next.next = new(node);
+        write(n.value);
+
+        n.next.next.prin();
+    end
+}

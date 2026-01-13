@@ -1,6 +1,8 @@
 #ifndef CLASS_TABLE_H
 #define CLASS_TABLE_H
 
+#include <stdbool.h>
+
 struct TypeInfo;
 struct VarList;
 struct Param;
@@ -55,5 +57,7 @@ void printCT();
 
 void addMethodParamsToLST(struct Param *params);
 void checkMethodSignature(struct TypeInfo *returnType, char *methodName, struct Param *params);
+
+bool isInherentOf(struct ClassTable *childClass, struct ClassTable *parentClass);
 
 #endif

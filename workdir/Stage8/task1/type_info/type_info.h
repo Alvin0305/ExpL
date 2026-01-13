@@ -10,7 +10,15 @@ struct ClassTable;
 struct Dimension;
 
 enum Kind { INT, STRING, BOOL, TUPLE, VOID, TYPE, NONE, NULL_TYPE, CLASS, UNKNOWN };
-enum Size { INT_SIZE = 1, STRING_SIZE = 1, NONE_SIZE = 0, VOID_SIZE = 0 };
+enum Size {
+    INT_SIZE = 1,
+    STRING_SIZE = 1,
+    NONE_SIZE = 0,
+    VOID_SIZE = 0,
+    TUPLE_PTR_SIZE = 1,
+    UDT_PTR_SIZE = 1,
+    CLASS_PTR_SIZE = 1
+};
 
 typedef struct TypeInfo {
     enum Kind kind;

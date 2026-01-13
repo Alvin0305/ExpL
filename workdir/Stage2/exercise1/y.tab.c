@@ -403,8 +403,8 @@ void yyerror(char const *msg) {
 }
 
 int main() {
-    target_file = fopen("io/result.xsm", "w");
-    FILE *source_file = fopen("io/input.a", "r");
+    target_file = fopen(OUTPUT_FILE, "w");
+    FILE *source_file = fopen(SOURCE_FILE, "r");
 
     yyin = source_file;
 

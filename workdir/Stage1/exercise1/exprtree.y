@@ -4,6 +4,7 @@
     #include "exprtree.h"
     #include "exprtree.c"
 
+    extern FILE *yyin;
     int yylex(void);
     void yyerror(char const *msg);
 %}
@@ -45,5 +46,6 @@ void yyerror(char const *msg) {
 }
 
 int main() {
+    yyin = fopen("in.expl", "r");
     return yyparse();
 }

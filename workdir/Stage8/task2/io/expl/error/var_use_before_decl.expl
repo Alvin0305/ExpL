@@ -1,0 +1,5 @@
+int main() {
+    begin
+        a = 10;
+    end
+}

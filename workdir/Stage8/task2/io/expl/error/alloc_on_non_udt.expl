@@ -1,0 +1,21 @@
+type 
+    Box {
+        int a;
+    }
+endtype
+
+int main() {
+    decl
+        int *p;
+        Box b;
+    enddecl
+    begin
+        b = alloc();
+        b.a = alloc();
+        
+        p = alloc();
+        *p = 10;
+
+        write(*p);
+    end
+}

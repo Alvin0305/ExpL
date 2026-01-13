@@ -7,7 +7,7 @@
 
 #define STACK_START 4096
 
-#define SOURCE_FILE "io/input.a"
+#define SOURCE_FILE "io/input.expl"
 #define OUTPUT_FILE "io/result.xsm"
 
 enum type {

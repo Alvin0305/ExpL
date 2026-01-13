@@ -1,0 +1,12 @@
+type
+    Person { int age; }
+endtype
+
+int main() {
+    decl
+        Person p;
+    enddecl
+    begin
+        p.name = 10;
+    end
+}

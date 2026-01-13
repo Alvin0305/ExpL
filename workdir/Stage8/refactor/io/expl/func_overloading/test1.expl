@@ -1,0 +1,33 @@
+decl
+    int foo(int a);
+    int foo(str s);
+enddecl
+
+int foo(int a) {
+    decl
+    enddecl
+    begin
+        return a + 10;
+    end
+}
+
+int foo(str s) {
+    decl
+    enddecl
+    begin
+        write(s);
+        return 5;
+    end
+}
+
+int main() {
+    decl
+        int x;
+    enddecl
+    begin
+        x = foo(10);
+        write(x);
+        x = foo("hello");
+        write(x);
+    end
+}

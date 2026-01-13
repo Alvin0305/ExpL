@@ -6,6 +6,8 @@
 
     #define regIndex int
 
+    extern FILE *yyin;
+
     int yylex(void);
     void yyerror(char const *msg);
 
@@ -151,6 +153,7 @@ void generateExitCode() {
 
 
 int main() {
+    yyin = fopen("in.expl", "r");
     target_file = fopen("result.xsm", "w");
     return yyparse();
 }

@@ -4,7 +4,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/expl/class/bst_class_case1.expl"
+#define SOURCE_FILE "io/test/extends.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -20,7 +20,7 @@
 #define STACK_END 5119
 
 #define HEADER_SIZE 8
-#define MAX_USER_DEF_VAR_SIZE 8
+#define DYNAMIC_MEM_ALLOC_BLOCK_SIZE 8
 
 #define TOTAL_REGISTERS 20
 
