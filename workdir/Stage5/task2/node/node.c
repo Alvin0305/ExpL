@@ -601,11 +601,11 @@ struct tnode *createLocalDeclarationNode(struct tnode *typeNode, struct tnode *i
     struct tnode *node = createConnectorNode(typeNode, idListNode);
 
     node->nodeType = NODE_LOCAL_DECL;
-    printf("Hello Hello\n");
+    // printf("Hello Hello\n");
     // print(node);
-    printLocalSymbolTable();
+    // printLocalSymbolTable();
     populateLocalSymbolTable(node);
-    printLocalSymbolTable();
+    // printLocalSymbolTable();
 
     return node;
 }

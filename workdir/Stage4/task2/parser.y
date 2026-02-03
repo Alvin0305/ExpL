@@ -54,7 +54,7 @@ program : KW_BEGIN declarations statementList KW_END {
 declarations : KW_DECL declList KW_ENDDECL { 
         $$ = $2; 
         print($2);
-        populateGSymbolTable($2);
+        populateGST($2);
         printGSymbolTable(); 
     }
     | KW_DECL KW_ENDDECL { $$ = NULL; }

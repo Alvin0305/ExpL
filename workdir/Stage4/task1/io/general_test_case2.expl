@@ -1,5 +1,9 @@
 begin
-    decl int a,b,c; enddecl
+    decl
+        int a,b,c; 
+        str name;
+        int age;
+    enddecl
 
     a = 1;
     b = 2;

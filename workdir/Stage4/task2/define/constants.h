@@ -4,7 +4,7 @@
 #define NOT_CONSTANT 1000000
 #define NO_RETURN -100
 
-#define SOURCE_FILE "io/4.expl"
+#define SOURCE_FILE "io/while_with_if.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -17,23 +17,11 @@
 
 #define TOTAL_REGISTERS 20
 
-enum sizes
-{
-    INT_SIZE = 4,
-    STRING_SIZE = 6,
-    NONE_SIZE = 0
-};
+enum sizes { INT_SIZE = 1, STRING_SIZE = 1, NONE_SIZE = 0 };
 
-enum type
-{
-    INT,
-    STRING,
-    BOOL,
-    NONE
-};
+enum type { INT, STRING, BOOL, NONE };
 
-enum nodeTypes
-{
+enum nodeTypes {
     NODE_EMPTY,
     NODE_ASSIGN,
     NODE_CONNECTOR,
@@ -79,11 +67,7 @@ enum nodeTypes
 #define FAILURE -1
 
 // error returns for read and write
-enum errors
-{
-    E_VARIABLE_REDECLARATION,
-    E_VARIABLE_USED_BEFORE_DECLARATION
-};
+enum errors { E_VARIABLE_REDECLARATION, E_VARIABLE_USED_BEFORE_DECLARATION };
 
 // error returns for labels
 #define E_LABEL_EXISTS -3

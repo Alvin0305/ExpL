@@ -76,7 +76,7 @@
 [\t ] { }
 [()\[\]] {return yytext[0];}
 [\n] { lineNumber++; }
-. {printf("unknown character %s\n", yytext); exit(1);}
+. {printf("unknown character %s at %d\n", yytext, lineNumber); exit(1);}
 
 %%
 

@@ -404,7 +404,7 @@ static YYINT  *yylexp = 0;
 
 static YYINT  *yylexemes = 0;
 #endif /* YYBTYACC */
-#line 75 "parser.y"
+#line 74 "parser.y"
 
 void yyerror(char const *msg) {
     printf("[Error] : %s\n", msg);
@@ -1093,88 +1093,87 @@ case 1:
 #line 38 "parser.y"
 	{
         print(yystack.l_mark[-1].node);
-        print_inorder(yystack.l_mark[-1].node);
         printf("Finished\n");
         exit(0);
     }
-#line 1101 "y.tab.c"
+#line 1100 "y.tab.c"
 break;
 case 3:
-#line 47 "parser.y"
+#line 46 "parser.y"
 	{ yyval.node = createConnectorNode(yystack.l_mark[-1].node, yystack.l_mark[0].node); }
-#line 1106 "y.tab.c"
+#line 1105 "y.tab.c"
 break;
 case 4:
-#line 48 "parser.y"
+#line 47 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1111 "y.tab.c"
+#line 1110 "y.tab.c"
 break;
 case 5:
-#line 51 "parser.y"
+#line 50 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1116 "y.tab.c"
+#line 1115 "y.tab.c"
 break;
 case 6:
-#line 52 "parser.y"
+#line 51 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1121 "y.tab.c"
+#line 1120 "y.tab.c"
 break;
 case 7:
-#line 53 "parser.y"
+#line 52 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1126 "y.tab.c"
+#line 1125 "y.tab.c"
 break;
 case 8:
-#line 56 "parser.y"
+#line 55 "parser.y"
 	{ yyval.node = createReadNode(yystack.l_mark[-2].node); }
-#line 1131 "y.tab.c"
+#line 1130 "y.tab.c"
 break;
 case 9:
-#line 59 "parser.y"
+#line 58 "parser.y"
 	{ yyval.node = createWriteNode(yystack.l_mark[-2].node); }
-#line 1136 "y.tab.c"
+#line 1135 "y.tab.c"
 break;
 case 10:
-#line 62 "parser.y"
+#line 61 "parser.y"
 	{ yyval.node = createAssignNode(yystack.l_mark[-3].node, yystack.l_mark[-1].node); }
-#line 1141 "y.tab.c"
+#line 1140 "y.tab.c"
 break;
 case 11:
-#line 65 "parser.y"
+#line 64 "parser.y"
 	{ yyval.node = createArithOpNode(NODE_ADD, yystack.l_mark[-2].node, yystack.l_mark[0].node); }
-#line 1146 "y.tab.c"
+#line 1145 "y.tab.c"
 break;
 case 12:
-#line 66 "parser.y"
+#line 65 "parser.y"
 	{ yyval.node = createArithOpNode(NODE_SUB, yystack.l_mark[-2].node, yystack.l_mark[0].node); }
-#line 1151 "y.tab.c"
+#line 1150 "y.tab.c"
 break;
 case 13:
-#line 67 "parser.y"
+#line 66 "parser.y"
 	{ yyval.node = createArithOpNode(NODE_MUL, yystack.l_mark[-2].node, yystack.l_mark[0].node); }
-#line 1156 "y.tab.c"
+#line 1155 "y.tab.c"
 break;
 case 14:
-#line 68 "parser.y"
+#line 67 "parser.y"
 	{ yyval.node = createArithOpNode(NODE_DIV, yystack.l_mark[-2].node, yystack.l_mark[0].node); }
-#line 1161 "y.tab.c"
+#line 1160 "y.tab.c"
 break;
 case 15:
-#line 69 "parser.y"
+#line 68 "parser.y"
 	{ yyval.node = yystack.l_mark[-1].node; }
-#line 1166 "y.tab.c"
+#line 1165 "y.tab.c"
 break;
 case 16:
-#line 70 "parser.y"
+#line 69 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1171 "y.tab.c"
+#line 1170 "y.tab.c"
 break;
 case 17:
-#line 71 "parser.y"
+#line 70 "parser.y"
 	{ yyval.node = yystack.l_mark[0].node; }
-#line 1176 "y.tab.c"
+#line 1175 "y.tab.c"
 break;
-#line 1178 "y.tab.c"
+#line 1177 "y.tab.c"
     default:
         break;
     }

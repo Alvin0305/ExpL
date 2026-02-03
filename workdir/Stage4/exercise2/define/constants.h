@@ -4,7 +4,7 @@
 #define NOT_CONSTANT 1000000
 #define NO_RETURN -100
 
-#define SOURCE_FILE "io/array/sum_of_n_factorials.expl"
+#define SOURCE_FILE "io/test/sum_fact.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 

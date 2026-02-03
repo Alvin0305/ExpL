@@ -1,8 +1,6 @@
 typedef struct tnode {
     int val;
     char *op;
-    int flag;
-    int regNo;
     struct tnode *left;
     struct tnode *right;
 } tnode;

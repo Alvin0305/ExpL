@@ -4,7 +4,7 @@
 #define NOT_CONSTANT 1000000
 #define NO_RETURN -100
 
-#define SOURCE_FILE "io/repeat_until.expl"
+#define SOURCE_FILE "io/test.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 

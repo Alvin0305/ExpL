@@ -5,6 +5,8 @@ begin
     while (i < 10) do
         if (i == 5) then
             write(100);
+        else
+            write(i);
         endif
         i = i + 1;
     endwhile

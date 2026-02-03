@@ -1011,7 +1011,7 @@ YY_RULE_SETUP
 case 42:
 YY_RULE_SETUP
 #line 79 "lexer.l"
-{printf("unknown character %s\n", yytext); exit(1);}
+{printf("unknown character %s at %d\n", yytext, lineNumber); exit(1);}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP

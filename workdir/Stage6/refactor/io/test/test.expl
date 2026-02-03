@@ -1,0 +1,68 @@
+type
+   Node {
+        int val;
+        Node next;
+   }
+endtype
+
+decl
+    void printLinkedList(Node head);
+    void freeLinkedList(Node head);
+enddecl
+
+void printLinkedList(Node head) {
+    decl
+        Node current;
+        int temp;
+    enddecl
+    begin
+        current = head;
+        while (current != NULL) do
+            write(current.val);
+            current = current.next;
+        endwhile
+    end
+}
+void freeLinkedList(Node head) {
+    decl
+        Node current, nextNode;
+    enddecl
+    begin  
+        current = head;
+        while (current != NULL) do
+            nextNode = current.next;
+            free(current);
+            current = nextNode;
+        endwhile
+    end
+}
+int main()
+{
+decl
+    Node head, current, newNode;
+    int n, temp, counter, num;
+enddecl
+begin
+    temp = initialize();
+    write("Enter n:");
+    read(n);
+    head = NULL;
+    counter = 0;
+    while (counter < n) do
+        newNode = alloc();
+        read(num);
+        newNode.val = num;
+        newNode.next = NULL;
+        if (head == NULL) then
+            head = newNode;
+            current = newNode;
+        else
+            current.next = newNode;
+            current = newNode;
+        endif
+        counter = counter + 1;
+    endwhile
+    write("The List:");
+    return 0;
+end
+}
