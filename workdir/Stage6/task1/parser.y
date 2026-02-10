@@ -31,8 +31,8 @@
 %type <node> paramList param 
 %type <node> mainBlock body
 %type <node> functionDefinitionBlock functionDefinition localDeclBlock localDeclList localDecl idList argList functionCall returnStatement funcDeclParamList funcDeclParam
-%type <node> globalTupleDeclaration tupleFieldList tupleIdList tupleField localTupleDecl tupleAssignmentStatement tupleAccess 
-%type <node> fieldAccess fieldAssignmentStatement memberAccess
+%type <node> globalTupleDeclaration tupleFieldList tupleIdList tupleField localTupleDecl 
+%type <node> fieldAssignmentStatement memberAccess
 %type program programBody
 %type <field> typeField typeFieldList 
 
@@ -231,7 +231,6 @@ assignmentStatement : ID ASSIGN expr SEMI                   { $$ = createAssignN
     | ID INCREMENT SEMI                                     { $$ = createIncrementNode($1); }
     | ID DECREMENT SEMI                                     { $$ = createDecrementNode($1); }
     | compoundAssignment SEMI                               { $$ = $1; }
-    // | tupleAssignmentStatement SEMI                         { $$ = $1; }
     | fieldAssignmentStatement SEMI                         { $$ = $1; }
     ;
 
@@ -239,18 +238,6 @@ memberAccess : memberAccess DOT ID                          { $$ = createMemberA
     | ID DOT ID                                             { $$ = createMemberAccessNode($1, $3, ACCESS_DOT); }
     | ID ARROW ID                                           { $$ = createMemberAccessNode($1, $3, ACCESS_ARROW); }
     ;
-
-// tupleAccess : ID DOT ID                                     { $$ = createTupleAccessNode($1, $3); }
-//     | ID ARROW ID                                           { $$ = createTuplePointerAccessNode($1, $3); }
-//     ;              
-
-// fieldAccess : fieldAccess DOT ID                            { $$ = createUserTypeAccessNode($1, $3); }
-//     | ID DOT ID                                             { $$ = createUserTypeAccessNode($1, $3); }
-//     ;
-
-// tupleAssignmentStatement : ID DOT ID ASSIGN expr            { $$ = createTupleAssignmentNode($1, $3, $5); }
-//     | ID ARROW ID ASSIGN expr                               { $$ = createTuplePointerAssignmentNode($1, $3, $5); }
-//     ;
 
 fieldAssignmentStatement : memberAccess ASSIGN expr         { $$ = createMemberAssignmentNode($1, $3); }
     ;
@@ -292,8 +279,6 @@ expr : expr PLUS expr                                       { $$ = createArithOp
     | MUL ID                                                { $$ = createDereferenceNode($2); }
     | AMPERSAND ID                                          { $$ = createAddressToNode($2); }
     | functionCall                                          { $$ = $1; }
-    // | tupleAccess                                           { $$ = $1; }
-    // | fieldAccess                                           { $$ = $1; }
     | memberAccess                                          { $$ = $1; }
     ;
 

@@ -69,7 +69,7 @@ program : globalDeclarationsBlock functionDefinitionBlock mainBlock {
 globalDeclarationsBlock : KW_DECL globalDeclarationList KW_ENDDECL { 
         $$ = $2; 
         printf("reduced global decl\n");
-        populateGSymbolTable($2);
+        populateGST($2);
         printGSymbolTable(); 
     }
     | KW_DECL KW_ENDDECL { $$ = NULL; }
@@ -93,7 +93,7 @@ globalVarList : globalVarList COMMA ID                      { $$ = createConnect
     | ID '(' funcDeclParamList ')'                          { $$ = createFunctionDeclarationNode($1, $3); }
     ;
 
-globalTupleDeclaration : KW_TUPLE ID '(' tupleParamList ')' tupleIdList SEMI      { $$ = createGlobalTupleNode($2, $4, $6); }
+globalTupleDeclaration : KW_TUPLE ID '(' tupleParamList ')' tupleIdList SEMI      { $$ = createGlobalTupleTypeNode($2, $4, $6); }
     ;
 
 tupleParamList : tupleParamList COMMA tupleParam { $$ = createConnectorNode($1, $3); }
@@ -127,7 +127,7 @@ functionDefinitionBlock : functionDefinitionBlock functionDefinition    { $$ = c
     ;
 
 functionDefinition : type ID '(' paramList ')' 
-        { currentFunction = lookup($2->varName); } 
+        { currentFunction = lookupGST($2->varName); } 
     '{' localDeclBlock body '}'  
         { $$ = createFunctionDefinitionNode($1, $2, $4, $8, $9); }
     ;
@@ -156,7 +156,7 @@ localDeclList : localDeclList localDecl                 { $$ = createConnectorNo
 localDecl : type idList SEMI                            { $$ = createLocalDeclarationNode($1, $2); }
     ;
 
-localTupleDecl : KW_TUPLE ID '(' tupleParamList ')' tupleIdList SEMI     { $$ = createLocalTupleDeclarationNode($2, $4, $6); }
+localTupleDecl : KW_TUPLE ID '(' tupleParamList ')' tupleIdList SEMI     { $$ = createLocalTupleTypeDeclarationNode($2, $4, $6); }
     ;
 
 idList : idList COMMA ID                                { $$ = createConnectorNode($1, $3); }

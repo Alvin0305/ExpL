@@ -35,10 +35,10 @@ void generateJumpOnNonZeroCode(int reg, int label);
 void generateRepeatUntilCode(struct tnode *node);
 
 // core code generation methods
-void generateCode(struct tnode *root);
-void generateHeader();
+void generateHeader();  
 int generateCode(struct tnode *root);
 void generateExitCode();
+// void generateCode_(struct tnode *root);
 
 // helpers
 int getAddressOfVariable(struct tnode *node);

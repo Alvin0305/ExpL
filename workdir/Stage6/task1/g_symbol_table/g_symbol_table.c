@@ -42,7 +42,8 @@ struct GSymbol *lookupGST(char *name) {
     return NULL;
 }
 
-struct GSymbol *installGST(char *name, int type, int size, bool isPtr, struct TupleType *tupleType, struct TypeTable *typeTableEntry, int functionLabel) {
+struct GSymbol *installGST(char *name, int type, int size, bool isPtr, struct TupleType *tupleType,
+                           struct TypeTable *typeTableEntry, int functionLabel) {
     struct GSymbol *head = GSTHead;
 
     if (lookupGST(name)) {
@@ -70,7 +71,8 @@ void printGST() {
     printf("\n-------------[SYMBOL TABLE]--------------\n");
     printf("[VarName][DataType][Size][Binding][isPtr]\n");
     while (head) {
-        printf("%s [%s] %d %d %s", head->name, dataTypeToString(head->type), head->size, head->binding, booleanToString(head->isPtr));
+        printf("%s [%s] %d %d %s", head->name, dataTypeToString(head->type), head->size, head->binding,
+               booleanToString(head->isPtr));
         if (head->dimensions) {
             printf("%d: ", head->numDimensions);
             printDimensions(head);
@@ -114,8 +116,7 @@ void addTupleTypeToGST(struct tnode *idNode, struct tnode *tupleFieldNode, struc
 }
 
 bool checkFunctionSignature(struct tnode *functionDefinitionNode) {
-    if (functionDefinitionNode->nodeType != NODE_FUNC_DEF)
-        return false;
+    if (functionDefinitionNode->nodeType != NODE_FUNC_DEF) return false;
 
     struct tnode *returnAndNameNode = functionDefinitionNode->left;
     struct tnode *paramDeclAndBodyNode = functionDefinitionNode->right;
@@ -165,7 +166,11 @@ static struct GSymbol *createSymbolTableEntry(char *name, int type, int size, bo
     entry->tupleType = NULL;
     entry->typeTableEntry = NULL;
 
-    if (functionLabel == NO_LABEL && type != USER_TYPE) {
+    if (functionLabel != NO_LABEL) {
+
+    } else if (type == USER_TYPE) {
+        stackTop += 1;
+    } else {
         stackTop += size;
     }
 
@@ -177,8 +182,7 @@ static struct GSymbol *createSymbolTableEntry(char *name, int type, int size, bo
 }
 
 static void populateGST(struct tnode *root) {
-    if (!root)
-        return;
+    if (!root) return;
 
     struct GSymbol *entry;
     switch (root->nodeType) {
@@ -210,10 +214,12 @@ static void populateGST(struct tnode *root) {
                     compilerError(E_VARIABLE_WITH_TYPE_VOID, root->varName);
                 }
 
-                int size = currentDataType == TUPLE ? currentTupleType->size : currentDataType == USER_TYPE ? getSizeOfType(currentUserDefinedType)
-                                                                                                            : getSizeOfDataType(currentDataType);
+                int size = currentDataType == TUPLE       ? currentTupleType->size
+                           : currentDataType == USER_TYPE ? getSizeOfType(currentUserDefinedType)
+                                                          : getSizeOfDataType(currentDataType);
 
-                entry = installGST(root->varName, currentDataType, size, false, currentTupleType, currentUserDefinedType, NO_LABEL);
+                entry =
+                    installGST(root->varName, currentDataType, size, false, currentTupleType, currentUserDefinedType, NO_LABEL);
 
                 root->gSymbolTableEntry = entry;
                 root->type = root->gSymbolTableEntry->type;
@@ -227,9 +233,11 @@ static void populateGST(struct tnode *root) {
                     compilerError(E_VARIABLE_WITH_TYPE_VOID, idNode->varName);
                 }
 
-                int size = currentDataType == TUPLE ? currentTupleType->size : currentDataType == USER_TYPE ? getSizeOfType(currentUserDefinedType)
-                                                                                                            : getSizeOfDataType(currentDataType);
-                entry = installGST(idNode->varName, currentDataType, size, true, currentTupleType, currentUserDefinedType, NO_LABEL);
+                int size = currentDataType == TUPLE       ? currentTupleType->size
+                           : currentDataType == USER_TYPE ? getSizeOfType(currentUserDefinedType)
+                                                          : getSizeOfDataType(currentDataType);
+                entry =
+                    installGST(idNode->varName, currentDataType, size, true, currentTupleType, currentUserDefinedType, NO_LABEL);
 
                 root->gSymbolTableEntry = entry;
                 root->type = root->gSymbolTableEntry->type;
@@ -243,8 +251,8 @@ static void populateGST(struct tnode *root) {
                 if (currentDataType == VOID) {
                     compilerError(E_VARIABLE_WITH_TYPE_VOID, idNode->varName);
                 }
-                entry = installGST(idNode->varName, currentDataType, computerArraySize(root->right, &dimensionCount),
-                                   true, NULL, currentUserDefinedType, NO_LABEL);
+                entry = installGST(idNode->varName, currentDataType, computerArraySize(root->right, &dimensionCount), true, NULL,
+                                   currentUserDefinedType, NO_LABEL);
 
                 entry->dimensions = (int *)malloc(dimensionCount * sizeof(int));
                 extractArrayDimensions(entry, root->right);
@@ -264,7 +272,8 @@ static void populateGST(struct tnode *root) {
                     compilerError(E_FUNCTION_REDECLARATION, idNode->varName);
                 }
 
-                entry = installGST(idNode->varName, currentDataType, getSizeOfDataType(currentDataType), false, currentTupleType, currentUserDefinedType, createNewLabel());
+                entry = installGST(idNode->varName, currentDataType, getSizeOfDataType(currentDataType), false, currentTupleType,
+                                   currentUserDefinedType, createNewLabel());
                 addParamsToFunction(entry, paramListNode);
                 break;
             }
@@ -293,8 +302,7 @@ static void populateGST(struct tnode *root) {
 }
 
 static void addParamsToFunction(struct GSymbol *entry, struct tnode *paramListNode) {
-    if (!paramListNode)
-        return;
+    if (!paramListNode) return;
 
     switch (paramListNode->nodeType) {
         case NODE_CONNECTOR:
@@ -357,7 +365,8 @@ static bool checkParamsForFunction(struct tnode *node, struct Param **param, cha
                 bool nameMatch = (strcmp(idNode->varName, (*param)->name) == 0);
 
                 if (!typeMatch) {
-                    compilerError(E_FUNCTION_SIGNATURE_TYPE_MISMATCH, functionName, idNode->varName, (*param)->type, typeNode->type);
+                    compilerError(E_FUNCTION_SIGNATURE_TYPE_MISMATCH, functionName, idNode->varName, (*param)->type,
+                                  typeNode->type);
                 } else if (!nameMatch) {
                     compilerError(E_FUNCTION_SIGNATURE_VARNAME_MISMATCH, functionName, (*param)->type, idNode->varName);
                 }
@@ -403,8 +412,7 @@ static int computerArraySize(struct tnode *dimensionDeclNode, int *dimensionCoun
 }
 
 static int computeDimensionProduct(struct tnode *dimensionDeclNode, int *dimensionCount) {
-    if (!dimensionDeclNode)
-        return 1;
+    if (!dimensionDeclNode) return 1;
 
     if (dimensionDeclNode->nodeType == NODE_CONSTANT) {
         (*dimensionCount)++;
@@ -416,8 +424,7 @@ static int computeDimensionProduct(struct tnode *dimensionDeclNode, int *dimensi
 }
 
 static void extractArrayDimensions(struct GSymbol *entry, struct tnode *dimensionDeclNode) {
-    if (!dimensionDeclNode)
-        return;
+    if (!dimensionDeclNode) return;
 
     if (dimensionDeclNode->nodeType == NODE_CONSTANT) {
         entry->dimensions[entry->numDimensions++] = dimensionDeclNode->numVal;

@@ -11,8 +11,8 @@
 #include "../local_symbol_table/local_symbol_table.h"
 #include "../node/node.h"
 #include "../register/register.h"
-#include "../util/util.h"
 #include "../type_table/type_table.h"
+#include "../util/util.h"
 #include "code_gen.h"
 
 #include "arithmetic/arithmetic.h"
@@ -229,78 +229,55 @@ int generateCode(struct tnode *root) {
             return generateAddressToCode(root);
 
         case NODE_READ:
-            {
-                int varMemAddrReg = getAddressOfVariable(root->left);
-                generateReadFromConsoleCode(varMemAddrReg);
-                break;
-            }
+            int varMemAddrReg = getAddressOfVariable(root->left);
+            generateReadFromConsoleCode(varMemAddrReg);
+            break;
 
         case NODE_READ_TO_ARRAY:
-            {
-                int memAddrReg = generateArrayElementAddress(root->left);
-                generateReadFromConsoleCodeToAddrInReg(memAddrReg);
-                break;
-            }
+            int memAddrReg = generateArrayElementAddress(root->left);
+            generateReadFromConsoleCodeToAddrInReg(memAddrReg);
+            break;
 
         case NODE_WRITE:
-            {
-                int exprReg = generateCode(root->left);
-                generateWriteToConsoleCode(exprReg);
-                break;
-            }
+            int exprReg = generateCode(root->left);
+            generateWriteToConsoleCode(exprReg);
+            break;
 
         case NODE_WHILE:
-            {
-                generateWhileLoopCode(root);
-                break;
-            }
+            generateWhileLoopCode(root);
+            break;
 
         case NODE_IF:
-            {
-                generateIfCode(root);
-                break;
-            }
+            generateIfCode(root);
+            break;
 
         case NODE_IF_ELSE:
-            {
-                generateIfElseCode(root);
-                break;
-            }
+            generateIfElseCode(root);
+            break;
 
         case NODE_BREAK:
-            {
-                generateBreakCode();
-                break;
-            }
+            generateBreakCode();
+            break;
 
         case NODE_CONTINUE:
-            {
-                generateContinueCode();
-                break;
-            }
+            generateContinueCode();
+            break;
 
         case NODE_REPEAT_UNTIL:
-            {
-                generateRepeatUntilCode(root);
-                break;
-            }
+            generateRepeatUntilCode(root);
+            break;
 
         case NODE_DO_WHILE:
-            {
-                generateDoWhileCode(root);
-                break;
-            }
+
+            generateDoWhileCode(root);
+            break;
 
         case NODE_ARRAY_ACCESS:
-            {
-                return generateArrayAccessCode(root);
-            }
+            return generateArrayAccessCode(root);
 
         case NODE_ARRAY_ASSIGN:
-            {
-                generateAssignmentToArray(root);
-                break;
-            }
+            generateAssignmentToArray(root);
+            break;
 
         case NODE_ADD:
         case NODE_SUB:
@@ -358,6 +335,12 @@ int generateCode(struct tnode *root) {
             generateTuplePointerAssignCode(root);
             break;
 
+        case NODE_USER_DEF_TYPE_ACCESS:
+            break;
+
+        case NODE_USER_DEF_TYPE_ASSIGNMENT:
+            break;
+
         default:
             printf("[WARNING]: Unhandled node came while generating code: ");
             printNode(root);
@@ -367,9 +350,7 @@ int generateCode(struct tnode *root) {
     return __NONE__;
 }
 
-void generateHeader() {
-    fprintf(target_file, "%d\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, "MAIN", 0, 0, 0, 0, 0, 0);
-}
+void generateHeader() { fprintf(target_file, "%d\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, "MAIN", 0, 0, 0, 0, 0, 0); }
 
 int getAddressOfVariable(struct tnode *node) {
     LSymbol *localEntry = lookupLST(node->varName);

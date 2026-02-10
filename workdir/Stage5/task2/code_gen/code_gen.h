@@ -35,7 +35,7 @@ void generateJumpOnNonZeroCode(int reg, int label);
 void generateRepeatUntilCode(struct tnode *node);
 
 // core code generation methods
-void generateCode(struct tnode *root);
+// void generateCode(struct tnode *root);
 void generateHeader();
 int generateCode(struct tnode *root);
 void generateExitCode();

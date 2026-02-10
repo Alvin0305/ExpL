@@ -111,10 +111,10 @@ test: all
 		# 5. Compare Results \
 		if [ -f $$expect_file ]; then \
 			if diff -w -B $$output_file $$expect_file > /dev/null; then \
-				echo "  \033[0;32m[PASS]\033[0m"; \
+				printf "  \033[0;32m[PASS]\033[0m\n"; \
 				pass=$$((pass + 1)); \
 			else \
-				echo "  \033[0;31m[FAIL]\033[0m Output differs from expected."; \
+				printf "  \033[0;31m[FAIL]\033[0m Output differs from expected.\n"; \
 				echo "         See: $$output_file"; \
 				fail=$$((fail + 1)); \
 			fi; \
@@ -125,12 +125,12 @@ test: all
 		fi; \
 	done; \
 	\
-	echo "\n========================================"; \
+	printf "\n========================================\n"; \
 	echo "             TEST SUMMARY               "; \
 	echo "========================================"; \
 	echo "  TOTAL TESTS : $$total"; \
-	echo "  PASSED      : \033[0;32m$$pass\033[0m"; \
-	echo "  FAILED      : \033[0;31m$$fail\033[0m"; \
+	printf "  PASSED      : \033[0;32m$$pass\033[0m\n"; \
+	printf "  FAILED      : \033[0;31m$$fail\033[0m\n"; \
 	echo "========================================"; \
 	if [ $$fail -gt 0 ]; then exit 1; fi
 

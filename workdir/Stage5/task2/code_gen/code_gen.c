@@ -628,14 +628,6 @@ int generateCode(struct tnode *root) {
     return NO_RETURN;
 }
 
-void generateCode(tnode *root) {
-    initializeRegisters();
-
-    generateHeader();
-    generateCode(root);
-    generateExitCode();
-}
-
 void generateHeader() {
     fprintf(target_file, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, 2056, 0, 0, 0, 0, 0, 0);
     fprintf(target_file, "MOV SP, %d\n", stackTop);

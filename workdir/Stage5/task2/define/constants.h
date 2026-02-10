@@ -6,7 +6,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/functions/function1.expl"
+#define SOURCE_FILE "io/functions/fibonacci.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 
@@ -22,8 +22,8 @@
 
 enum sizes
 {
-    INT_SIZE = 4,
-    STRING_SIZE = 6,
+    INT_SIZE = 1,
+    STRING_SIZE = 1,
     NONE_SIZE = 0
 };
 

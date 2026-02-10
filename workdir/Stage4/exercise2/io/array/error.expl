@@ -1,0 +1,6 @@
+begin
+decl
+	int n,i,j;
+enddecl
+	read(x);
+end

@@ -371,7 +371,6 @@ struct tnode *createMemberAccessNode(struct tnode *field1Node, struct tnode *fie
     if (field1Node->nodeType == NODE_VARIABLE) {
         struct tnode *idNode = createVariableUsageNode(field1Node->varName);
         struct tnode *node = createConnectorNode(idNode, field2Node);
-        printf("type: %s\n", dataTypeToString(field2Node->type));
         node->type = field2Node->type;
 
         if (idNode->type == TUPLE) {

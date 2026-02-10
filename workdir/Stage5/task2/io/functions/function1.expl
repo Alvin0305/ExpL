@@ -37,7 +37,7 @@ int main() {
     begin
         num = 100;
         brkp;
-        result = sum(2, f(f(2)));
+        result = sum(2, f(f(2)), 1);
 
         write(result);
         write("Hey");

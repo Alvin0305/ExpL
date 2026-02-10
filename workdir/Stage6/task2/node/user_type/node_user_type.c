@@ -8,6 +8,7 @@
 
 #include "node_user_type.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 struct tnode *createUserTypeNode(struct tnode *typeNameNode) {
     struct tnode *node = createLeafNode(NODE_TYPE);
@@ -71,6 +72,10 @@ struct tnode *createMemberAccessNode(struct tnode *baseExprNode, struct tnode *m
 
         } else if (baseIdNode->type == USER_TYPE) {
             resolvedField = fieldListLookup(activeUserType, memberIdNode->varName);
+
+            if (resolvedField == NULL) {
+                compilerError(E_ACCESS_NON_EXISTING_FIELD_OF_TYPE, activeUserType->name, memberIdNode->varName);
+            } 
             memberAccessNode->nodeType = NODE_USER_DEF_TYPE_ACCESS;
             memberAccessNode->type = typeTableEntryToType(resolvedField->type);
             return memberAccessNode;

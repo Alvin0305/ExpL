@@ -27,4 +27,17 @@
 ##### Callee's Work
 
 - Push Old BP to the stack for restoring after callee return
-- 
+- Set BP to SP
+- Reserve space for local variables
+
+##### What to do on return (callee)
+
+- Save the return value (at $BP - 2$) to some register
+- Pop the local variables from the stack by subtracting $localBinding$ from SP
+- Pop the Old BP from stack (currently at stack top) to BP
+- write RET instruction to return to the address in the stack top (next instruction to run in caller)
+
+##### What to do after return (caller)
+
+- Regain the machine status by popping out the 20 saved registers from the stack
+- Continue executing to the next instruction. 

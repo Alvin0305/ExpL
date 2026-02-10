@@ -6,8 +6,8 @@
 #include "../error_handler/error_handler.h"
 #include "../g_symbol_table/g_symbol_table.h"
 #include "../node/node.h"
-#include "../util/util.h"
 #include "../type_table/type_table.h"
+#include "../util/util.h"
 #include "local_symbol_table.h"
 
 static int currentDataType = NONE;
@@ -22,7 +22,8 @@ int localBinding = 1;
 
 // static helpers
 
-static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, struct TupleType *tupleType, struct TypeTable *typeTableEntry) {
+static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, struct TupleType *tupleType,
+                               struct TypeTable *typeTableEntry) {
     struct LSymbol *entry = (struct LSymbol *)malloc(sizeof(struct LSymbol));
 
     if (isParam) {
@@ -32,7 +33,7 @@ static LSymbol *createLSTEntry(char *name, int type, bool isPtr, bool isParam, s
         if (type == TUPLE) {
             localBinding += tupleType->size;
         } else if (type == USER_TYPE) {
-            
+            localBinding += 1;
         } else {
             localBinding += getSizeOfDataType(type);
         }
@@ -104,7 +105,8 @@ static void populateLST(struct tnode *declNode) {
 
 // core methods
 
-struct LSymbol *installLST(char *name, int type, bool isParam, bool isPtr, struct TupleType *tupleType, struct TypeTable *typeTableEntry) {
+struct LSymbol *installLST(char *name, int type, bool isParam, bool isPtr, struct TupleType *tupleType,
+                           struct TypeTable *typeTableEntry) {
     struct LSymbol *entry = createLSTEntry(name, type, isPtr, isParam, tupleType, typeTableEntry);
     entry->typeTableEntry = typeTableEntry;
 

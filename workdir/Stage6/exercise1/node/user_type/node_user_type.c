@@ -24,7 +24,8 @@ struct tnode *createMemberAssignmentNode(struct tnode *fieldAccess, struct tnode
     struct tnode *node = createConnectorNode(fieldAccess, exprNode);
 
     if (!isTypeCompatible(fieldAccess->type, exprNode->type)) {
-        printf("[ERROR]: [%d] Type mismatch in assignment, %s = %s\n", lineNumber, dataTypeToString(fieldAccess->type), dataTypeToString(exprNode->type));
+        printf("[ERROR]: [%d] Type mismatch in assignment, %s = %s\n", lineNumber, dataTypeToString(fieldAccess->type),
+               dataTypeToString(exprNode->type));
         exit(1);
     }
 
@@ -79,11 +80,14 @@ struct tnode *createMemberAccessNode(struct tnode *baseExprNode, struct tnode *m
 
         } else if (baseIdNode->type == USER_TYPE) {
             resolvedField = fieldListLookup(activeUserType, memberIdNode->varName);
+            if (resolvedField == NULL) {
+                compilerError(E_ACCESS_NON_EXISTING_FIELD_OF_TYPE, activeUserType->name, memberIdNode->varName);
+            }
             activeUserType = resolvedField->type;
 
             memberAccessNode->nodeType = NODE_USER_DEF_TYPE_ACCESS;
             memberAccessNode->type = typeTableEntryToType(activeUserType);
-            
+
             return memberAccessNode;
         } else {
             compilerError(E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE, baseIdNode->varName, baseIdNode->type);

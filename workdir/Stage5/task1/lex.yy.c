@@ -1048,37 +1048,38 @@ case 48:
 YY_RULE_SETUP
 #line 84 "lexer.l"
 {
+    printf("length: %d\n", yyleng);
     yylval.node = createNewVariableNode(yytext);
     return ID;
 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 89 "lexer.l"
+#line 90 "lexer.l"
 { }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 90 "lexer.l"
+#line 91 "lexer.l"
 {return yytext[0];}
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 91 "lexer.l"
+#line 92 "lexer.l"
 { lineNumber++; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 92 "lexer.l"
+#line 93 "lexer.l"
 {printf("unknown character %s\n", yytext); exit(1);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 94 "lexer.l"
+#line 95 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1081 "lex.yy.c"
+#line 1082 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2046,7 +2047,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 94 "lexer.l"
+#line 95 "lexer.l"
 
 
 int yywrap() {

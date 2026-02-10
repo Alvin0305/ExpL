@@ -1,0 +1,18 @@
+type
+    node {
+        int val;
+    }
+endtype
+
+decl
+enddecl
+
+int main() {
+    decl
+        node n;
+    enddecl
+
+    begin
+        n.v = 10;
+    end
+}

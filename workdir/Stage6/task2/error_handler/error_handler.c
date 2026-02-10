@@ -53,8 +53,8 @@ void compilerError(int error, ...) {
 
         case E_FUNCTION_SIGNATURE_TOO_FEW_ARG:
             functionName = va_arg(ap, char *);
-            fprintf(stderr, "[ERROR]: Function \"%s\" definition has less arguments than definition (%d)\n",
-                    functionName, lineNumber);
+            fprintf(stderr, "[ERROR]: Function \"%s\" definition has less arguments than definition (%d)\n", functionName,
+                    lineNumber);
             break;
 
         case E_FUNCTION_CALL_MORE_ARG:
@@ -95,9 +95,8 @@ void compilerError(int error, ...) {
             functionName = va_arg(ap, char *);
             expectedReturnType = va_arg(ap, int);
             givenReturnType = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Expected return type for function \"%s\" is %s, but got %s\n",
-                    functionName, dataTypeToString(expectedReturnType), dataTypeToString(givenReturnType));
+            fprintf(stderr, "[ERROR]: Expected return type for function \"%s\" is %s, but got %s\n", functionName,
+                    dataTypeToString(expectedReturnType), dataTypeToString(givenReturnType));
             break;
 
         case E_FUNCTION_SIGNATURE_TYPE_MISMATCH:
@@ -105,33 +104,27 @@ void compilerError(int error, ...) {
             paramName = va_arg(ap, char *);
             expectedType = va_arg(ap, int);
             givenType = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Expected type for param \"%s\" in function \"%s\" is %s, but got %s\n",
-                    paramName, functionName, dataTypeToString(expectedType), dataTypeToString(givenType));
+            fprintf(stderr, "[ERROR]: Expected type for param \"%s\" in function \"%s\" is %s, but got %s\n", paramName,
+                    functionName, dataTypeToString(expectedType), dataTypeToString(givenType));
             break;
 
         case E_FUNCTION_SIGNATURE_VARNAME_MISMATCH:
             functionName = va_arg(ap, char *);
             expectedParamName = va_arg(ap, char *);
             givenParamName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Expected name for param in function \"%s\" is %s, but got %s\n",
-                    functionName, expectedParamName, givenParamName);
+            fprintf(stderr, "[ERROR]: Expected name for param in function \"%s\" is %s, but got %s\n", functionName,
+                    expectedParamName, givenParamName);
             break;
 
         case E_PARAMETER_DUPLICATION:
             functionName = va_arg(ap, char *);
             paramName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Duplicate parameter \"%s\" given to function \"%s\"\n",
-                    paramName, functionName);
+            fprintf(stderr, "[ERROR]: Duplicate parameter \"%s\" given to function \"%s\"\n", paramName, functionName);
             break;
 
         case E_LABEL_EXISTS:
             labelName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Label name \"%s\" already exists\n",
-                    labelName);
+            fprintf(stderr, "[ERROR]: Label name \"%s\" already exists\n", labelName);
             break;
 
         case E_FUNCTION_PASSED_ARG_MISMATCH:
@@ -139,46 +132,37 @@ void compilerError(int error, ...) {
             paramName = va_arg(ap, char *);
             expectedType = va_arg(ap, int);
             givenType = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Expected type of argument \"%s\" for function \"%s\" is %s, but got %s (%d)\n",
-                    paramName, functionName, dataTypeToString(expectedType), dataTypeToString(givenType), lineNumber);
+            fprintf(stderr, "[ERROR]: Expected type of argument \"%s\" for function \"%s\" is %s, but got %s (%d)\n", paramName,
+                    functionName, dataTypeToString(expectedType), dataTypeToString(givenType), lineNumber);
             break;
 
         case E_DEREFERENCE_NON_POINTER_TUPLE:
             variableName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Variable \"%s\" is not a pointer to dereference\n",
-                    variableName);
+            fprintf(stderr, "[ERROR]: Variable \"%s\" is not a pointer to dereference\n", variableName);
             break;
 
         case E_POINTER_TO_POINTER:
             variableName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Variable \"%s\" is a pointer, a pointer to another pointer is not supported in ExpL\n",
+            fprintf(stderr, "[ERROR]: Variable \"%s\" is a pointer, a pointer to another pointer is not supported in ExpL\n",
                     variableName);
             break;
 
         case E_TUPLE_TYPE_USED_BEFORE_DECLARATION:
             tupleTypeName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Tuple type \"%s\" is not yet declared to use {%d}\n",
-                    tupleTypeName, lineNumber);
+            fprintf(stderr, "[ERROR]: Tuple type \"%s\" is not yet declared to use {%d}\n", tupleTypeName, lineNumber);
             break;
 
         case E_VARIABLE_WITH_TYPE_VOID:
             variableName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Variable \"%s\" is assigned void type\n",
-                    variableName);
+            fprintf(stderr, "[ERROR]: Variable \"%s\" is assigned void type\n", variableName);
             break;
 
         case E_TYPE_MISMATCH:
             where = va_arg(ap, char *);
             expectedType = va_arg(ap, int);
             givenType = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Expected %s type in %s, but got %s",
-                    dataTypeToString(expectedType), where, dataTypeToString(givenType));
+            fprintf(stderr, "[ERROR]: Expected %s type in %s, but got %s", dataTypeToString(expectedType), where,
+                    dataTypeToString(givenType));
             break;
 
         case E_STACK_MEMORY_EXHAUSTED:
@@ -187,21 +171,17 @@ void compilerError(int error, ...) {
 
         case E_USER_DEF_VAR_SIZE_OVERFLOW:
             size = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Maximum size of user defined variable is %d, but got %d\n",
-                    MAX_USER_DEF_VAR_SIZE, size);
+            fprintf(stderr, "[ERROR]: Maximum size of user defined variable is %d, but got %d\n", MAX_USER_DEF_VAR_SIZE, size);
             break;
 
         case E_USER_TYPE_REDECLARATION:
             typeName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: User defined type \"%s\" is redefined\n", typeName);
+            fprintf(stderr, "[ERROR]: User defined type \"%s\" is redefined\n", typeName);
             break;
 
         case E_FIELD_TYPE_UNDEFINED:
             variableName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: Field \"%s\" in user defined type has a undefined type\n", variableName);
+            fprintf(stderr, "[ERROR]: Field \"%s\" in user defined type has a undefined type\n", variableName);
             break;
 
         case E_MEMBER_ACCESS_ON_NON_SUPPORTED_TYPE:
@@ -213,21 +193,22 @@ void compilerError(int error, ...) {
             break;
 
         case E_ACCESS_NON_EXISTING_FIELD_OF_TYPE:
-            printf("error");
+            typeName = va_arg(ap, char *);
+            fieldName = va_arg(ap, char *);
+            fprintf(stderr, "[ERROR]: Accessing non existing field of user defined type. Type %s has no attribute %s\n", typeName,
+                    fieldName);
             break;
 
         case E_USER_TYPE_USED_BEFORE_DECLARATION:
             typeName = va_arg(ap, char *);
-            fprintf(stderr,
-                    "[ERROR]: User defined type \"%s\" is used before declaration\n", typeName);
+            fprintf(stderr, "[ERROR]: User defined type \"%s\" is used before declaration\n", typeName);
             break;
 
         case E_INVALID_SIZE_FOR_USER_DEFINED_TYPE:
             typeName = va_arg(ap, char *);
             size = va_arg(ap, int);
-            fprintf(stderr,
-                    "[ERROR]: Size for user defined type \"%s\" should be between 1 and 8, but given %d\n",
-                    typeName, size);
+            fprintf(stderr, "[ERROR]: Size for user defined type \"%s\" should be between 1 and 8, but given %d\n", typeName,
+                    size);
             break;
 
         default:

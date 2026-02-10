@@ -6,7 +6,8 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/expl/user_type/update.expl"
+// #define SOURCE_FILE "io/expl/user_type/update.expl"
+#define SOURCE_FILE "io/test/err.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 

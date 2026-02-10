@@ -69,7 +69,7 @@ program : globalDeclarationsBlock functionDefinitionBlock mainBlock {
 globalDeclarationsBlock : KW_DECL globalDeclarationList KW_ENDDECL { 
         $$ = $2; 
         // print($2);
-        populateGSymbolTable($2);
+        populateGST($2);
         printGSymbolTable(); 
     }
     | KW_DECL KW_ENDDECL { $$ = NULL; }
@@ -109,7 +109,7 @@ functionDefinitionBlock : functionDefinitionBlock functionDefinition    { $$ = c
     ;
 
 functionDefinition : type ID '(' paramList ')' 
-        { currentFunction = lookup($2->varName); } 
+        { currentFunction = lookupGST($2->varName); } 
     '{' localDeclBlock body '}'  
         { $$ = createFunctionDefinitionNode($1, $2, $4, $8, $9); }
     ;

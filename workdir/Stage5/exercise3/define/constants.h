@@ -6,7 +6,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/expl/functions/function1.expl"
+#define SOURCE_FILE "io/expl/tuple/tuple_return.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 

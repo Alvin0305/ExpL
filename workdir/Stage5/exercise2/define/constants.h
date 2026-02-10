@@ -22,8 +22,8 @@
 
 enum sizes
 {
-    INT_SIZE = 4,
-    STRING_SIZE = 6,
+    INT_SIZE = 1,
+    STRING_SIZE = 1,
     NONE_SIZE = 0
 };
 

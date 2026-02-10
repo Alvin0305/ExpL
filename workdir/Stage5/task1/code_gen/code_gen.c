@@ -1,16 +1,16 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "code_gen.h"
 #include "../define/constants.h"
-#include "../node/node.h"
-#include "../register/register.h"
+#include "../g_symbol_table/g_symbol_table.h"
 #include "../label/label.h"
 #include "../label/label_stack.h"
-#include "../g_symbol_table/g_symbol_table.h"
+#include "../node/node.h"
+#include "../register/register.h"
 #include "../util/util.h"
+#include "code_gen.h"
 
 int generateAddRegCode(int leftReg, int rightReg) {
     fprintf(target_file, "ADD R%d, R%d\n", leftReg, rightReg);
@@ -62,9 +62,7 @@ void generateDecrementCode(struct tnode *node) {
     generateWriteToMemoryCode(reg, varMemAddr);
 }
 
-void generateWriteToMemoryCode(int reg, int varMemAddr) {
-    fprintf(target_file, "MOV [%d], R%d\n", varMemAddr, reg);
-}
+void generateWriteToMemoryCode(int reg, int varMemAddr) { fprintf(target_file, "MOV [%d], R%d\n", varMemAddr, reg); }
 
 void generateReadFromConsoleCode(int varMemAddr) {
     int functionNameReg = getFreeRegister();
@@ -72,7 +70,7 @@ void generateReadFromConsoleCode(int varMemAddr) {
     int memAddrReg = getFreeRegister();
     int arg3Reg = getFreeRegister();
     int returnReg = getFreeRegister();
-    
+
     fprintf(target_file, "MOV R%d, \"%s\"\n", functionNameReg, "Read");
     fprintf(target_file, "PUSH R%d\n", functionNameReg);
 
@@ -100,7 +98,7 @@ void generateReadFromConsoleCodeToAddrInReg(int memAddrReg) {
     int fileDescriptorReg = getFreeRegister();
     int arg3Reg = getFreeRegister();
     int returnReg = getFreeRegister();
-    
+
     fprintf(target_file, "MOV R%d, \"%s\"\n", functionNameReg, "Read");
     fprintf(target_file, "PUSH R%d\n", functionNameReg);
 
@@ -127,7 +125,7 @@ void generateWriteToConsoleCode(int reg) {
     int fileDescriptorReg = getFreeRegister();
     int arg3Reg = getFreeRegister();
     int returnReg = getFreeRegister();
-    
+
     fprintf(target_file, "MOV R%d, \"Write\"\n", functionNameReg);
     fprintf(target_file, "PUSH R%d\n", functionNameReg);
 
@@ -197,9 +195,7 @@ int generateAssignVariableCode(struct tnode *node) {
     return NO_RETURN;
 }
 
-void generateLabelHeader(int label) {
-    fprintf(target_file, "L%d:\n", label);
-}
+void generateLabelHeader(int label) { fprintf(target_file, "L%d:\n", label); }
 
 void generateJumpOnZeroCode(int reg, int label) {
     fprintf(target_file, "JZ R%d, L%d\n", reg, label);
@@ -211,36 +207,34 @@ void generateJumpOnNonZeroCode(int reg, int label) {
     releaseRegister(reg);
 }
 
-void generateJumpCode(int label) {
-    fprintf(target_file, "JMP L%d\n", label);
-}
+void generateJumpCode(int label) { fprintf(target_file, "JMP L%d\n", label); }
 
 void generateConditionCode(struct tnode *node, int trueLabel, int falseLabel) {
     int leftReg = generateCode(node->left);
     int rightReg = generateCode(node->right);
 
     switch (node->nodeType) {
-        case NODE_GE: 
+        case NODE_GE:
             fprintf(target_file, "GE R%d, R%d\n", leftReg, rightReg);
             break;
-        
-        case NODE_GT: 
+
+        case NODE_GT:
             fprintf(target_file, "GT R%d, R%d\n", leftReg, rightReg);
             break;
 
-        case NODE_LE: 
+        case NODE_LE:
             fprintf(target_file, "LE R%d, R%d\n", leftReg, rightReg);
             break;
 
-        case NODE_LT: 
+        case NODE_LT:
             fprintf(target_file, "LT R%d, R%d\n", leftReg, rightReg);
             break;
 
-        case NODE_EQ: 
+        case NODE_EQ:
             fprintf(target_file, "EQ R%d, R%d\n", leftReg, rightReg);
             break;
 
-        case NODE_NE: 
+        case NODE_NE:
             fprintf(target_file, "NE R%d, R%d\n", leftReg, rightReg);
             break;
     }
@@ -273,12 +267,12 @@ void generateLogicalConditionCode(struct tnode *node, int trueLabel, int falseLa
             break;
 
         case NODE_OR:
-            secondConditionLabel = createNewLabel();    
+            secondConditionLabel = createNewLabel();
             generateLogicalConditionCode(node->left, trueLabel, secondConditionLabel);
             generateLabelHeader(secondConditionLabel);
             generateLogicalConditionCode(node->right, trueLabel, falseLabel);
             break;
-        
+
         case NODE_NOT:
             generateLogicalConditionCode(node->left, falseLabel, trueLabel);
             break;
@@ -319,13 +313,12 @@ void generateIfCode(struct tnode *node) {
     struct tnode *ifNode = node->right;
 
     generateLogicalConditionCode(conditionNode, ifLabel, restOfCodeLabel);
-    
+
     generateLabelHeader(ifLabel);
     generateCode(ifNode);
 
     generateLabelHeader(restOfCodeLabel);
 }
-
 
 void generateWhileLoopCode(struct tnode *node) {
     int loopConditionLabel = createNewLabel();
@@ -336,7 +329,7 @@ void generateWhileLoopCode(struct tnode *node) {
 
     generateLabelHeader(loopConditionLabel);
     generateLogicalConditionCode(node->left, loopBodyLabel, restOfCodeLabel);
-    
+
     generateLabelHeader(loopBodyLabel);
     generateCode(node->right);
     generateJumpCode(loopConditionLabel);
@@ -409,17 +402,17 @@ int generateArrayElementAddress(struct tnode *arrayAccessNode) {
         struct tnode *indexExpr = NULL;
 
         if (node->nodeType == NODE_CONNECTOR) {
-            indexExpr = node->left; 
+            indexExpr = node->left;
         } else {
-            indexExpr = node;       
+            indexExpr = node;
         }
 
         int indexReg = generateCode(indexExpr);
-        
+
         if (productArray[index] != 1) {
             fprintf(target_file, "MUL R%d, %d\n", indexReg, productArray[index]);
         }
-        
+
         fprintf(target_file, "ADD R%d, R%d\n", sumReg, indexReg);
         releaseRegister(indexReg);
         index++;
@@ -427,7 +420,7 @@ int generateArrayElementAddress(struct tnode *arrayAccessNode) {
         if (node->nodeType == NODE_CONNECTOR) {
             node = node->right;
         } else {
-            break; 
+            break;
         }
     }
 
@@ -489,7 +482,7 @@ int generateDereferenceCode(struct tnode *dereferenceNode) {
     int idReg = generateCode(idNode);
 
     fprintf(target_file, "MOV R%d, [R%d]\n", freeReg, idReg);
-    
+
     releaseRegister(idReg);
     return freeReg;
 }
@@ -514,7 +507,7 @@ int generateCode(struct tnode *root) {
         case NODE_EMPTY:
             return NO_RETURN;
 
-        case NODE_ASSIGN: 
+        case NODE_ASSIGN:
             return generateAssignVariableCode(root);
 
         case NODE_CONNECTOR:
@@ -571,7 +564,7 @@ int generateCode(struct tnode *root) {
         case NODE_BREAK:
             generateBreakCode();
             return NO_RETURN;
-        
+
         case NODE_CONTINUE:
             generateContinueCode();
             return NO_RETURN;
@@ -594,19 +587,25 @@ int generateCode(struct tnode *root) {
         case NODE_ADD:
         case NODE_SUB:
         case NODE_MUL:
-        case NODE_DIV: 
-        case NODE_MOD: {
-            int leftReg = generateCode(root->left);
-            int rightReg = generateCode(root->right);
+        case NODE_DIV:
+        case NODE_MOD:
+            {
+                int leftReg = generateCode(root->left);
+                int rightReg = generateCode(root->right);
 
-            switch(root->nodeType) {
-                case NODE_ADD: return generateAddRegCode(leftReg, rightReg);
-                case NODE_SUB: return generateSubtractRegCode(leftReg, rightReg);
-                case NODE_MUL: return generateMultiplyRegCode(leftReg, rightReg);
-                case NODE_DIV: return generateDivideRegCode(leftReg, rightReg);
-                case NODE_MOD: return generateModuloRegCode(leftReg, rightReg);
+                switch (root->nodeType) {
+                    case NODE_ADD:
+                        return generateAddRegCode(leftReg, rightReg);
+                    case NODE_SUB:
+                        return generateSubtractRegCode(leftReg, rightReg);
+                    case NODE_MUL:
+                        return generateMultiplyRegCode(leftReg, rightReg);
+                    case NODE_DIV:
+                        return generateDivideRegCode(leftReg, rightReg);
+                    case NODE_MOD:
+                        return generateModuloRegCode(leftReg, rightReg);
+                }
             }
-        }
 
         case NODE_INC:
             generateIncrementCode(root);
@@ -620,13 +619,13 @@ int generateCode(struct tnode *root) {
     return NO_RETURN;
 }
 
-void generateCode(tnode *root) {
-    initializeRegisters();
+// void generateCode_(tnode *root) {
+//     initializeRegisters();
 
-    generateHeader();
-    generateCode(root);
-    generateExitCode();
-}
+//     generateHeader();
+//     generateCode(root);
+//     generateExitCode();
+// }
 
 int getAddressOfVariable(struct tnode *node) {
     GSymbol *entry = node->gSymbolTableEntry;
