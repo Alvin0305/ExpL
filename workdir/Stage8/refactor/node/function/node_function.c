@@ -34,14 +34,13 @@ bool checkArgs(Param **param, struct Node *argListNode, char *functionName) {
 
 struct Node *createFunctionCallNode(struct Node *functionNameNode, struct Node *argListNode) {
     struct Node *node = createConnectorNode(functionNameNode, argListNode);
-    print(argListNode);
 
     int n;
     struct TypeInfo **typeInfo = getTypeInfoFromArgs(argListNode, &n);
-    printf("n: %d\n", n);
-    for (int i = 0; i < n; i++) {
-        printf("%s, ", dataTypeToString(typeInfo[i]->kind));
-    }
+    // printf("n: %d\n", n);
+    // for (int i = 0; i < n; i++) {
+    //     printf("%s, ", dataTypeToString(typeInfo[i]->kind));
+    // }
 
     GSymbol *entry = lookupGST(functionNameNode->varName, true, typeInfo, n);
 

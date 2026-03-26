@@ -1,0 +1,9 @@
+decl
+    int foo(int a);
+enddecl
+
+int foo(str a) {
+    begin
+        return 1;
+    end
+}

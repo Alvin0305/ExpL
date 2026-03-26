@@ -34,6 +34,8 @@ int calcSizeOfType(struct TupleType *tupleType, struct TypeTable *type, struct C
 bool isTypeCompatible(enum Type leftType, enum Type rightType) {
     if (leftType == TYPE && rightType == NULL_TYPE) {
         return true;
+    } else if (leftType == CLASS && rightType == NULL_TYPE) {
+        return true;
     } else {
         return leftType == rightType;
     }
@@ -41,7 +43,9 @@ bool isTypeCompatible(enum Type leftType, enum Type rightType) {
 
 bool areTypeCompatible(struct TypeInfo *leftType, struct TypeInfo *rightType) {
     if (leftType->kind == TYPE && rightType->kind == NULL_TYPE) return true;
+    if (leftType->kind == CLASS && rightType->kind == NULL_TYPE) return true;
     if (leftType->kind != rightType->kind) return false;
+    
     if (leftType->kind == TUPLE) {
         return (strcmp(leftType->tupleType->name, rightType->tupleType->name) == 0);
     }
@@ -279,6 +283,10 @@ void printNode(struct tnode *node) {
 
         case NODE_ARRAY_ACCESS:
             printf("ARRAY ACCESS\n");
+            break;
+
+        case NODE_CLASS_FIELD_ACCESS:
+            printf("CLASS FIELD ACCESS\n");
             break;
 
         default:

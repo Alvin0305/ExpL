@@ -80,16 +80,6 @@ int generateArrayAccessCode(struct Node *arrayAccessNode) {
     return freeReg;
 }
 
-void generateAssignmentFromArray(struct Node *arrayAssignNode) {
-    struct Node *left = arrayAssignNode->left;
-    int memAddr = generateCode(left);
-
-    int indexReg = generateArrayAccessCode(arrayAssignNode->right);
-    fprintf(target_file, "MOV [%d], R%d\n", memAddr, indexReg);
-
-    releaseRegister(indexReg);
-}
-
 void generateAssignmentToArray(struct Node *arrayAssignNode) {
     int indexReg = generateArrayElementAddress(arrayAssignNode->left);
     int valueReg = generateCode(arrayAssignNode->right);

@@ -1,5 +1,6 @@
-Mathew
-35
-999
-CS
+Enter
+1.Rectangle
+2.Square
+Enter side sq
+100
 Machine is halting.

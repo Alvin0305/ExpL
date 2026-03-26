@@ -1,75 +1,104 @@
 class
-    Rectangle {
+    A {
         decl
-            int length;
-            int breadth;
-            int set_dimensions();
-            int area();
+            int f0();
+            int f1();
         enddecl
-
-        int area() {
-            decl
-            enddecl
+        
+        int f0() {
             begin
-                return self.length * self.breadth;
+                write("In class A f0");
+                return 1;
             end
         }
 
-        int set_dimensions() {
-            decl
-            enddecl
+        int f1() {
             begin
-                write("Enter length ");
-                read(self.length);
-                write("Enter breadth");
-                read(self.breadth);
-                return 0;
+                write("In class A f1");
+                return 1;
             end
         }
     }
 
-    Square extends Rectangle {
+    B extends A {
         decl
-            int set_dimensions();
+            int f0();
+            int f2();
         enddecl
 
-        int set_dimensions() {
-            decl
-            enddecl
-            
+        int f0() {
             begin
-                write("Enter side sq");
-                read(self.length);
-                self.breadth = self.length;
-                return 0;
+                write("In class B f0");
+                return 1;
+            end
+        }
+        
+        int f2() {
+            begin
+                write("In class B f2");
+                return 1;
+            end
+        }
+
+
+    }
+
+    C extends B {
+        decl
+            int f0();
+            int f2();
+            int f4();
+        enddecl
+        
+        int f0() {
+            begin
+                write("In class C f0");
+                return 1;
+            end
+        }
+        
+        int f2() {
+            begin
+                write("In class C f2");
+                return 1;
+            end
+        }
+        
+        int f4() {
+            begin
+                write("In class C f4");
+                return 1;
             end
         }
     }
 endclass
 
+
 decl
-    Rectangle obj;
+    A obj;
+    A test_obj;
 enddecl
 
 int main() {
     decl
-        int x;
+        int temp,n;
     enddecl
     begin
-        x = initialize();
-        write("Enter");
-        write("1.Rectangle");
-        write("2.Square");
-        read(x);
-
-        if (x == 1) then
-            obj = new(Rectangle);
-        else
-            obj = new(Square);
-        endif
+        temp = initialize();
+        read(n);
         
-        x = obj.set_dimensions();
-        write(obj.area());
-        return 0;
+        if (n < 0) then
+            obj = new(A);
+        else if (n == 0) then
+            obj = new(B);
+        else if (n > 0) then
+            obj = new(C);
+        endif
+        endif
+        endif
+
+        test_obj = obj;
+        write(test_obj.f0());
+        return 1;
     end
 }

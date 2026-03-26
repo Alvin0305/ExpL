@@ -1,0 +1,15 @@
+class A {
+    decl
+        int x;
+    enddecl
+}
+endclass
+
+int main() {
+decl
+    A a;
+enddecl
+begin
+    a.foo();
+end
+}

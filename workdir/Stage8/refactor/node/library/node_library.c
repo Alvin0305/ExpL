@@ -57,7 +57,7 @@ struct Node *createWriteNode(Node *exprNode) {
     struct Node *node = createEmptyNode();
 
     if (exprNode->type != INT && exprNode->type != STRING && exprNode->type != TYPE && exprNode->type != CLASS) {
-        printf("[ERROR]: [%d] Type mismatch, type is: %s\n", lineNumber, dataTypeToString(exprNode->type));
+        printf("[ERROR]: [%d] Type mismatch in write, type is: %s\n", lineNumber, dataTypeToString(exprNode->type));
         exit(1);
     }
 
@@ -93,12 +93,12 @@ struct Node *createAllocNode(struct Node *node) {
             idNode = createVariableUsageNode(node->varName);
             type = idNode->typeInfo->type;
             _class = idNode->typeInfo->_class;
-            
+
             if (!type && !_class) {
                 compilerError(E_USER_TYPE_USED_BEFORE_DECLARATION, idNode->varName);
             }
 
-            if (isPrimitive(idNode->type)) {
+            if (type && isPrimitive(idNode->type)) {
                 compilerError(E_ALLOC_ON_NON_UDT, idNode->varName);
             }
 

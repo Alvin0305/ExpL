@@ -131,10 +131,7 @@ void generateAllocCode(struct Node *node) {
     fprintf(target_file, "CALL 0\n");
 
     fprintf(target_file, "POP R%d\n", returnReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
+    fprintf(target_file, "SUB SP, 4\n");
 
     // for (int i = TOTAL_REGISTERS - 1; i >= 0; i--) {
     //     if (i != returnReg) {

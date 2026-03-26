@@ -1,0 +1,24 @@
+class
+    node {
+        decl
+            int value;
+            node next;
+        enddecl
+    }
+endclass
+
+decl
+enddecl
+
+int main() {
+    decl
+        node n;
+    enddecl
+
+    begin
+        n = new(node);
+        n.value = "10";
+        n.next = NULL;
+        write(n.value);
+    end
+}

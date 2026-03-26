@@ -79,7 +79,6 @@ code_header (0\nMAIN\n0\n0\n0\n0\n0\n0\n)
 }
 
 {mov_instruction} {
-    // printf("mov instruction reduced with %s\n", yytext);
     if (scanNumber == 1) {
         addr += 2;
     } else if (scanNumber == 2) {

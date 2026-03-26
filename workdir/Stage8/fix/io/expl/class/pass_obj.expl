@@ -1,0 +1,33 @@
+class
+    printer{
+        decl
+            int x;
+            int print(int v);
+        enddecl
+
+        int print(int v){
+            decl enddecl
+            begin
+                write(v);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    printer p;
+enddecl
+
+int main(){
+    decl 
+        int x;
+    enddecl
+    begin
+        x = initialize();
+        p = new(printer);
+        p.x = 99;
+        p.print(p.x);
+        return 0;
+    end
+}

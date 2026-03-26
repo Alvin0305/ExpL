@@ -1,0 +1,43 @@
+class
+A {
+    decl
+        int foo();
+    enddecl
+
+    int foo() {
+        decl
+        enddecl
+        begin
+            return 3;
+        end
+    }
+}
+
+B extends A {
+    decl
+        int foo();
+    enddecl
+
+    int foo() {
+        decl
+        enddecl
+        begin
+            return 6;
+        end
+    }
+}
+endclass
+
+decl
+    A a, b;
+enddecl
+
+int main() {
+    decl
+    enddecl
+    begin
+        a = new(B);
+        b = a;
+        write(b.foo());
+    end
+}

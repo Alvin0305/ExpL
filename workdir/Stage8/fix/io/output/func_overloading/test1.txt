@@ -1,0 +1,4 @@
+20
+hello
+5
+Machine is halting.

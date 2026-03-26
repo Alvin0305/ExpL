@@ -1,12 +1,12 @@
 #include "class_table.h"
 #include "../error_handler/error_handler.h"
+#include "../g_symbol_table/param_list.h"
 #include "../label/label.h"
+#include "../local_symbol_table/local_symbol_table.h"
 #include "../semantic_context/semantic_context.h"
 #include "../tuple_type_table/tuple_type_table.h"
 #include "../type_table/type_table.h"
 #include "../util/util.h"
-#include "../g_symbol_table/param_list.h"
-#include "../local_symbol_table/local_symbol_table.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,10 +16,10 @@ static int numClasses = 0;
 static int numField = 0;
 static int numMethods = 0;
 
-static struct ClassTable *activeClass;
+static struct ClassTable *activeClass = NULL;
 struct ClassMethod *activeMethod = NULL;
 
-static struct ClassTable *classTableHead;
+static struct ClassTable *classTableHead = NULL;
 
 static void printClassFieldOfClass(struct ClassTable *_class) {
     struct ClassField *field = _class->fields;
@@ -32,7 +32,7 @@ static void printClassFieldOfClass(struct ClassTable *_class) {
             printf("  - %d %s %s\n", field->fieldIndex, field->name, field->typeInfo->_class->name);
         } else {
             printf("  - %d %s %s\n", field->fieldIndex, field->name, field->typeInfo->type->name);
-        } 
+        }
 
         field = field->next;
     }
@@ -48,7 +48,7 @@ static void printClassMethodParam(struct Param *params) {
         } else {
             printf("    - %s [%s] %s\n", head->name, head->typeInfo->type->name, booleanToString(head->isPtr));
         }
-        
+
         head = head->next;
     }
 }
@@ -65,12 +65,11 @@ static void printClassMethodsOfClass(struct ClassTable *_class) {
             printf("  - %d %s %s\n", method->methodIndex, method->name, returnType->_class->name);
         } else {
             printf("  - %d %s %s\n", method->methodIndex, method->name, returnType->type->name);
-        } 
+        }
         printClassMethodParam(method->params);
         method = method->next;
     }
 }
-
 
 struct ClassTable *createNewClass(char *name) {
     struct ClassTable *_class = (struct ClassTable *)malloc(sizeof(struct ClassTable));
@@ -123,7 +122,7 @@ struct Param *addSelfParam(struct Param *params) {
 
 struct ClassMethod *createNewClassMethod(struct TypeInfo *returnType, char *name, struct Param *params) {
     struct ClassMethod *method = (struct ClassMethod *)malloc(sizeof(struct ClassMethod));
-    
+
     params = addSelfParam(params);
 
     method->params = params;
@@ -162,9 +161,7 @@ struct ClassField *lookupClassField(struct ClassTable *_class, char *name) {
     return NULL;
 }
 
-struct ClassMethod *lookupMethodInActiveClass(char *name) {
-    return lookupClassMethod(activeClass, name);
-}
+struct ClassMethod *lookupMethodInActiveClass(char *name) { return lookupClassMethod(activeClass, name); }
 
 struct ClassMethod *lookupClassMethod(struct ClassTable *_class, char *name) {
     struct ClassMethod *method = _class->methods;
@@ -292,7 +289,7 @@ void addMethodParamsToLST(struct Param *params) {
 void checkMethodSignature(struct TypeInfo *returnType, char *methodName, struct Param *params) {
     struct ClassMethod *method = lookupMethodInActiveClass(methodName);
     struct Param *givenParams = addSelfParam(params);
-    
+
     if (!method) {
         compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, methodName);
     }

@@ -43,7 +43,6 @@ static bool areSameFunction(struct GSymbol *symbol, char *name, struct TypeInfo 
 
 struct GSymbol *lookupGST(char *name, bool isFunction, struct TypeInfo **paramTypes, int numParams) {
     struct GSymbol *head = GSTHead;
-    printf("looking for %s\n", name);
 
     while (head) {
         if (isFunction) {
@@ -116,8 +115,6 @@ static void checkGSTEntry(struct TypeInfo *typeInfo, char *name, bool isFunction
 
 struct GSymbol *installToGST(struct TypeInfo *typeInfo, char *name, bool isPtr, bool isFunction, struct Param *params,
                              struct Dimension *dimensions) {
-    printGST();
-    printf("installing %s %s\n", name, booleanToString(isFunction));
 
     checkGSTEntry(typeInfo, name, isFunction, getNumOfParams(params), getParamTypesFromParams(params));
     struct ClassTable *_class = typeInfo->_class;
@@ -207,7 +204,8 @@ void checkFunctionSignature(struct TypeInfo *typeInfo, char *funcName, struct Pa
     struct GSymbol *entry = lookupGST(funcName, true, getParamTypesFromParams(givenParams), getNumOfParams(givenParams));
 
     if (!entry) {
-        compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, funcName, getParamTypesFromParams(givenParams), getNumOfParams(givenParams));
+        compilerError(E_FUNCTION_USED_BEFORE_DECLARATION, funcName, getParamTypesFromParams(givenParams),
+                      getNumOfParams(givenParams));
     }
 
     if (!isTypeCompatible(typeInfo, entry->typeInfo)) {

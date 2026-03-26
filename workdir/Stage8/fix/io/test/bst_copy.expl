@@ -1,0 +1,43 @@
+type
+    bst {
+        int value;
+        bst left;
+        bst right;
+    }
+endtype
+
+decl
+enddecl
+
+int main() {
+    decl
+        bst root;
+    enddecl
+
+    begin
+        root = alloc();
+        root.left = alloc();
+        root.right = alloc();
+        root.left.left = alloc();
+        root.left.right = alloc();
+        root.right = alloc();
+        root.right.left = alloc();
+        root.right.right = alloc();
+        
+        root.value = 1;
+        root.left.value = 2;
+        root.left.left.value = 3;
+        root.left.right.value = 4;
+        root.right.value = 5;
+        root.right.left.value = 6;
+        root.right.right.value = 7;
+
+        write(root.value);
+        write(root.left.value);
+        write(root.left.left.value);
+        write(root.left.right.value);
+        write(root.right.value);
+        write(root.right.left.value);
+        write(root.right.right.value);
+    end
+}

@@ -106,9 +106,10 @@ int resolveMemberAddress(struct Node *node) {
                 struct ClassMethod *classMethod = lookupClassMethod(activeClass, methodName);
                 activeTypeInfo = classMethod->returnType;
                 releaseRegister(freeReg);
-                freeReg = generateMethodCall(freeReg, activeClass, methodCallNode);
+                return generateMethodCall(freeReg, activeClass, methodCallNode);
             }
-            return freeReg;
+            compilerError(E_METHOD_CALLED_ON_NON_CLASS_VARIABLE, methodName);
+            return __NONE__;
 
         default:
             printf("[WARNING]: unhandled node in class access helper: %d\n", node->nodeType);
@@ -127,10 +128,11 @@ int generateClassMethodCallCode(struct Node *root) { return resolveMemberAddress
 
 void generateClassFieldAssignmentCode(struct Node *root) {
     struct Node *accessNode = root->left;
+    struct Node *valueNode = root->right;
 
     int addrReg = resolveMemberAddress(accessNode);
+    int valueReg = generateCode(valueNode);
 
-    int valueReg = generateCode(root->right);
     fprintf(target_file, "MOV [R%d], R%d\n", addrReg, valueReg);
 
     releaseRegister(addrReg);

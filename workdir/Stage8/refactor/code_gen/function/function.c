@@ -56,7 +56,7 @@ void popArgsFromStack(struct Param *params) {
     while (param) {
         fprintf(target_file, "POP R%d\n", freeReg);
         if (param->typeInfo->kind == CLASS) {
-            printf("param %s is class, so double popping\n", param->name);
+            printf("[DEBUG] param %s is class, so double popping\n", param->name);
             fprintf(target_file, "POP R%d\n", freeReg);
         }
         param = param->next;
@@ -98,9 +98,9 @@ void generateMainCode(struct Node *root) {
     fprintf(target_file, "BRKP\n");
 
     fprintf(target_file, "MOV SP, %d\n", stackTop);
-    fprintf(target_file, "MOV BP, SP\n");
-    fprintf(target_file, "BRKP\n");
-
+    // fprintf(target_file, "MOV BP, SP\n");
+    // fprintf(target_file, "BRKP\n");
+    
     fprintf(target_file, "PUSH BP\n");
     fprintf(target_file, "MOV BP, SP\n");
 
@@ -111,7 +111,10 @@ void generateMainCode(struct Node *root) {
     generateExitCode();
 }
 
+// changes made -> copyRegsiterStatus and regainRegisterStatus called (remove it if some error happen)
 void generateFunctionCode(int functionLabel, struct Node *root) {
+    bool *copy = copyRegisterStatus();
+
     initializeRegisters();
     generateFunctionHeader(functionLabel);
 
@@ -120,6 +123,8 @@ void generateFunctionCode(int functionLabel, struct Node *root) {
     fprintf(target_file, "ADD SP, %d\n", localBinding);
     generateCode(root);
     generateFunctionJumpBackCode();
+
+    regainRegisterStatus(copy);
 }
 
 void generateFunctionReturnCode(struct Node *returnNode) {

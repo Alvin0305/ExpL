@@ -1,0 +1,5 @@
+Exception
+Found
+Program
+Terminated
+Machine is halting.

@@ -1,0 +1,28 @@
+class 
+    A {
+        decl
+            int foo();
+        enddecl
+        int foo() {
+            begin
+                write("A::foo");
+                return 100;
+            end
+        }
+    }
+endclass
+
+decl
+    A a;
+enddecl
+
+int main() {
+    decl
+        int temp;
+    enddecl
+    begin
+        temp = initialize();
+        a = new(A);
+        write(a.foo());
+    end
+}

@@ -25,8 +25,10 @@ struct tnode *createMemberAssignmentNode(struct tnode *fieldAccess, struct tnode
         node->nodeType = NODE_TUPLE_POINTER_ASSIGN;
     } else if (fieldAccess->nodeType == NODE_USER_DEF_TYPE_ACCESS) {
         node->nodeType = NODE_USER_DEF_TYPE_ASSIGNMENT;
+    } else if (fieldAccess->nodeType == NODE_CLASS_FIELD_ACCESS) {
+        node->nodeType = NODE_CLASS_FIELD_ASSIGNMENT;
     } else {
-        printf("[ERROR]");
+        printf("[ERROR] Unexpected Node while creating assignment node");
         printNode(fieldAccess);
     }
 
@@ -97,7 +99,7 @@ struct tnode *createMemberAccessNode(struct tnode *baseExprNode, struct tnode *m
                         if (!method) {
                             printf("error2\n");
                         }
-                        
+
                         activeClass = method->returnType->_class;
                         activeUserType = method->returnType->type;
 
@@ -114,8 +116,6 @@ struct tnode *createMemberAccessNode(struct tnode *baseExprNode, struct tnode *m
                     activeClass = resolvedClassField->typeInfo->_class;
                     activeUserType = resolvedClassField->typeInfo->type;
                     memberAccessNode->type = resolvedClassField->typeInfo->kind;
-
-                    printf("%s is class. new active type is: %s\n", baseIdNode->varName, activeUserType->name);
 
                     memberAccessNode->typeInfo = resolvedClassField->typeInfo;
                     memberAccessNode->nodeType = NODE_CLASS_FIELD_ACCESS;

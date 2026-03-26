@@ -1,0 +1,4 @@
+type
+    pair { int a; int b; }
+    pair { int x; int y; }
+endtype

@@ -35,7 +35,7 @@ int main() {
 
         swap(p1, p2);
 
-        write("after swap");
+        write("after swap");k
 
         write(num1);
         write(num2);

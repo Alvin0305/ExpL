@@ -19,10 +19,10 @@
 #include "array/array.h"
 #include "control_flow/control_flow.h"
 #include "function/function.h"
-#include "tuple/tuple.h"
-#include "user_type/user_type.h"
 #include "library/library.h"
 #include "pointer/pointer.h"
+#include "tuple/tuple.h"
+#include "user_type/user_type.h"
 
 void generateWriteToMemoryCode(int reg, int varMemAddr) {
     fprintf(target_file, "MOV [%d], R%d\n", varMemAddr, reg);
@@ -36,14 +36,14 @@ int getAddressOfVariable(struct tnode *node) {
 
     if (localEntry) {
         int binding = localEntry->binding;
-        
+
         if (binding < 0) {
             fprintf(target_file, "MOV R%d, BP\n", reg);
             fprintf(target_file, "SUB R%d, %d\n", reg, -binding);
         } else {
             fprintf(target_file, "MOV R%d, BP\n", reg);
             fprintf(target_file, "ADD R%d, %d\n", reg, binding);
-        }        
+        }
     } else if (globalEntry) {
         fprintf(target_file, "MOV R%d, %d\n", reg, globalEntry->binding);
     } else {
@@ -78,7 +78,7 @@ int generateLoadVariableCode(struct tnode *node) {
 
     fprintf(target_file, "MOV R%d, [R%d]\n", freeReg, varMemAddrReg);
     releaseRegister(varMemAddrReg);
-    
+
     return freeReg;
 }
 
@@ -95,9 +95,7 @@ void generateAssignVariableCode(struct tnode *node) {
     releaseRegister(varMemAddrReg);
 }
 
-void generateArrayAllocCode(struct tnode *node) {
-
-}
+void generateArrayAllocCode(struct tnode *node) {}
 
 int generateCode(struct tnode *root) {
     if (!root) return __NONE__;
@@ -268,8 +266,11 @@ int generateCode(struct tnode *root) {
 
         case NODE_CLASS_FIELD_ACCESS:
             return 0;
-        
+
         case NODE_CLASS_METHOD_ACCESS:
+            return 0;
+
+        case NODE_CLASS_FIELD_ASSIGNMENT:
             return 0;
 
         default:
@@ -281,6 +282,4 @@ int generateCode(struct tnode *root) {
     return __NONE__;
 }
 
-void generateHeader() {
-    fprintf(target_file, "%d\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, "MAIN", 0, 0, 0, 0, 0, 0);
-}
+void generateHeader() { fprintf(target_file, "%d\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", 0, "MAIN", 0, 0, 0, 0, 0, 0); }

@@ -1,0 +1,44 @@
+class
+    tester{
+        decl
+            int x;
+            int show(int v);
+            int run();
+        enddecl
+
+        int show(int v){
+            decl enddecl
+            begin
+                write(v);
+                return 1;
+            end
+        }
+
+        int run(){
+            decl enddecl
+            begin
+                write(self);
+                self.x = 25;
+                write(self.x);
+                self.show(1);
+                return 1;
+            end
+        }
+    }
+endclass
+
+decl
+    tester t;
+enddecl
+
+int main(){
+    decl
+        int x; 
+    enddecl
+    begin
+        x = initialize();
+        t = new(tester);
+        t.run();
+        return 0;
+    end
+}

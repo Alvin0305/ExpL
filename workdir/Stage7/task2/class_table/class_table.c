@@ -17,9 +17,9 @@ static int numClasses = 0;
 static int numField = 0;
 static int numMethods = 0;
 
-static struct ClassTable *classTableHead;
+static struct ClassTable *classTableHead = NULL;
 
-static struct ClassTable *activeClass;
+static struct ClassTable *activeClass = NULL;
 struct ClassMethod *activeMethod = NULL;
 
 static void printClassFieldOfClass(struct ClassTable *_class) {

@@ -15,7 +15,6 @@ struct Param *createParam(struct TypeInfo *typeInfo, char *name, bool isPtr) {
     param->name = strdup(name);
     param->isPtr = isPtr;
     param->typeInfo = typeInfo;
-    printf("created param %s\n", name);
 
     return param;
 }

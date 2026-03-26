@@ -4,7 +4,7 @@
 #define NO_LABEL -200
 #define __NONE__ -1
 
-#define SOURCE_FILE "io/expl/error/test.expl"
+#define SOURCE_FILE "io/expl/Stage7/fib_sum.expl"
 #define INTERMEDIATE_FILE "io/intermediate.xsm"
 #define TRANSLATED_FILE "io/translated.xsm"
 

@@ -1,0 +1,4 @@
+decl
+    tuple pair (int a, int b) a;
+    tuple pair (int x, int y) b;
+enddecl

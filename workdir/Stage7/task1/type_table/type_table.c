@@ -130,9 +130,6 @@ struct TypeTable *lookupTT(char *name) {
         head = head->next;
     }
 
-    // printf("%s not found in TT\n", name);
-    printTypeTable();
-
     return NULL;
 }
 

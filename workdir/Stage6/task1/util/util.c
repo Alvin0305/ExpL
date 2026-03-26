@@ -1,8 +1,8 @@
 #include "../define/constants.h"
 #include "../node/node.h"
 
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 char *booleanToString(bool b) {
     if (b) {
@@ -64,7 +64,7 @@ char *opToString(int op) {
 
 void printNode(struct tnode *node) {
 
-    switch(node->nodeType) {
+    switch (node->nodeType) {
         case NODE_CONNECTOR:
             printf("CONNECTOR\n");
             break;
@@ -168,7 +168,7 @@ void printNode(struct tnode *node) {
         case NODE_ADD:
             printf("+\n");
             break;
-        
+
         case NODE_SUB:
             printf("-\n");
             break;
@@ -207,6 +207,10 @@ void printNode(struct tnode *node) {
 
         case NODE_TUPLE_ACCESS:
             printf("TUPLE ACCESS\n");
+            break;
+
+        case NODE_FUNC_DEF:
+            printf("FUNC DEF\n");
             break;
 
         default:

@@ -137,10 +137,7 @@ void generateNewClassCode(struct Node *node) {
     fprintf(target_file, "CALL 0\n");
 
     fprintf(target_file, "POP R%d\n", returnReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
-    fprintf(target_file, "POP R%d\n", freeReg);
+    fprintf(target_file, "SUB SP, 4\n");
 
     releaseRegister(freeReg);
 
@@ -159,7 +156,7 @@ void generateNewClassCode(struct Node *node) {
     // else if (nodeType == NODE_ARRAY_ACCESS) {
     //     freeReg = generateArrayElementAddress(left);
     //     fprintf(target_file, "MOV [R%d], R%d\n", freeReg, returnReg);
-    // } 
+    // }
 
     releaseRegister(freeReg);
     releaseRegister(returnReg);

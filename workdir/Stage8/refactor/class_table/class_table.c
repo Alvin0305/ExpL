@@ -325,9 +325,9 @@ void setMethodsToClass(struct ClassMethod *methods) {
 }
 
 void setupVirtualFunctionTable() {
-    struct ClassTable *head = classTableHead;
-    while (head) {
-        struct ClassMethod *method = head->methods;
+    struct ClassTable *_class = classTableHead;
+    while (_class) {
+        struct ClassMethod *method = _class->methods;
         int freeReg = getFreeRegister();
 
         for (int i = 0; i < MAX_NUM_METHODS; i++) {
@@ -343,7 +343,7 @@ void setupVirtualFunctionTable() {
 
         releaseRegister(freeReg);
 
-        head = head->next;
+        _class = _class->next;
     }
 }
 

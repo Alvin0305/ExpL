@@ -1,0 +1,16 @@
+decl
+    int matrix[3][3];
+    int list[3];
+enddecl
+int main() {
+    decl
+    enddecl
+
+    begin
+        list[0] = 1;
+        list[1] = 10;
+        list[list[0]] = list[list[0]];
+
+        write(list[list[0]]);
+    end
+}

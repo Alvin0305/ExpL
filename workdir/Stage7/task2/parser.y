@@ -399,7 +399,7 @@ memberAccess : memberAccess DOT ID                                  { $$ = creat
                                                                       ACCESS_DOT, false, NULL); }
     | ID DOT ID                                                     { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, false, NULL); }
     | ID ARROW ID                                                   { $$ = createMemberAccessNode($1, $3, ACCESS_ARROW, false, NULL); }
-    | methodCall
+    | methodCall                                                    { $$ = $1; }
     ;
 
 methodCall : ID DOT ID '(' argList ')'                              { $$ = createMemberAccessNode($1, $3, ACCESS_DOT, true, $5); }

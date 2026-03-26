@@ -1,0 +1,24 @@
+decl
+    int func(int num);
+    str func(str name);
+enddecl
+
+int func(int num) {
+    begin
+        return num + 1;
+    end
+}
+
+str func(str name) {
+    begin
+        write(name);
+        return name;
+    end
+}
+
+int main() {
+    begin
+        write(func(1));
+        write(func("Alvin"));
+    end
+}

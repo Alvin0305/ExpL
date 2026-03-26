@@ -1,0 +1,10 @@
+decl
+    int foo();
+    int foo();
+enddecl
+
+int main() {
+    begin
+        foo();
+    end
+}
